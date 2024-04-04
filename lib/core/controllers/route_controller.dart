@@ -8,6 +8,12 @@ class RouteController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   var routes = <Route>[].obs;
 
+  @override
+  void onInit() async {
+    super.onInit();
+    await fetchUserRoutes();
+  }
+
   Future<void> createRoute({
     required GeoPoint startingLocation,
     required GeoPoint destinationLocation,
@@ -31,17 +37,17 @@ class RouteController extends GetxController {
           .doc(routeId)
           .set(route.toJson());
       await Get.find<UserController>().updateUserRouteList(routeId: route.id);
-      routes.value = await fetchUserRoutes();
+      await fetchUserRoutes();
     } catch (error) {
       throw Exception(error.toString());
     }
   }
 
-  Future<List<Route>> fetchUserRoutes() async {
+  Future<void> fetchUserRoutes() async {
     try {
       List<String> routeIds =
           Get.find<UserController>().user.value!.routes ?? [];
-      List<Route> fetchedRoutes = [];
+      List<Route> routes = [];
       // Get routes from firestore.
       for (String routeId in routeIds) {
         DocumentSnapshot snapshot = await firestore
@@ -50,9 +56,9 @@ class RouteController extends GetxController {
             .get();
         // Create Route models.
         Route route = Route.fromFirestore(snapshot);
-        fetchedRoutes.add(route);
+        routes.add(route);
       }
-      return fetchedRoutes;
+      this.routes.value = routes;
     } catch (error) {
       throw Exception(error.toString());
     }
