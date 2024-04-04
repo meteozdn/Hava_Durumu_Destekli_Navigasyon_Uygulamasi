@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:navigationapp/core/controllers/auth_controller.dart';
 
 class WeatherScreen extends StatelessWidget {
   const WeatherScreen({super.key});
@@ -7,8 +9,13 @@ class WeatherScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.blue,
-      child: const Center(
-        child: Text("Weather"),
+      child: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Get.find<AuthController>().logout();
+          },
+          child: const Text("Log out"),
+        ),
       ),
     );
   }
