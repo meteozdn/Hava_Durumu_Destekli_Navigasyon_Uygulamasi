@@ -8,6 +8,12 @@ class ChatGroupController extends GetxController {
   var chatGroups = <ChatGroup>[].obs;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
+  @override
+  void onInit() async {
+    super.onInit();
+    await fetchUserChatGroups();
+  }
+
   Future<void> createChatGroup({
     required List<String> members,
     String name = "",
@@ -26,18 +32,18 @@ class ChatGroupController extends GetxController {
       for (String userId in members) {
         await Get.find<UserController>()
             .updateUserChatGroupList(chatGroupId: id, userId: userId);
-        chatGroups.value = await fetchChatGroups();
+        await fetchUserChatGroups();
       }
     } catch (error) {
       throw Exception(error.toString());
     }
   }
 
-  Future<List<ChatGroup>> fetchChatGroups() async {
+  Future<void> fetchUserChatGroups() async {
     try {
       List<String> ids =
           Get.find<UserController>().user.value!.chatGroups ?? [];
-      List<ChatGroup> fetchedChatGroups = [];
+      List<ChatGroup> chatGroups = [];
       // Get ChatGroups from firestore.
       for (String id in ids) {
         DocumentSnapshot snapshot = await firestore
@@ -54,9 +60,9 @@ class ChatGroupController extends GetxController {
             chatGroup.name = value.username;
           });
         }
-        fetchedChatGroups.add(chatGroup);
+        chatGroups.add(chatGroup);
       }
-      return fetchedChatGroups;
+      this.chatGroups.value = chatGroups;
     } catch (error) {
       throw Exception(error.toString());
     }
