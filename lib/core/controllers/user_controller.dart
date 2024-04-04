@@ -19,7 +19,7 @@ class UserController extends GetxController {
       // Create instance of user.
       User user = User.fromFirestore(snapshot);
       this.user.value = user;
-      friends.value = await getFriendsList();
+      await fetchUserFriends();
     } catch (error) {
       throw Exception(error.toString());
     }
@@ -73,7 +73,7 @@ class UserController extends GetxController {
   }
 
   // Method to get users friends list.
-  Future<List<User>> getFriendsList() async {
+  Future<void> fetchUserFriends() async {
     try {
       User currentUser = user.value!;
       List<String> friendIds = currentUser.friends ?? [];
@@ -86,7 +86,7 @@ class UserController extends GetxController {
         User friend = User.fromFirestore(snapshot);
         friends.add(friend);
       }
-      return friends;
+      this.friends.value = friends;
     } catch (error) {
       throw Exception("Error updating friend list: $error");
     }
@@ -107,7 +107,7 @@ class UserController extends GetxController {
       }
       // Update local user data.
       user.value!.friends = friends;
-      this.friends.value = await getFriendsList();
+      await fetchUserFriends();
       // Save to firestore.
       await firestore
           .collection(FirestoreCollections.users)
