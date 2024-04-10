@@ -17,9 +17,9 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      WeatherScreen(),
-      NavigationScreen(),
-      JourneyScreen(),
+      const WeatherScreen(),
+      const NavigationScreen(),
+      const JourneyScreen(),
     ];
 
     return Obx(() {
