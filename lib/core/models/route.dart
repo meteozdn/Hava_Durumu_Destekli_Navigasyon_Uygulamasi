@@ -4,9 +4,9 @@ class Route {
   final String id;
   final String ownerId;
   final DateTime plannedAt;
-  final GeoPoint startingLocation;
   final GeoPoint destinationLocation;
-  bool isStarted; // isActive
+  bool isActive;
+  GeoPoint? startingLocation;
   DateTime? startedAt;
   String? startedWeather;
   GeoPoint? location;
@@ -22,9 +22,9 @@ class Route {
       {required this.id,
       required this.ownerId,
       required this.plannedAt,
-      required this.startingLocation,
       required this.destinationLocation,
-      required this.isStarted,
+      required this.isActive,
+      this.startingLocation,
       this.startedAt,
       this.startedWeather,
       this.location,
@@ -44,7 +44,7 @@ class Route {
       plannedAt: data["plannedAt"].toDate(),
       startingLocation: data["startingLocation"],
       destinationLocation: data["destinationLocation"],
-      isStarted: data["isStarted"],
+      isActive: data["isActive"],
       startedAt: data["startedAt"]?.toDate(),
       startedWeather: data["startedWeather"],
       location: data["location"],
@@ -64,7 +64,7 @@ class Route {
         "plannedAt": plannedAt,
         "startingLocation": startingLocation,
         "destinationLocation": destinationLocation,
-        "isStarted": isStarted,
+        "isActive": isActive,
         "startedAt": startedAt,
         "startedWeather": startedWeather,
         "location": location,
