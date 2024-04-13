@@ -20,7 +20,7 @@ class MainScreen extends StatelessWidget {
           Get.put(UserController());
           if (authController.user.value != null) {
             Get.find<UserController>()
-                .setUser(userId: authController.user.value!.uid)
+                .setAuthenticatedUser(userId: authController.user.value!.uid)
                 .then((value) {
               Get.put(RouteController());
               Get.put(FriendRequestController());
