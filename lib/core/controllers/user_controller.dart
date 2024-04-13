@@ -5,12 +5,11 @@ import 'package:navigationapp/core/controllers/auth_controller.dart';
 import 'package:navigationapp/core/models/user.dart';
 
 class UserController extends GetxController {
-  Rx<User?> user = Rx<User?>(null);
-  var friends = <User>[].obs;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  Rx<User?> user = Rx<User?>(null);
 
   // Method to set user data.
-  Future<void> setUser({required String userId}) async {
+  Future<void> setAuthenticatedUser({required String userId}) async {
     try {
       DocumentSnapshot snapshot = await firestore
           .collection(FirestoreCollections.users)
@@ -19,7 +18,6 @@ class UserController extends GetxController {
       // Create instance of user.
       User user = User.fromFirestore(snapshot);
       this.user.value = user;
-      await fetchUserFriends();
     } catch (error) {
       throw Exception(error.toString());
     }
@@ -67,103 +65,6 @@ class UserController extends GetxController {
         }
       }
       return searchResults;
-    } catch (error) {
-      throw Exception(error.toString());
-    }
-  }
-
-  // Method to get users friends list.
-  Future<void> fetchUserFriends() async {
-    try {
-      User currentUser = user.value!;
-      List<String> friendIds = currentUser.friends ?? [];
-      List<User> friends = [];
-      for (String id in friendIds) {
-        DocumentSnapshot snapshot = await firestore
-            .collection(FirestoreCollections.users)
-            .doc(id)
-            .get();
-        User friend = User.fromFirestore(snapshot);
-        friends.add(friend);
-      }
-      this.friends.value = friends;
-    } catch (error) {
-      throw Exception("Error updating friend list: $error");
-    }
-  }
-
-  // Method to update users friends list.
-  Future<void> updateUserFriendList(
-      {required String userId,
-      required String friendId,
-      bool isAdding = true}) async {
-    try {
-      // Update user's friend list.
-      List<String> friends = user.value!.friends ?? [];
-      if (isAdding) {
-        friends.add(friendId);
-      } else {
-        friends.remove(friendId);
-      }
-      // Update local user data.
-      user.value!.friends = friends;
-      await fetchUserFriends();
-      // Save to firestore.
-      await firestore
-          .collection(FirestoreCollections.users)
-          .doc(user.value!.id)
-          .update({"friends": friends});
-    } catch (error) {
-      throw Exception(error.toString());
-    }
-  }
-
-  // Method to update users chatGroup list.
-  Future<void> updateUserChatGroupList({
-    required String chatGroupId,
-    required String userId,
-    bool isAdding = true,
-  }) async {
-    try {
-      // Update user's chatGroup list.
-      List<String> chatGroups = user.value!.chatGroups ?? [];
-      if (isAdding) {
-        chatGroups.add(chatGroupId);
-      } else {
-        chatGroups.remove(chatGroupId);
-      }
-      // Update local user data.
-      user.value!.chatGroups = chatGroups;
-      // Save to firestore.
-      await firestore
-          .collection(FirestoreCollections.users)
-          .doc(user.value!.id)
-          .update({"chatGroups": chatGroups});
-    } catch (error) {
-      throw Exception(error.toString());
-    }
-  }
-
-  // Method to update users route list.
-  Future<void> updateUserRouteList({
-    required String routeId,
-    bool isAdding = true,
-  }) async {
-    try {
-      // Update user's route list.
-      List<String> routes = user.value!.routes ?? [];
-      if (isAdding) {
-        routes.add(routeId);
-      } else {
-        routes.remove(routeId);
-      }
-      // Update local user data.
-      user.value!.routes = routes;
-      // Save to firestore.
-      await firestore
-          .collection(FirestoreCollections.users)
-          .doc(user.value!.id)
-          .update({"routes": routes});
     } catch (error) {
       throw Exception(error.toString());
     }
