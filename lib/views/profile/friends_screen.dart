@@ -12,7 +12,7 @@ class FriendsScreen extends StatelessWidget {
       children: [
         ElevatedButton(
             onPressed: () {
-              Get.to(() => SearchUserPage());
+              Get.to(() => SearchUserScreen());
             },
             child: const Text("Arkadaş ekle")),
         const Text("Arkadaşlık istekleri"),
