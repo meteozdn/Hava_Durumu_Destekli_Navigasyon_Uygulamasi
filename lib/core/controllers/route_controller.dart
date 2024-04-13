@@ -6,7 +6,8 @@ import 'package:navigationapp/core/models/route.dart';
 
 class RouteController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  var routes = <Route>[].obs;
+  final RxList<Route> _routes = <Route>[].obs;
+  List<Route> get routes => _routes;
 
   @override
   void onInit() async {
@@ -14,51 +15,79 @@ class RouteController extends GetxController {
     await fetchUserRoutes();
   }
 
+  Future<void> fetchUserRoutes() async {
+    try {
+      routes.clear();
+      // Store routes in local.
+      List<String> ids = Get.find<UserController>().user.value!.routes ?? [];
+      // Get routes from firestore.
+      for (String id in ids) {
+        DocumentSnapshot snapshot = await firestore
+            .collection(FirestoreCollections.routes)
+            .doc(id)
+            .get();
+        // Create Route model.
+        Route route = Route.fromFirestore(snapshot);
+        routes.add(route);
+      }
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
   Future<void> createRoute({
-    required GeoPoint startingLocation,
     required GeoPoint destinationLocation,
+    GeoPoint? startingLocation,
   }) async {
     try {
       // Create auto Id.
-      final routeId =
-          firestore.collection(FirestoreCollections.routes).doc().id;
+      final id = firestore.collection(FirestoreCollections.routes).doc().id;
       // Create Route model.
       Route route = Route(
-        id: routeId,
+        id: id,
         ownerId: Get.find<UserController>().user.value!.id,
         plannedAt: DateTime.now(),
         startingLocation: startingLocation,
         destinationLocation: destinationLocation,
-        isStarted: false,
+        isActive: false,
       );
+      // Save Route to local.
+      Get.find<UserController>().user.value!.routes?.add(id);
       // Save Route to firestore.
       await firestore
           .collection(FirestoreCollections.routes)
-          .doc(routeId)
+          .doc(id)
           .set(route.toJson());
-      await Get.find<UserController>().updateUserRouteList(routeId: route.id);
+      await updateUserRouteList(routeId: route.id);
       await fetchUserRoutes();
     } catch (error) {
       throw Exception(error.toString());
     }
   }
 
-  Future<void> fetchUserRoutes() async {
+  //Method to update users route list.
+  Future<void> updateUserRouteList({
+    required String routeId,
+    bool isAdding = true,
+  }) async {
     try {
-      List<String> routeIds =
-          Get.find<UserController>().user.value!.routes ?? [];
-      List<Route> routes = [];
-      // Get routes from firestore.
-      for (String routeId in routeIds) {
-        DocumentSnapshot snapshot = await firestore
-            .collection(FirestoreCollections.routes)
-            .doc(routeId)
-            .get();
-        // Create Route models.
-        Route route = Route.fromFirestore(snapshot);
-        routes.add(route);
+      String currentUserId = Get.find<UserController>().user.value!.id;
+      // Save to firestore.
+      if (isAdding) {
+        await firestore
+            .collection(FirestoreCollections.users)
+            .doc(currentUserId)
+            .update({
+          "routes": FieldValue.arrayUnion([routeId])
+        });
+      } else {
+        await firestore
+            .collection(FirestoreCollections.users)
+            .doc(currentUserId)
+            .update({
+          "routes": FieldValue.arrayRemove([routeId])
+        });
       }
-      this.routes.value = routes;
     } catch (error) {
       throw Exception(error.toString());
     }
