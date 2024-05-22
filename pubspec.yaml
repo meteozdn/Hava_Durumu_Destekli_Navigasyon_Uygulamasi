@@ -1,21 +1,22 @@
 name: navigationapp
 description: "A new Flutter project."
-publish_to: "none"
+publish_to: 'none'
 version: 0.1.0
 
 environment:
-  sdk: ">=3.2.2 <4.0.0"
+  sdk: '>=3.2.2 <4.0.0'
 
 dependencies:
-  firebase_core: ^2.28.0
-  cloud_firestore: ^4.15.9
-  firebase_auth: ^4.17.9
-  connectivity_plus: ^6.0.1
+  animated_expandable_fab: ^0.0.3
+ # connectivity_plus: ^6.0.1
   dio: ^5.4.1
   flutter:
     sdk: flutter
-  flutter_screenutil: ^5.9.0
+  flutter_expandable_fab: ^2.0.0
+  flutter_screenutil: ^5.9.1
   get: ^4.6.6
+  google_maps_flutter: ^2.6.1
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -24,3 +25,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+     - lib/assets/icons/
