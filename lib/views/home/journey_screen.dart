@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 class JourneyScreen extends StatelessWidget {
   const JourneyScreen({super.key});
@@ -7,8 +8,12 @@ class JourneyScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.amber,
-      child: const Center(
-        child: Text("Journey"),
+      child: Center(
+        child: Container(
+          decoration: BoxDecoration(color: Colors.white),
+          height: 200,
+          width: 200,
+        ),
       ),
     );
   }

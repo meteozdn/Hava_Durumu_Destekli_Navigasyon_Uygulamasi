@@ -27,54 +27,61 @@ class HomeScreen extends StatelessWidget {
 
     return Obx(() {
       return Scaffold(
-        floatingActionButton: ExpandableFab(
-          openIcon: const Icon(Icons.add),
-          distance: 80,
-          children: [
-            ActionButton(
-              color: ColorConstants.pictionBlueColor,
-              icon: const Icon(Icons.navigation_rounded),
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const NavigationSheet(
-                        //  isTimed: true,
-                        title: "Hızlı Sürüş",
-                      );
-                    });
-              },
-            ),
-            ActionButton(
-              color: ColorConstants.pictionBlueColor,
-              icon: const Icon(Icons.health_and_safety),
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const NavigationSheet(
-                        isTimed: true,
-                        title: "Güvenli Sürüş",
-                      );
-                    });
-              },
-            ),
-            ActionButton(
-              color: ColorConstants.pictionBlueColor,
-              icon: const Icon(Icons.watch_later_rounded),
-              onPressed: () {
-                showModalBottomSheet(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return const NavigationSheet(
-                        isTimed: true,
-                        title: "İleri Tarihli Sürüş",
-                      );
-                    });
-              },
-            ),
-          ],
-        ),
+        floatingActionButton: _index.value == 1
+            ? FloatingActionButton(
+                onPressed: () {},
+                child: const Icon(
+                  Icons.message_outlined,
+                ),
+              )
+            : ExpandableFab(
+                openIcon: const Icon(Icons.add),
+                distance: 80,
+                children: [
+                  ActionButton(
+                    color: ColorConstants.pictionBlueColor,
+                    icon: const Icon(Icons.navigation_rounded),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const NavigationSheet(
+                              //  isTimed: true,
+                              title: "Hızlı Sürüş",
+                            );
+                          });
+                    },
+                  ),
+                  ActionButton(
+                    color: ColorConstants.pictionBlueColor,
+                    icon: const Icon(Icons.health_and_safety),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const NavigationSheet(
+                              isTimed: true,
+                              title: "Güvenli Sürüş",
+                            );
+                          });
+                    },
+                  ),
+                  ActionButton(
+                    color: ColorConstants.pictionBlueColor,
+                    icon: const Icon(Icons.watch_later_rounded),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const NavigationSheet(
+                              isTimed: true,
+                              title: "İleri Tarihli Sürüş",
+                            );
+                          });
+                    },
+                  ),
+                ],
+              ),
         body: screens[_index.value],
         bottomNavigationBar: bottomNav(),
       );
