@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "580136256060",
-    "project_id": "navigationapp-f72d9",
-    "storage_bucket": "navigationapp-f72d9.appspot.com"
+    "project_number": "598144588382",
+    "project_id": "navigationapp-74b1f",
+    "storage_bucket": "navigationapp-74b1f.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:580136256060:android:0bb1398c07b2b5dc6cf939",
+        "mobilesdk_app_id": "1:598144588382:android:a24814862951dae5e772cf",
         "android_client_info": {
           "package_name": "com.example.navigationapp"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyCKGNlxbic2xsBug40Wdqx9DTLYWy3YODo"
+          "current_key": "AIzaSyAwNOr6b8t2kawjybp3mEzzwnwmJbj6G1M"
         }
       ],
       "services": {
