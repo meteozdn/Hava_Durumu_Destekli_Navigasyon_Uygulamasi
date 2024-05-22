@@ -11,17 +11,7 @@ class AppConstants {
 }
 
 class AppTextStyle {
-  static TextStyle get baseStyle => TextStyle(
-        fontSize: 14.sp,
-        fontFamily: "RobotoRegular",
-        color: ColorConstants.pinkColor,
-      );
-  static TextStyle get boldStyle =>
-      baseStyle.copyWith(fontFamily: "RobotoBold");
-  static TextStyle get mediumStyle =>
-      baseStyle.copyWith(fontFamily: "RobotoMedium");
-  static TextStyle get lightStyle =>
-      baseStyle.copyWith(fontFamily: "RobotoLight");
+  static final midBlack = TextStyle(fontSize: 20.sp, color: Colors.black);
 }
 
 class ColorConstants {
@@ -37,7 +27,22 @@ class ColorConstants {
   static const Color likedColor = Color(0xFFFFC830);
   static const Color leftPlateColor = Color(0xFFF8BA43);
   static const Color lightPinkColor = Color(0xFFFFEBFF);
-  static const Color blueColor = Color(0xFF7d97f4);
+  static const Color pictionBlueColor = Color(0xFF61B9ED);
   static const Color pastelMagentaColor = Color(0xFFF18DBF);
   static const Color cardinalColor = Color(0xFFBD1742);
+}
+
+class WeatherIcons {
+  static const sunny = "lib/assets/icons/sunny.png";
+  static const sunny2d = "lib/assets/icons/sunny2d.png";
+  static const rainy2d = "lib/assets/icons/rainy2d.png";
+  static const rainy = "lib/assets/icons/rainy.png";
+  static const snow = "lib/assets/icons/snow.png";
+  static const snow2d = "lib/assets/icons/snow2d.png";
+  static const thunder = "lib/assets/icons/thunder.png";
+  static const thunder2d = "lib/assets/icons/thunder2d.png";
+}
+
+class IconsConst {
+  static const blackNavigateIcon = "lib/assets/icons/navigate.png";
 }
