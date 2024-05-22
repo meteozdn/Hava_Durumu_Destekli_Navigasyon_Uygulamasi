@@ -10,6 +10,7 @@ dependencies:
   animated_expandable_fab: ^0.0.3
  # connectivity_plus: ^6.0.1
   dio: ^5.4.1
+  firebase_core: ^2.31.1
   flutter:
     sdk: flutter
   flutter_expandable_fab: ^2.0.0
