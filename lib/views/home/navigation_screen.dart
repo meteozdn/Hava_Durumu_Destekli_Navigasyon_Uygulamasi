@@ -15,26 +15,13 @@ class NavigationScreen extends StatelessWidget {
       mapController = controller;
     }
 
-    return Stack(
-      children: [
-        GoogleMap(
-          initialCameraPosition: CameraPosition(target: _center, zoom: 8.h),
-          onMapCreated: _onMapCreated, compassEnabled: true,
-          myLocationButtonEnabled: false,
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(target: _center, zoom: 8.h),
+      onMapCreated: _onMapCreated, compassEnabled: true,
+      myLocationButtonEnabled: false,
 
-          // mapType: MapType.hybrid,
-          //myLocationButtonEnabled: true,
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 60.0.h, left: 30.w),
-          child: const ElevatedWidgetButton(
-            image: WeatherIcons.sunny,
-            height: 30,
-            width: 70,
-            text: '40',
-          ),
-        )
-      ],
+      // mapType: MapType.hybrid,
+      //myLocationButtonEnabled: true,
     );
   }
 }

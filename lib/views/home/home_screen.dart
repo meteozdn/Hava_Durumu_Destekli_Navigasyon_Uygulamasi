@@ -11,7 +11,7 @@ import 'package:navigationapp/views/home/weather_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-  RxInt _index = 0.obs;
+  RxInt _index = 1.obs;
   final List<String> titles = ["Hava Durumu", "Navigasyon", "Yolcluk"];
 
   void indexController(int num) {
@@ -22,7 +22,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       const NavigationScreen(),
-      const JourneyScreen(),
+      JourneyScreen(),
     ];
 
     return Obx(() {
@@ -82,7 +82,30 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),
-        body: screens[_index.value],
+        body: Stack(
+          children: [
+            screens[_index.value],
+            Padding(
+              padding: EdgeInsets.only(top: 60.0.h, left: 30.w, right: 30.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _index.value == 1
+                      ? const SizedBox.shrink()
+                      : const ElevatedWidgetButton(
+                          image: WeatherIcons.sunny,
+                          height: 30,
+                          width: 70,
+                          text: '40',
+                        ),
+                  const CircleAvatar(
+                    backgroundColor: ColorConstants.pictionBlueColor,
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
         bottomNavigationBar: bottomNav(),
       );
     });
@@ -99,14 +122,14 @@ class HomeScreen extends StatelessWidget {
       selectedIndex: _index.value,
       destinations: <Widget>[
         NavigationDestination(
-          selectedIcon: const Icon(
+          selectedIcon: Icon(
             Icons.assistant_navigation,
-            size: 30, color: ColorConstants.pictionBlueColor,
+            size: 30.r, color: ColorConstants.pictionBlueColor,
             //  color: ProjectColors.white,
           ),
-          icon: const Icon(
+          icon: Icon(
             Icons.assistant_navigation,
-            size: 30,
+            size: 30.r,
             //  color: ProjectColors.navyBlue,
           ),
           label: titles[1],
@@ -120,11 +143,11 @@ class HomeScreen extends StatelessWidget {
               //  color: ProjectColors.white,
             ),
           ),
-          icon: const Badge(
+          icon: Badge(
             label: Text('2'),
             child: Icon(
               Icons.time_to_leave,
-              size: 30,
+              size: 30.r,
               //   color: ProjectColors.navyBlue,
             ),
           ),
@@ -148,10 +171,10 @@ class NavigationSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // color: ColorConstants.redColor,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
           color: ColorConstants.whiteColor,
           borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+              topLeft: Radius.circular(30.r), topRight: Radius.circular(30.r))),
       height: isTimed ? 400.h : 310.h,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
@@ -185,7 +208,7 @@ class NavigationSheet extends StatelessWidget {
                     child: Row(
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(right: 8.0),
+                          padding: EdgeInsets.only(right: 8.0.w),
                           child: SelectedButtonWidget(text: "Hatırlatıcı"),
                         ),
                         SelectedButtonWidget(text: "Paylaş")
@@ -194,7 +217,7 @@ class NavigationSheet extends StatelessWidget {
                   )
                 : const SizedBox.shrink(),
             Padding(
-              padding: const EdgeInsets.only(top: 15.0),
+              padding: EdgeInsets.only(top: 15.0.h),
               child: SizedBox(
                 width: 400.w,
                 height: 40.h,
@@ -249,7 +272,7 @@ class SelectedButtonWidget extends StatelessWidget {
                       ? ColorConstants.whiteColor
                       : ColorConstants.blackColor,
                 ),
-                borderRadius: BorderRadius.circular(20)),
+                borderRadius: BorderRadius.circular(20.r)),
             child: Center(
                 child: Text(
               text,
