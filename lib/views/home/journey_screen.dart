@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/get_navigation.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
+import 'package:get/get_utils/get_utils.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class Journey {
@@ -58,34 +63,99 @@ class JourneyScreen extends StatelessWidget {
         user: "Mehmet Büyükekşi",
         time: "5 sa 10 dk")
   ];
-
+  RxInt _selectedIndex = 1.obs;
+  final PageController _controller = PageController();
   JourneyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-          padding: EdgeInsets.only(top: 100.0.h, left: 20.w, right: 20.w),
-          child: ListView.builder(
-              padding: EdgeInsets.only(bottom: 20.0.h),
-              itemCount: journeys.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: EdgeInsets.only(top: 20.0.h),
-                  child: Material(
-                    borderRadius: BorderRadius.circular(20.r),
-                    elevation: 10.h,
-                    child: JourneyWidget(
-                      startCity: journeys[index].user,
-                      endCity: 'Samsun',
-                      startDate: '18.00',
-                      endDate: '20.30',
-                      user: 'Ahmet Mehmet',
-                      time: '12 sa 10 dk',
-                    ),
-                  ),
-                );
-              })),
+    return Padding(
+      padding: EdgeInsets.only(
+        top: 60.0.h,
+      ),
+      child: Column(
+        children: [
+          Obx(() {
+            return Text(
+              _selectedIndex.value == 1
+                  ? "Yolculuklarım"
+                  : "Paylaşılan Yolculuklar",
+              style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+            );
+          }),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ...List.generate(
+                2,
+                (index) => Obx(() {
+                  return ProjectIndicator(
+                      index: _selectedIndex.value,
+                      isActive: _selectedIndex.value == index);
+                }),
+              ),
+            ],
+          ),
+          SizedBox(
+            height: 500.h,
+            child: PageView(
+              onPageChanged: (index) {
+                _selectedIndex(index);
+              },
+              controller: _controller,
+              children: [
+                ListView.builder(
+                    padding:
+                        EdgeInsets.only(left: 20.w, right: 20.w, bottom: 30),
+
+                    //  padding: EdgeInsets.only(bottom: 20.0.h),
+                    itemCount: journeys.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 20.0.h),
+                        child: Material(
+                          borderRadius: BorderRadius.circular(20.r),
+                          elevation: 10.h,
+                          child: JourneyWidget(
+                            isMY: true,
+                            startCity: journeys[index].user,
+                            endCity: 'Samsun',
+                            startDate: '18.00',
+                            endDate: '20.30',
+                            user: 'Ahmet Mehmet',
+                            time: '12 sa 10 dk',
+                          ),
+                        ),
+                      );
+                    }),
+                ListView.builder(
+                    padding: EdgeInsets.only(left: 20.w, right: 20.w),
+
+                    //   padding: EdgeInsets.only(bottom: 20.0.h),
+                    itemCount: journeys.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Padding(
+                        padding: EdgeInsets.only(top: 20.0.h),
+                        child: Material(
+                          borderRadius: BorderRadius.circular(20.r),
+                          elevation: 10.h,
+                          child: JourneyWidget(
+                            isMY: false,
+                            startCity: journeys[index].user,
+                            endCity: 'Samsun',
+                            startDate: '18.00',
+                            endDate: '20.30',
+                            user: 'Ahmet Mehmet',
+                            time: '12 sa 10 dk',
+                          ),
+                        ),
+                      );
+                    }),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -99,6 +169,7 @@ class JourneyWidget extends StatelessWidget {
     required this.endDate,
     required this.user,
     required this.time,
+    required this.isMY,
   });
   final String startCity;
   final String endCity;
@@ -106,12 +177,16 @@ class JourneyWidget extends StatelessWidget {
   final String endDate;
   final String user;
   final String time;
+  final bool isMY;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(color: ColorConstants.pictionBlueColor),
+          border: Border.all(
+              color: isMY
+                  ? ColorConstants.pastelMagentaColor
+                  : ColorConstants.pictionBlueColor),
           color: Colors.white,
           borderRadius: BorderRadius.circular(20.r)),
       height: 160.h,
@@ -136,7 +211,9 @@ class JourneyWidget extends StatelessWidget {
                       SizedBox(
                         child: CircleAvatar(
                           radius: 25.r,
-                          backgroundColor: ColorConstants.pictionBlueColor,
+                          backgroundColor: isMY
+                              ? ColorConstants.pastelMagentaColor
+                              : ColorConstants.pictionBlueColor,
                         ),
                       ),
                       Padding(
@@ -213,8 +290,9 @@ class JourneyWidget extends StatelessWidget {
                           children: [
                             ElevatedButton(
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor:
-                                      ColorConstants.pictionBlueColor,
+                                  backgroundColor: isMY
+                                      ? ColorConstants.pastelMagentaColor
+                                      : ColorConstants.pictionBlueColor,
                                 ),
                                 onPressed: () {},
                                 child: const Icon(
@@ -268,6 +346,35 @@ class RotateLine extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+}
+
+class ProjectIndicator extends StatelessWidget {
+  final bool isActive;
+  const ProjectIndicator({
+    super.key,
+    required this.isActive,
+    this.index,
+  });
+  final int? index;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 350),
+      margin: const EdgeInsets.all(5),
+      width: isActive ? 40.0 : 10.0,
+      height: 10.0,
+      decoration: BoxDecoration(
+          color: index == 0
+              ? isActive
+                  ? ColorConstants.pastelMagentaColor
+                  : ColorConstants.pictionBlueColor
+              : isActive
+                  ? ColorConstants.pictionBlueColor
+                  : ColorConstants.pastelMagentaColor,
+          borderRadius: BorderRadius.circular(8)),
     );
   }
 }

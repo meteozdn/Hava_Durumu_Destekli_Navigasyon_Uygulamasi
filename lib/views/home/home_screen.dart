@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/home/journey_screen.dart';
 import 'package:navigationapp/views/home/navigation_screen.dart';
 import 'package:navigationapp/views/home/weather_screen.dart';
@@ -27,9 +28,12 @@ class HomeScreen extends StatelessWidget {
 
     return Obx(() {
       return Scaffold(
+        backgroundColor: Colors.white,
         floatingActionButton: _index.value == 1
             ? FloatingActionButton(
-                onPressed: () {},
+                onPressed: () {
+                  Get.toNamed(NavigationConstants.message);
+                },
                 child: const Icon(
                   Icons.message_outlined,
                 ),
@@ -113,7 +117,9 @@ class HomeScreen extends StatelessWidget {
 
   NavigationBar bottomNav() {
     return NavigationBar(
-      height: 70,
+      shadowColor: Colors.transparent, backgroundColor: Colors.white,
+      elevation: 0,
+      height: 55.h,
       //  backgroundColor: ProjectColors.paleCornflowerBlue,
       onDestinationSelected: (int index) {
         indexController(index);
