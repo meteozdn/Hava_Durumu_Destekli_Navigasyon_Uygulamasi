@@ -22,11 +22,16 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final List<Widget> screens = [
       const NavigationScreen(),
+<<<<<<< HEAD
       const JourneyScreen(),
+=======
+      JourneyScreen(),
+>>>>>>> metedev1
     ];
 
     return Obx(() {
       return Scaffold(
+<<<<<<< HEAD
         floatingActionButton: ExpandableFab(
           openIcon: const Icon(Icons.add),
           distance: 80,
@@ -72,10 +77,87 @@ class HomeScreen extends StatelessWidget {
                       );
                     });
               },
+=======
+        floatingActionButton: _index.value == 1
+            ? FloatingActionButton(
+                onPressed: () {},
+                child: const Icon(
+                  Icons.message_outlined,
+                ),
+              )
+            : ExpandableFab(
+                openIcon: const Icon(Icons.add),
+                distance: 80,
+                children: [
+                  ActionButton(
+                    color: ColorConstants.pictionBlueColor,
+                    icon: const Icon(Icons.navigation_rounded),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const NavigationSheet(
+                              //  isTimed: true,
+                              title: "Hızlı Sürüş",
+                            );
+                          });
+                    },
+                  ),
+                  ActionButton(
+                    color: ColorConstants.pictionBlueColor,
+                    icon: const Icon(Icons.health_and_safety),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const NavigationSheet(
+                              isTimed: true,
+                              title: "Güvenli Sürüş",
+                            );
+                          });
+                    },
+                  ),
+                  ActionButton(
+                    color: ColorConstants.pictionBlueColor,
+                    icon: const Icon(Icons.watch_later_rounded),
+                    onPressed: () {
+                      showModalBottomSheet(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return const NavigationSheet(
+                              isTimed: true,
+                              title: "İleri Tarihli Sürüş",
+                            );
+                          });
+                    },
+                  ),
+                ],
+              ),
+        body: Stack(
+          children: [
+            screens[_index.value],
+            Padding(
+              padding: EdgeInsets.only(top: 60.0.h, left: 30.w, right: 30.w),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _index.value == 1
+                      ? const SizedBox.shrink()
+                      : const ElevatedWidgetButton(
+                          image: WeatherIcons.sunny,
+                          height: 30,
+                          width: 70,
+                          text: '40',
+                        ),
+                  const CircleAvatar(
+                    backgroundColor: ColorConstants.pictionBlueColor,
+                  )
+                ],
+              ),
+>>>>>>> metedev1
             ),
           ],
         ),
-        body: screens[_index.value],
         bottomNavigationBar: bottomNav(),
       );
     });
@@ -92,14 +174,20 @@ class HomeScreen extends StatelessWidget {
       selectedIndex: _index.value,
       destinations: <Widget>[
         NavigationDestination(
+<<<<<<< HEAD
           selectedIcon: const Icon(
             Icons.assistant_navigation,
             size: 30, color: ColorConstants.pictionBlueColor,
+=======
+          selectedIcon: Icon(
+            Icons.assistant_navigation,
+            size: 30.r, color: ColorConstants.pictionBlueColor,
+>>>>>>> metedev1
             //  color: ProjectColors.white,
           ),
-          icon: const Icon(
+          icon: Icon(
             Icons.assistant_navigation,
-            size: 30,
+            size: 30.r,
             //  color: ProjectColors.navyBlue,
           ),
           label: titles[1],
@@ -113,11 +201,11 @@ class HomeScreen extends StatelessWidget {
               //  color: ProjectColors.white,
             ),
           ),
-          icon: const Badge(
+          icon: Badge(
             label: Text('2'),
             child: Icon(
               Icons.time_to_leave,
-              size: 30,
+              size: 30.r,
               //   color: ProjectColors.navyBlue,
             ),
           ),
@@ -141,10 +229,17 @@ class NavigationSheet extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       // color: ColorConstants.redColor,
+<<<<<<< HEAD
       decoration: const BoxDecoration(
           color: ColorConstants.whiteColor,
           borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30), topRight: Radius.circular(30))),
+=======
+      decoration: BoxDecoration(
+          color: ColorConstants.whiteColor,
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.r), topRight: Radius.circular(30.r))),
+>>>>>>> metedev1
       height: isTimed ? 400.h : 310.h,
       child: Padding(
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
@@ -178,7 +273,11 @@ class NavigationSheet extends StatelessWidget {
                     child: Row(
                       children: [
                         Padding(
+<<<<<<< HEAD
                           padding: const EdgeInsets.only(right: 8.0),
+=======
+                          padding: EdgeInsets.only(right: 8.0.w),
+>>>>>>> metedev1
                           child: SelectedButtonWidget(text: "Hatırlatıcı"),
                         ),
                         SelectedButtonWidget(text: "Paylaş")
@@ -187,7 +286,11 @@ class NavigationSheet extends StatelessWidget {
                   )
                 : const SizedBox.shrink(),
             Padding(
+<<<<<<< HEAD
               padding: const EdgeInsets.only(top: 15.0),
+=======
+              padding: EdgeInsets.only(top: 15.0.h),
+>>>>>>> metedev1
               child: SizedBox(
                 width: 400.w,
                 height: 40.h,
@@ -242,7 +345,11 @@ class SelectedButtonWidget extends StatelessWidget {
                       ? ColorConstants.whiteColor
                       : ColorConstants.blackColor,
                 ),
+<<<<<<< HEAD
                 borderRadius: BorderRadius.circular(20)),
+=======
+                borderRadius: BorderRadius.circular(20.r)),
+>>>>>>> metedev1
             child: Center(
                 child: Text(
               text,

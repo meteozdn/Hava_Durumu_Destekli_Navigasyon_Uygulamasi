@@ -15,6 +15,7 @@ class NavigationScreen extends StatelessWidget {
       mapController = controller;
     }
 
+<<<<<<< HEAD
     return Stack(
       children: [
         GoogleMap(
@@ -35,6 +36,15 @@ class NavigationScreen extends StatelessWidget {
           ),
         )
       ],
+=======
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(target: _center, zoom: 8.h),
+      onMapCreated: _onMapCreated, compassEnabled: true,
+      myLocationButtonEnabled: false,
+
+      // mapType: MapType.hybrid,
+      //myLocationButtonEnabled: true,
+>>>>>>> metedev1
     );
   }
 }

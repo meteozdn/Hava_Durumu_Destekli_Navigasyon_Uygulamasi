@@ -26,7 +26,7 @@ if (flutterVersionName == null) {
 android {
     namespace "com.example.navigationapp"
     compileSdkVersion flutter.compileSdkVersion
-    ndkVersion flutter.ndkVersion
+    ndkVersion 20
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
