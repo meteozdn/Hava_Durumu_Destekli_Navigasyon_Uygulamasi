@@ -15,28 +15,6 @@ class NavigationScreen extends StatelessWidget {
       mapController = controller;
     }
 
-<<<<<<< HEAD
-    return Stack(
-      children: [
-        GoogleMap(
-          initialCameraPosition: CameraPosition(target: _center, zoom: 8.h),
-          onMapCreated: _onMapCreated, compassEnabled: true,
-          myLocationButtonEnabled: false,
-
-          // mapType: MapType.hybrid,
-          //myLocationButtonEnabled: true,
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 60.0.h, left: 30.w),
-          child: const ElevatedWidgetButton(
-            image: WeatherIcons.sunny,
-            height: 30,
-            width: 70,
-            text: '40',
-          ),
-        )
-      ],
-=======
     return GoogleMap(
       initialCameraPosition: CameraPosition(target: _center, zoom: 8.h),
       onMapCreated: _onMapCreated, compassEnabled: true,
@@ -44,7 +22,6 @@ class NavigationScreen extends StatelessWidget {
 
       // mapType: MapType.hybrid,
       //myLocationButtonEnabled: true,
->>>>>>> metedev1
     );
   }
 }

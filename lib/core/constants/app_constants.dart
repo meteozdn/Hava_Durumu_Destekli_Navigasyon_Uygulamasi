@@ -43,13 +43,10 @@ class WeatherIcons {
   static const thunder2d = "lib/assets/icons/thunder2d.png";
 }
 
-<<<<<<< HEAD
-=======
 class IconConsts {
   static const line = "lib/assets/icons/line.png";
 }
 
->>>>>>> metedev1
 class IconsConst {
   static const blackNavigateIcon = "lib/assets/icons/navigate.png";
 }
