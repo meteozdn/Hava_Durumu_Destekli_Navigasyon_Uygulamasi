@@ -6,13 +6,13 @@ import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
-import 'package:navigationapp/views/home/journey_screen.dart';
+import 'package:navigationapp/views/home/journeys/journey_screen.dart';
 import 'package:navigationapp/views/home/navigation_screen.dart';
 import 'package:navigationapp/views/home/weather_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-  RxInt _index = 1.obs;
+  RxInt _index = 0.obs;
   final List<String> titles = ["Hava Durumu", "Navigasyon", "Yolcluk"];
 
   void indexController(int num) {
@@ -35,16 +35,22 @@ class HomeScreen extends StatelessWidget {
                   Get.toNamed(NavigationConstants.message);
                 },
                 child: const Icon(
-                  Icons.message_outlined,
+                  Icons.message,
+                  color: ColorConstants.whiteColor,
                 ),
               )
             : ExpandableFab(
-                openIcon: const Icon(Icons.add),
+                openIcon: const Icon(
+                  Icons.add,
+                  color: ColorConstants.whiteColor,
+                ),
                 distance: 80,
                 children: [
                   ActionButton(
                     color: ColorConstants.pictionBlueColor,
-                    icon: const Icon(Icons.navigation_rounded),
+                    icon: const Icon(
+                      Icons.navigation_rounded,
+                    ),
                     onPressed: () {
                       showModalBottomSheet(
                           context: context,
@@ -58,7 +64,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   ActionButton(
                     color: ColorConstants.pictionBlueColor,
-                    icon: const Icon(Icons.health_and_safety),
+                    icon: const Icon(
+                      Icons.health_and_safety,
+                    ),
                     onPressed: () {
                       showModalBottomSheet(
                           context: context,
@@ -72,7 +80,9 @@ class HomeScreen extends StatelessWidget {
                   ),
                   ActionButton(
                     color: ColorConstants.pictionBlueColor,
-                    icon: const Icon(Icons.watch_later_rounded),
+                    icon: const Icon(
+                      Icons.watch_later_rounded,
+                    ),
                     onPressed: () {
                       showModalBottomSheet(
                           context: context,

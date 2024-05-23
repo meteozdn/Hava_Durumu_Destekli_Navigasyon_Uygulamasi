@@ -16,6 +16,7 @@ class RotateLine extends StatelessWidget {
           backgroundColor: ColorConstants.blackColor,
           radius: 10.r,
           child: CircleAvatar(
+            backgroundColor: ColorConstants.whiteColor,
             radius: 5.r,
           ),
         ),
@@ -30,6 +31,7 @@ class RotateLine extends StatelessWidget {
           backgroundColor: ColorConstants.blackColor,
           radius: 10.r,
           child: CircleAvatar(
+            backgroundColor: ColorConstants.whiteColor,
             radius: 5.r,
           ),
         ),

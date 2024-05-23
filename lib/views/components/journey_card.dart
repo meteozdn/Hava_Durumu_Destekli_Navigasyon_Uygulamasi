@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/views/components/rotate_line.dart';
 
 class JourneyWidget extends StatelessWidget {
-  const JourneyWidget({
+  JourneyWidget({
     super.key,
     required this.startCity,
     required this.endCity,
@@ -16,11 +17,13 @@ class JourneyWidget extends StatelessWidget {
   });
   final String startCity;
   final String endCity;
-  final String startDate;
-  final String endDate;
+  final DateTime startDate;
+  final DateTime endDate;
   final String user;
   final String time;
   final bool isMY;
+  final DateFormat formatterDate = DateFormat('dd mm yyyy', 'tr_TR');
+  final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
 
   @override
   Widget build(BuildContext context) {
@@ -68,10 +71,10 @@ class JourneyWidget extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 45.0.w),
+                        padding: EdgeInsets.only(left: 35.0.w),
                         child: Text(
                           textAlign: TextAlign.center,
-                          "11.12.2024\n$time",
+                          formatterDate.format(startDate),
                           style: TextStyle(
                             fontSize: 13.sp,
                           ),
@@ -88,7 +91,7 @@ class JourneyWidget extends StatelessWidget {
                     ),
                     SizedBox(
                       height: 70.h,
-                      width: 150.w,
+                      width: 180.w,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -101,7 +104,7 @@ class JourneyWidget extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.sp),
                               ),
                               Text(
-                                startDate,
+                                formatterHour.format(startDate),
                                 style: TextStyle(fontSize: 12.sp),
                               ),
                             ],
@@ -114,7 +117,7 @@ class JourneyWidget extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.sp),
                               ),
                               Text(
-                                endDate,
+                                formatterHour.format(endDate),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                 ),
@@ -125,7 +128,7 @@ class JourneyWidget extends StatelessWidget {
                       ),
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 50.0.w),
+                      padding: EdgeInsets.only(left: 10.0.w),
                       child: SizedBox(
                         height: 70.h,
                         child: Row(

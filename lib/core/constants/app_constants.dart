@@ -28,7 +28,7 @@ class ColorConstants {
   static const Color leftPlateColor = Color(0xFFF8BA43);
   static const Color lightPinkColor = Color(0xFFFFEBFF);
   static const Color pictionBlueColor = Color(0xFF61B9ED);
-  static const Color pastelMagentaColor = Color(0xFFF18DBF);
+  static const Color pastelMagentaColor = Color(0xFFBD1742);
   static const Color cardinalColor = Color(0xFFBD1742);
 }
 

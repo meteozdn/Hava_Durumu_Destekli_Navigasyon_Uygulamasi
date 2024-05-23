@@ -26,44 +26,7 @@ class Journey {
 }
 
 class JourneyScreen extends StatelessWidget {
-  final List<Journey> journeys = [
-    Journey(
-        startDate: "10.9.2024",
-        endCity: "Çorum",
-        startCity: "Ankara",
-        endDate: "11.10.2024",
-        user: "Mehmet Büyükekşi",
-        time: "5 sa 10 dk"),
-    Journey(
-        startDate: "10.9.2024",
-        endCity: "Çorum",
-        startCity: "Ankara",
-        endDate: "11.10.2024",
-        user: "Mehmet Büyükekşi",
-        time: "5 sa 10 dk"),
-    Journey(
-        startDate: "10.9.2024",
-        endCity: "Çorum",
-        startCity: "Ankara",
-        endDate: "11.10.2024",
-        user: "Mehmet Büyükekşi",
-        time: "5 sa 10 dk"),
-    Journey(
-        startDate: "10.9.2024",
-        endCity: "Çorum",
-        startCity: "Ankara",
-        endDate: "11.10.2024",
-        user: "Mehmet Büyükekşi",
-        time: "5 sa 10 dk"),
-    Journey(
-        startDate: "10.9.2024",
-        endCity: "Çorum",
-        startCity: "Ankara",
-        endDate: "11.10.2024",
-        user: "Mehmet Büyükekşi",
-        time: "5 sa 10 dk")
-  ];
-  RxInt _selectedIndex = 1.obs;
+  RxInt _selectedIndex = 0.obs;
   final PageController _controller = PageController();
   JourneyScreen({super.key});
 
@@ -77,7 +40,7 @@ class JourneyScreen extends StatelessWidget {
         children: [
           Obx(() {
             return Text(
-              _selectedIndex.value == 1
+              _selectedIndex.value == 0
                   ? "Yolculuklarım"
                   : "Paylaşılan Yolculuklar",
               style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
@@ -110,7 +73,7 @@ class JourneyScreen extends StatelessWidget {
                     builder: (controller) {
                       return ListView.builder(
                         padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                        itemCount: controller.sharedRoutes.length,
+                        itemCount: controller.userRoutes.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: EdgeInsets.only(top: 20.0.h),
@@ -120,14 +83,13 @@ class JourneyScreen extends StatelessWidget {
                               child: JourneyWidget(
                                 isMY: true,
                                 startCity:
-                                    controller.sharedRoutes[index].startingCity,
+                                    controller.userRoutes[index].startingCity,
                                 endCity: controller
-                                    .sharedRoutes[index].destinationCity,
-                                startDate: controller
-                                    .sharedRoutes[index].plannedAt
-                                    .toString(),
-                                endDate: '(estimated time?)',
-                                user: controller.sharedRoutes[index].ownerName,
+                                    .userRoutes[index].destinationCity,
+                                startDate:
+                                    controller.userRoutes[index].plannedAt,
+                                endDate: DateTime.now(),
+                                user: controller.userRoutes[index].ownerName,
                                 time: '12 sa 10 dk',
                               ),
                             ),
@@ -143,27 +105,26 @@ class JourneyScreen extends StatelessWidget {
                     builder: (controller) {
                       return ListView.builder(
                         padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                        itemCount: controller.userRoutes.length,
+                        itemCount: controller.sharedRoutes.length,
                         itemBuilder: (context, index) {
                           return Padding(
                             padding: EdgeInsets.only(top: 20.0.h),
                             child: Material(
-                              borderRadius: BorderRadius.circular(20.r),
-                              elevation: 10.h,
-                              child: JourneyWidget(
-                                isMY: true,
-                                startCity:
-                                    controller.userRoutes[index].startingCity,
-                                endCity: controller
-                                    .userRoutes[index].destinationCity,
-                                startDate: controller
-                                    .userRoutes[index].plannedAt
-                                    .toString(),
-                                endDate: '(estimated time?)',
-                                user: controller.userRoutes[index].ownerName,
-                                time: '12 sa 10 dk',
-                              ),
-                            ),
+                                borderRadius: BorderRadius.circular(20.r),
+                                elevation: 10.h,
+                                child: JourneyWidget(
+                                  isMY: false,
+                                  startCity: controller
+                                      .sharedRoutes[index].startingCity,
+                                  endCity: controller
+                                      .sharedRoutes[index].destinationCity,
+                                  startDate:
+                                      controller.sharedRoutes[index].plannedAt,
+                                  endDate: DateTime.now(),
+                                  user:
+                                      controller.sharedRoutes[index].ownerName,
+                                  time: '12 sa 10 dk',
+                                )),
                           );
                         },
                       );
