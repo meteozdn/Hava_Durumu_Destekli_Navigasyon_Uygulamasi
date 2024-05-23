@@ -6,7 +6,7 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/core/init/navigation/navigation_service.dart';
 import 'package:navigationapp/firebase_options.dart';
-import 'package:navigationapp/views/home/home_screen.dart';
+import 'package:navigationapp/views/main/main_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ class MainApp extends StatelessWidget {
       builder: (_, child) {
         return GetMaterialApp(
           getPages: NavigationService.routes,
-          initialRoute: NavigationConstants.home,
+          initialRoute: NavigationConstants.main,
           debugShowCheckedModeBanner: false,
           //     title: 'First Method',
           // You can use the library anywhere in the app even in theme
@@ -46,7 +46,7 @@ class MainApp extends StatelessWidget {
           home: child,
         );
       },
-      child: HomeScreen(),
+      child: const MainScreen(),
     );
   }
 }
