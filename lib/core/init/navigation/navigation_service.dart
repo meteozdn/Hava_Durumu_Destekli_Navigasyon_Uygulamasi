@@ -1,7 +1,9 @@
 import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/export.dart';
+import 'package:navigationapp/views/auth/auth_screen.dart';
 import 'package:navigationapp/views/home/home_screen.dart';
+import 'package:navigationapp/views/main/main_screen.dart';
 import 'package:navigationapp/views/message/message_view.dart';
 
 class NavigationService {
@@ -13,6 +15,14 @@ class NavigationService {
     GetPage(
       name: NavigationConstants.home,
       page: () => HomeScreen(),
+    ),
+    GetPage(
+      name: NavigationConstants.auth,
+      page: () => AuthScreen(),
+    ),
+    GetPage(
+      name: NavigationConstants.main,
+      page: () => MainScreen(),
     ),
   ];
 }
