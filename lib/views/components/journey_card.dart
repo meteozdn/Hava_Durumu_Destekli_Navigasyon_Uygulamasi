@@ -22,7 +22,7 @@ class JourneyWidget extends StatelessWidget {
   final String user;
   final String time;
   final bool isMY;
-  final DateFormat formatterDate = DateFormat('dd mm yyyy', 'tr_TR');
+  final DateFormat formatterDate = DateFormat('dd.mm.yyyy', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
 
   @override
@@ -117,7 +117,7 @@ class JourneyWidget extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.sp),
                               ),
                               Text(
-                                formatterHour.format(endDate),
+                                formatterDate.format(endDate),
                                 style: TextStyle(
                                   fontSize: 12.sp,
                                 ),

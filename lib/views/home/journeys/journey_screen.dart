@@ -68,67 +68,73 @@ class JourneyScreen extends StatelessWidget {
               controller: _controller,
               children: [
                 Expanded(
-                  child: GetX<RouteController>(
-                    init: Get.find<RouteController>(),
-                    builder: (controller) {
-                      return ListView.builder(
-                        padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                        itemCount: controller.userRoutes.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(top: 20.0.h),
-                            child: Material(
-                              borderRadius: BorderRadius.circular(20.r),
-                              elevation: 10.h,
-                              child: JourneyWidget(
-                                isMY: true,
-                                startCity:
-                                    controller.userRoutes[index].startingCity,
-                                endCity: controller
-                                    .userRoutes[index].destinationCity,
-                                startDate:
-                                    controller.userRoutes[index].plannedAt,
-                                endDate: DateTime.now(),
-                                user: controller.userRoutes[index].ownerName,
-                                time: '12 sa 10 dk',
-                              ),
-                            ),
-                          );
-                        },
-                      );
-                    },
-                  ),
-                ),
-                Expanded(
-                  child: GetX<RouteController>(
-                    init: Get.find<RouteController>(),
-                    builder: (controller) {
-                      return ListView.builder(
-                        padding: EdgeInsets.only(left: 20.w, right: 20.w),
-                        itemCount: controller.sharedRoutes.length,
-                        itemBuilder: (context, index) {
-                          return Padding(
-                            padding: EdgeInsets.only(top: 20.0.h),
-                            child: Material(
+                  child: SizedBox(
+                    height: 200,
+                    child: GetX<RouteController>(
+                      init: Get.find<RouteController>(),
+                      builder: (controller) {
+                        return ListView.builder(
+                          padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                          itemCount: controller.userRoutes.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.only(top: 20.0.h),
+                              child: Material(
                                 borderRadius: BorderRadius.circular(20.r),
                                 elevation: 10.h,
                                 child: JourneyWidget(
-                                  isMY: false,
-                                  startCity: controller
-                                      .sharedRoutes[index].startingCity,
+                                  isMY: true,
+                                  startCity:
+                                      controller.userRoutes[index].startingCity,
                                   endCity: controller
-                                      .sharedRoutes[index].destinationCity,
+                                      .userRoutes[index].destinationCity,
                                   startDate:
-                                      controller.sharedRoutes[index].plannedAt,
+                                      controller.userRoutes[index].plannedAt,
                                   endDate: DateTime.now(),
-                                  user:
-                                      controller.sharedRoutes[index].ownerName,
+                                  user: controller.userRoutes[index].ownerName,
                                   time: '12 sa 10 dk',
-                                )),
-                          );
-                        },
-                      );
-                    },
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: SizedBox(
+                    height: 200.h,
+                    child: GetX<RouteController>(
+                      init: Get.find<RouteController>(),
+                      builder: (controller) {
+                        return ListView.builder(
+                          padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                          itemCount: controller.sharedRoutes.length,
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.only(top: 20.0.h),
+                              child: Material(
+                                  borderRadius: BorderRadius.circular(20.r),
+                                  elevation: 10.h,
+                                  child: JourneyWidget(
+                                    isMY: false,
+                                    startCity: controller
+                                        .sharedRoutes[index].startingCity,
+                                    endCity: controller
+                                        .sharedRoutes[index].destinationCity,
+                                    startDate: controller
+                                        .sharedRoutes[index].plannedAt,
+                                    endDate: DateTime.now(),
+                                    user: controller
+                                        .sharedRoutes[index].ownerName,
+                                    time: '12 sa 10 dk',
+                                  )),
+                            );
+                          },
+                        );
+                      },
+                    ),
                   ),
                 ),
               ],
