@@ -36,7 +36,6 @@ class HomeScreen extends StatelessWidget {
                 },
                 child: const Icon(
                   Icons.message,
-                  color: ColorConstants.whiteColor,
                 ),
               )
             : ExpandableFab(
