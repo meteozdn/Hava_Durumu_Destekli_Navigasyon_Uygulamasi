@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
+import 'package:navigationapp/controllers/chat_controller.dart';
 import 'package:navigationapp/core/constants/firestore_collections.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/models/chat_group.dart';
 
 class ChatGroupController extends GetxController {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final RxList<ChatGroup> _chatGroups = <ChatGroup>[].obs;
-  List<ChatGroup> get chatGroups => _chatGroups;
+  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final RxList<ChatGroup> chatGroups = <ChatGroup>[].obs;
+  final RxList<ChatController> chatControllers = <ChatController>[].obs;
 
   @override
   void onInit() async {
@@ -38,6 +39,10 @@ class ChatGroupController extends GetxController {
           });
         }
         chatGroups.add(chatGroup);
+        // Initialize ChatController for each chat group.
+        ChatController chatController =
+            Get.put(ChatController(chatGroup.id), tag: chatGroup.id);
+        chatControllers.add(chatController);
       }
     } catch (error) {
       throw Exception(error.toString());
