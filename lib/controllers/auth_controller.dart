@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:navigationapp/controllers/chat_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/friend_request_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
@@ -68,6 +69,10 @@ class AuthController extends GetxController {
 
   Future<void> logout() async {
     await getAuth().signOut();
+    ChatGroupController chatGroupController = Get.find<ChatGroupController>();
+    for (var chatController in chatGroupController.chatControllers) {
+      Get.delete<ChatController>(tag: chatController.chatGroupId);
+    }
     Get.delete<UserController>();
     Get.delete<ChatGroupController>();
     Get.delete<FriendRequestController>();

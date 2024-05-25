@@ -1,59 +1,68 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:navigationapp/controllers/auth_controller.dart';
+import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/views/message/chat_view.dart';
 
 class MessageView extends StatelessWidget {
   MessageView({super.key});
   final PageController _pageController = PageController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: ColorConstants.whiteColor,
-        actions: const [
-          /*
+        actions: [
           Padding(
             padding: const EdgeInsets.only(right: 30.0),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                  backgroundColor: ColorConstants.pictionBlueColor,
-                  iconColor: ColorConstants.whiteColor),
-              onPressed: () {},
-              child: const Icon(Icons.message),
+                backgroundColor: ColorConstants.pictionBlueColor,
+              ),
+              onPressed: () {
+                Get.find<AuthController>().logout();
+              },
+              child: const Icon(
+                Icons.message,
+                color: ColorConstants.whiteColor,
+              ),
             ),
-          )*/
+          )
         ],
       ),
       body: Column(
         children: [
-          Material(
-            elevation: 5,
-            child: Container(
-              color: ColorConstants.whiteColor,
-              height: 70.h,
-              child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  controller: _pageController,
-                  itemCount: 10,
-                  itemBuilder: (BuildContext context, int index) {
-                    return const CirclePersonCard(
-                      user: 'Metehan',
-                    );
-                  }),
-            ),
-          ),
           SizedBox(
             height: 510.h,
-            child: ListView.builder(
-                controller: _pageController,
-                itemCount: 20,
-                itemBuilder: (BuildContext context, int index) {
-                  return MessageTile(
-                    sender: "Name",
-                    message: "Mesaj, mesaj, mesaj, mesaj",
-                    isNew: index % 4 == 0,
-                  );
-                }),
+            child: GetX<ChatGroupController>(
+              builder: (controller) {
+                return ListView.builder(
+                  padding: EdgeInsets.only(left: 20.w, right: 20.w),
+                  itemCount: controller.chatGroups.length,
+                  itemBuilder: (context, index) {
+                    final chatGroup = controller.chatGroups[index];
+                    final chatController = controller.chatControllers[index];
+                    return Obx(() {
+                      String message;
+                      try {
+                        message = chatController.messages.last.text;
+                      } catch (error) {
+                        message = "Mesaj Gönderin!";
+                      }
+                      return MessageTile(
+                        sender: chatGroup.name,
+                        chatGroupId: chatGroup.id,
+                        message: message,
+                        isNew: index % 4 == 0,
+                      );
+                    });
+                  },
+                );
+              },
+            ),
           )
         ],
       ),
@@ -90,19 +99,31 @@ class CirclePersonCard extends StatelessWidget {
 }
 
 class MessageTile extends StatelessWidget {
-  const MessageTile({
-    super.key,
-    required this.sender,
-    required this.message,
-    required this.isNew,
-  });
+  const MessageTile(
+      {super.key,
+      required this.sender,
+      required this.message,
+      required this.isNew,
+      required this.chatGroupId});
   final String sender;
   final String message;
   final bool isNew;
+  final String chatGroupId;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ChatView(
+              chatGroupId: chatGroupId,
+              name: sender,
+            ),
+          ),
+        );
+      },
       subtitle: Text(message,
           style: isNew
               ? const TextStyle(
