@@ -29,14 +29,14 @@ class SearchUserController extends GetxController {
 
   Future<String> getFriendState({required String friendId}) async {
     List<Future<void>> futures = [];
-    String text = "Add Friend";
+    String text = "Arkadaş Ekle";
     // If user already sent friend request.
     futures.add(_getFriendRequestSnapshot(
             senderId: Get.find<UserController>().user.value!.id,
             recipientId: friendId)
         .then((value) {
       if (value!.docs.isNotEmpty) {
-        text = "Remove Request";
+        text = "İsteği sil";
       }
     }));
     // If user already received friend request.
@@ -45,14 +45,14 @@ class SearchUserController extends GetxController {
             recipientId: Get.find<UserController>().user.value!.id)
         .then((value) {
       if (value!.docs.isNotEmpty) {
-        text = "Accept Request";
+        text = "Kabul et";
       }
     }));
     futures.add(Get.find<UserController>()
         .fetchUser(userId: Get.find<UserController>().user.value!.id)
         .then((value) {
       if (value.friends!.contains(friendId)) {
-        text = "Remove Friend";
+        text = "Kaldır";
       }
     }));
     await Future.wait(futures);
@@ -72,6 +72,8 @@ class SearchUserController extends GetxController {
   }
 
   void updateButtonText({required String buttonText, required int index}) {
+    // buttonTexts[index] = buttonText;
+
     switch (buttonText) {
       case "Remove Request":
         buttonTexts[index] = "Add Friend";
@@ -79,7 +81,7 @@ class SearchUserController extends GetxController {
       case "Accept Request":
         buttonTexts[index] = "Remove Friend";
         break;
-      case "Remove Friend":
+      case "Kaldır":
         buttonTexts[index] = "Add Friend";
         break;
       case "Add Friend":

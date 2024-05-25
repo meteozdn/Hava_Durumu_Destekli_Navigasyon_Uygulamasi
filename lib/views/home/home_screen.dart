@@ -165,7 +165,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           icon: Badge(
-            label: Text('2'),
+            label: const Text('2'),
             child: Icon(
               Icons.time_to_leave,
               size: 30.r,
