@@ -50,6 +50,13 @@ class WeatherIcons {
   static const thunder2d = "lib/assets/icons/thunder2d.png";
 }
 
+class Animations {
+  static const safeCar = "lib/assets/animations/safeCar.json";
+  static const journeyCar = "lib/assets/animations/journeyCar.json";
+  static const a = "lib/assets/animations/a.json";
+  // static const safeCar = "lib/assets/animations/safeCar.json";
+}
+
 class IconConsts {
   static const line = "lib/assets/icons/line.png";
 }

@@ -77,5 +77,6 @@ class AuthController extends GetxController {
     Get.delete<ChatGroupController>();
     Get.delete<FriendRequestController>();
     Get.delete<RouteController>();
+    Get.back();
   }
 }

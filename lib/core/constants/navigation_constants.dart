@@ -4,5 +4,7 @@ class NavigationConstants {
   static const home = "/home";
   static const profileView = "/profile";
   static const message = "/message";
-  static const changeLanguage = "/changeLanguage";
+  static const search = "/search";
+
+  //static const changeLanguage = "/changeLanguage";
 }
