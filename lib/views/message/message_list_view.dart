@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
+import 'package:navigationapp/controllers/chat_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
+import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/views/message/chat_view.dart';
 
@@ -47,8 +49,12 @@ class MessageView extends StatelessWidget {
                     final chatController = controller.chatControllers[index];
                     return Obx(() {
                       String message;
+                      bool isSeen = true;
+                      String userId = Get.find<UserController>().user.value!.id;
                       try {
                         message = chatController.messages.last.text;
+                        isSeen = chatController.messages.last.seen
+                            .any((id) => id == userId);
                       } catch (error) {
                         message = "Mesaj Gönderin!";
                       }
@@ -56,7 +62,7 @@ class MessageView extends StatelessWidget {
                         sender: chatGroup.name,
                         chatGroupId: chatGroup.id,
                         message: message,
-                        isNew: index % 4 == 0,
+                        isSeen: isSeen,
                       );
                     });
                   },
@@ -103,17 +109,17 @@ class MessageTile extends StatelessWidget {
       {super.key,
       required this.sender,
       required this.message,
-      required this.isNew,
+      required this.isSeen,
       required this.chatGroupId});
   final String sender;
   final String message;
-  final bool isNew;
+  final bool isSeen;
   final String chatGroupId;
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () {
+      onTap: () async {
         Navigator.push(
           context,
           MaterialPageRoute(
@@ -123,13 +129,16 @@ class MessageTile extends StatelessWidget {
             ),
           ),
         );
+        if (!isSeen) {
+          await Get.find<ChatController>(tag: chatGroupId).seeMessage();
+        }
       },
       subtitle: Text(message,
-          style: isNew
-              ? const TextStyle(
+          style: isSeen
+              ? null
+              : const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: ColorConstants.pictionBlueColor)
-              : null),
+                  color: ColorConstants.pictionBlueColor)),
       title: Text(
         sender,
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
