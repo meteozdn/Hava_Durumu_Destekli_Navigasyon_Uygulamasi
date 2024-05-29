@@ -19,6 +19,7 @@ class ChatGroupController extends GetxController {
   Future<void> fetchUserChatGroups() async {
     try {
       chatGroups.clear();
+      chatControllers.clear();
       String currentUserId = Get.find<UserController>().user.value!.id;
       List<String> ids =
           Get.find<UserController>().user.value!.chatGroups ?? [];
@@ -54,6 +55,18 @@ class ChatGroupController extends GetxController {
     String name = "",
   }) async {
     try {
+      // Normalize the members list by sorting it.
+      members.sort();
+      for (var chatGroup in chatGroups) {
+        List<String> existingMembers = List<String>.from(chatGroup.members);
+        existingMembers.sort();
+        // Check if the sorted members list matches.
+        if (const ListEquality().equals(existingMembers, members)) {
+          // Chat group with the same members already exists.
+          // Exit the function to prevent creating a new chat group.
+          return;
+        }
+      }
       // Create auto Id.
       final id = firestore.collection(FirestoreCollections.chatGroups).doc().id;
       // Create ChatGroup model.
@@ -68,8 +81,8 @@ class ChatGroupController extends GetxController {
           .set(chatGroup.toJson());
       for (String userId in members) {
         await updateUserChatGroupList(chatGroupId: id, userId: userId);
-        await fetchUserChatGroups();
       }
+      await fetchUserChatGroups();
     } catch (error) {
       throw Exception(error.toString());
     }
@@ -81,21 +94,14 @@ class ChatGroupController extends GetxController {
       bool isAdding = true}) async {
     try {
       // Save to firestore.
-      if (isAdding) {
-        await firestore
-            .collection(FirestoreCollections.users)
-            .doc(userId)
-            .update({
-          "chatGroups": FieldValue.arrayUnion([chatGroupId])
-        });
-      } else {
-        await firestore
-            .collection(FirestoreCollections.users)
-            .doc(userId)
-            .update({
-          "chatGroups": FieldValue.arrayRemove([chatGroupId])
-        });
-      }
+      await firestore
+          .collection(FirestoreCollections.users)
+          .doc(userId)
+          .update({
+        "chatGroups": isAdding
+            ? FieldValue.arrayUnion([chatGroupId])
+            : FieldValue.arrayRemove([chatGroupId])
+      });
     } catch (error) {
       throw Exception(error.toString());
     }

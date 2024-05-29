@@ -6,10 +6,8 @@ import 'package:navigationapp/models/user.dart';
 
 class SearchUserController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final RxList<User> _users = <User>[].obs;
-  final RxList<String> _buttonTexts = <String>[].obs;
-  List<User> get users => _users;
-  List<String> get buttonTexts => _buttonTexts;
+  final RxList<User> users = <User>[].obs;
+  final RxList<String> buttonTexts = <String>[].obs;
 
   Future<void> searchUsers(String searchTerm) async {
     try {
@@ -21,7 +19,7 @@ class SearchUserController extends GetxController {
         final text = await getFriendState(friendId: user.id);
         buttonTexts.add(text);
       }
-      _users.assignAll(getUsers);
+      users.assignAll(getUsers);
     } catch (error) {
       throw Exception(error.toString());
     }
@@ -36,7 +34,7 @@ class SearchUserController extends GetxController {
             recipientId: friendId)
         .then((value) {
       if (value!.docs.isNotEmpty) {
-        text = "İsteği sil";
+        text = "İsteği Sil";
       }
     }));
     // If user already received friend request.
@@ -45,9 +43,10 @@ class SearchUserController extends GetxController {
             recipientId: Get.find<UserController>().user.value!.id)
         .then((value) {
       if (value!.docs.isNotEmpty) {
-        text = "Kabul et";
+        text = "Kabul Et";
       }
     }));
+    // If user already be friend with user.
     futures.add(Get.find<UserController>()
         .fetchUser(userId: Get.find<UserController>().user.value!.id)
         .then((value) {
@@ -72,20 +71,18 @@ class SearchUserController extends GetxController {
   }
 
   void updateButtonText({required String buttonText, required int index}) {
-    // buttonTexts[index] = buttonText;
-
     switch (buttonText) {
-      case "Remove Request":
-        buttonTexts[index] = "Add Friend";
+      case "Arkadaş Ekle":
+        buttonTexts[index] = "İsteği Sil";
         break;
-      case "Accept Request":
-        buttonTexts[index] = "Remove Friend";
+      case "Kabul Et":
+        buttonTexts[index] = "Kaldır";
         break;
       case "Kaldır":
-        buttonTexts[index] = "Add Friend";
+        buttonTexts[index] = "Arkadaş Ekle";
         break;
-      case "Add Friend":
-        buttonTexts[index] = "Remove Request";
+      case "İsteği Sil":
+        buttonTexts[index] = "Arkadaş Ekle";
         break;
       default:
     }
