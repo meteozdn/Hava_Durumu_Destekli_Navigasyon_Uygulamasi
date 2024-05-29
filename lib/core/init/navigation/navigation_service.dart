@@ -4,6 +4,8 @@ import 'package:navigationapp/views/auth/auth_screen.dart';
 import 'package:navigationapp/views/home/home_screen.dart';
 import 'package:navigationapp/views/main/main_screen.dart';
 import 'package:navigationapp/views/message/message_list_view.dart';
+import 'package:navigationapp/views/profile/profile_view.dart';
+import 'package:navigationapp/views/search/search_view.dart';
 
 class NavigationService {
   static List<GetPage> routes = [
@@ -21,7 +23,17 @@ class NavigationService {
     ),
     GetPage(
       name: NavigationConstants.main,
-      page: () => MainScreen(),
+      page: () => const MainScreen(),
+    ),
+    GetPage(
+      name: NavigationConstants.profileView,
+      page: () => ProfileView(),
+    ),
+    GetPage(
+      name: NavigationConstants.search,
+      page: () => SearchView(
+        title: "",
+      ),
     ),
   ];
 }

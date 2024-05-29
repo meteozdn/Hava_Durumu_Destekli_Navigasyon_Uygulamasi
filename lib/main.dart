@@ -43,7 +43,6 @@ class MainApp extends StatelessWidget {
           //     title: 'First Method',
           // You can use the library anywhere in the app even in theme
           theme: ThemeData(
-            iconTheme: IconThemeData(color: ColorConstants.whiteColor),
             appBarTheme: const AppBarTheme(color: ColorConstants.whiteColor),
             scaffoldBackgroundColor: ColorConstants.whiteColor,
             floatingActionButtonTheme: const FloatingActionButtonThemeData(
@@ -53,7 +52,7 @@ class MainApp extends StatelessWidget {
               fontSizeFactor: 1.sp,
             ),
           ),
-          home: child,
+          // home: child,
         );
       },
       child: const MainScreen(),

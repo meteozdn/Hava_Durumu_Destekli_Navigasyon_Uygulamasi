@@ -110,10 +110,15 @@ class HomeScreen extends StatelessWidget {
                           image: WeatherIcons.sunny,
                           height: 30,
                           width: 70,
-                          text: '40',
+                          text: '20',
                         ),
-                  const CircleAvatar(
-                    backgroundColor: ColorConstants.pictionBlueColor,
+                  GestureDetector(
+                    onTap: () {
+                      Get.toNamed(NavigationConstants.profileView);
+                    },
+                    child: const CircleAvatar(
+                      backgroundColor: ColorConstants.pictionBlueColor,
+                    ),
                   )
                 ],
               ),
@@ -160,7 +165,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           icon: Badge(
-            label: Text('2'),
+            label: const Text('2'),
             child: Icon(
               Icons.time_to_leave,
               size: 30.r,
