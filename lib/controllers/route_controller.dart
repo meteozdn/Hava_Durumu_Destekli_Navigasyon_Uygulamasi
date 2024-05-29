@@ -5,6 +5,7 @@ import 'package:navigationapp/core/constants/firestore_collections.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/models/chat_group.dart';
 import 'package:navigationapp/models/route.dart';
+import 'package:navigationapp/models/user.dart';
 
 class RouteController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -53,6 +54,11 @@ class RouteController extends GetxController {
     } catch (error) {
       throw Exception(error.toString());
     }
+
+    try {} catch (e) {
+      print(e);
+    }
+    print(_sharedRoutes);
   }
 
   Future<void> createRoute(
@@ -68,6 +74,7 @@ class RouteController extends GetxController {
       Route route = Route(
         id: id,
         ownerId: Get.find<UserController>().user.value!.id,
+        userImage: Get.find<UserController>().user.value?.image,
         ownerName:
             "${Get.find<UserController>().user.value!.name} ${Get.find<UserController>().user.value!.surname}",
         plannedAt: dateTime,

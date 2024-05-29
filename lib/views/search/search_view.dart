@@ -55,8 +55,18 @@ class SearchView extends StatelessWidget {
                   itemCount: controller.users.length,
                   itemBuilder: (context, index) {
                     return ListTile(
-                      leading: const CircleAvatar(
+                      leading: CircleAvatar(
+                        backgroundImage: controller.users[index].image != null
+                            ? NetworkImage(controller.users[index].image!)
+                            : null,
                         backgroundColor: ColorConstants.pictionBlueColor,
+                        radius: 20.h,
+                        child: controller.users[index].image == null
+                            ? Icon(
+                                Icons.person,
+                                size: 50.w,
+                              )
+                            : null,
                       ),
                       title: Text(controller.users[index].username),
                       trailing: ElevatedButton(

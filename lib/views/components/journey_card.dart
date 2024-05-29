@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 import 'package:intl/intl.dart';
+import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/models/user.dart';
 import 'package:navigationapp/views/components/rotate_line.dart';
 
 class JourneyWidget extends StatelessWidget {
@@ -14,6 +18,7 @@ class JourneyWidget extends StatelessWidget {
     required this.user,
     required this.time,
     required this.isMY,
+    this.userImage,
   });
   final String startCity;
   final String endCity;
@@ -24,7 +29,7 @@ class JourneyWidget extends StatelessWidget {
   final bool isMY;
   final DateFormat formatterDate = DateFormat('dd.mm.yyyy', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
-
+  final String? userImage;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -56,10 +61,17 @@ class JourneyWidget extends StatelessWidget {
                       ),
                       SizedBox(
                         child: CircleAvatar(
-                          radius: 25.r,
-                          backgroundColor: isMY
-                              ? ColorConstants.pastelMagentaColor
-                              : ColorConstants.pictionBlueColor,
+                          backgroundImage: userImage != null
+                              ? NetworkImage(userImage!)
+                              : null,
+                          backgroundColor: ColorConstants.pictionBlueColor,
+                          // radius: 50.h,
+                          child: userImage == null
+                              ? Icon(
+                                  Icons.person,
+                                  size: 30.w,
+                                )
+                              : null,
                         ),
                       ),
                       Padding(

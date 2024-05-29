@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/home/journeys/journey_screen.dart';
@@ -14,6 +15,7 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
   RxInt _index = 0.obs;
   final List<String> titles = ["Hava Durumu", "Navigasyon", "Yolcluk"];
+  final UserController userController = Get.find();
 
   void indexController(int num) {
     _index(num);
@@ -116,8 +118,18 @@ class HomeScreen extends StatelessWidget {
                     onTap: () {
                       Get.toNamed(NavigationConstants.profileView);
                     },
-                    child: const CircleAvatar(
+                    child: CircleAvatar(
+                      backgroundImage: userController.user.value!.image != null
+                          ? NetworkImage(userController.user.value!.image!)
+                          : null,
                       backgroundColor: ColorConstants.pictionBlueColor,
+                      // radius: 50.h,
+                      child: userController.user.value!.image == null
+                          ? Icon(
+                              Icons.person,
+                              size: 50.w,
+                            )
+                          : null,
                     ),
                   )
                 ],

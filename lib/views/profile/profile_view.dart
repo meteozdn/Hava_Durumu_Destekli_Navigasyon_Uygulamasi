@@ -3,13 +3,24 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
+import 'package:navigationapp/controllers/picker_controller/picker_controller.dart';
+import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
+import 'package:navigationapp/views/profile/friends.dart';
+import 'package:navigationapp/views/profile/saved_locations.dart';
+import 'package:navigationapp/views/profile/saved_rotates.dart';
+import 'package:navigationapp/views/profile/settings.dart';
 import 'package:navigationapp/views/search/search_view.dart';
 
 class ProfileView extends StatelessWidget {
   ProfileView({super.key});
-  final AuthController authController = AuthController();
+  final AuthController authController = Get.find();
+  final UserController userController = Get.find();
+
+  final ProfilePicturePickerController pickerController =
+      Get.put(ProfilePicturePickerController());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,53 +59,87 @@ class ProfileView extends StatelessWidget {
               children: [
                 Padding(
                   padding: const EdgeInsets.only(top: 30.0),
-                  child: CircleAvatar(
-                    backgroundColor: ColorConstants.pictionBlueColor,
-                    radius: 50.h,
-                    //   child: Text("kenan?"),
+                  child: Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      CircleAvatar(
+                        backgroundImage: userController.user.value!.image !=
+                                null
+                            ? NetworkImage(userController.user.value!.image!)
+                            : null,
+                        backgroundColor: ColorConstants.pictionBlueColor,
+                        radius: 50.h,
+                        child: userController.user.value!.image == null
+                            ? Icon(
+                                Icons.person,
+                                size: 50.w,
+                              )
+                            : null,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          await pickerController.pickImage();
+                          showDialog(
+                            context: context,
+                            builder: (_) {
+                              if (pickerController.image != null) {
+                                return AlertDialog(
+                                  title: const Text('Profil Fotoğrafı'),
+                                  content: Image.file(
+                                    fit: BoxFit.contain,
+                                    pickerController.image!,
+                                    width: 250.w,
+                                    height: 250.w,
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () {
+                                        pickerController.uploadImage();
+                                        Navigator.of(context,
+                                                rootNavigator: true)
+                                            .pop();
+                                      },
+                                      child: const Text('Tamam'),
+                                    ),
+                                    TextButton(
+                                      onPressed: Navigator.of(context).pop,
+                                      child: const Text('İptal'),
+                                    ),
+                                  ],
+                                );
+                              }
+
+                              return AlertDialog(
+                                title: const Text('Dialog Title'),
+                                content: const Text('Dialog Content'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: Navigator.of(context).pop,
+                                    child: const Text('Ok'),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: const CircleAvatar(
+                          backgroundColor: ColorConstants.pictionBlueColor,
+                          child: Icon(Icons.camera_alt_sharp),
+                        ),
+                      )
+                    ],
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(
                       top: 10.h, right: 10.h, left: 10.h, bottom: 60),
                   child: Text(
-                    "Ahmet ",
+                    userController.user.value!.name,
                     style: TextStyle(
                         color: ColorConstants.blackColor, fontSize: 30.sp),
                   ),
                 ),
-                Container(
-                  // height: 50.h,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: ColorConstants.pictionBlueColor),
-                    borderRadius: BorderRadius.circular(20.r),
-                    color: ColorConstants.whiteColor,
-                  ),
-                  child: Column(
-                    children: [
-                      ProfileButtons(
-                        icon: Icons.location_on,
-                        text: "Kayıtlı Yerler",
-                        //    func: null,
-                      ),
-                      ProfileButtons(
-                        icon: Icons.settings,
-                        text: "Kayıtlı Rotalar",
-                        //    func: null,
-                      ),
-                      ProfileButtons(
-                        icon: Icons.person,
-                        text: "Arkadaşlar",
-                        //func: null,
-                      ),
-                      ProfileButtons(
-                        icon: Icons.settings,
-                        text: "Ayarlar",
-                        //func: null,
-                      ),
-                    ],
-                  ),
-                ),
+                const ProfileWidgets(),
                 Padding(
                   padding: EdgeInsets.only(top: 60.0.h),
                   child: Container(
@@ -107,7 +152,6 @@ class ProfileView extends StatelessWidget {
                     ),
                     child: GestureDetector(
                       onTap: () {
-                        print("object");
                         authController.logout();
                         // Get.back();
                       },
@@ -123,6 +167,84 @@ class ProfileView extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class ProfileWidgets extends StatelessWidget {
+  const ProfileWidgets({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 50.h,
+      decoration: BoxDecoration(
+        border: Border.all(color: ColorConstants.pictionBlueColor),
+        borderRadius: BorderRadius.circular(20.r),
+        color: ColorConstants.whiteColor,
+      ),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () {
+              Get.to(
+                () => const SavedLocationsView(
+                    //  title: 'Kullanıcı Ara',
+                    ),
+              );
+            },
+            child: ProfileButtons(
+              icon: Icons.location_on,
+              text: "Kayıtlı Yerler",
+              //    func: null,
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Get.to(
+                () => const SavedRotatesView(
+                    //  title: 'Kullanıcı Ara',
+                    ),
+              );
+            },
+            child: ProfileButtons(
+              icon: Icons.route_rounded,
+              text: "Kayıtlı Rotalar",
+              //    func: null,
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Get.to(
+                () => FriendsView(
+                    //  title: 'Kullanıcı Ara',
+                    ),
+              );
+            },
+            child: ProfileButtons(
+              icon: Icons.person,
+              text: "Arkadaşlar",
+              //func: null,
+            ),
+          ),
+          GestureDetector(
+            onTap: () {
+              Get.to(
+                () => const SettingsView(
+                    //  title: 'Kullanıcı Ara',
+                    ),
+              );
+            },
+            child: ProfileButtons(
+              icon: Icons.settings,
+              text: "Ayarlar",
+              //func: null,
+            ),
+          ),
+        ],
       ),
     );
   }

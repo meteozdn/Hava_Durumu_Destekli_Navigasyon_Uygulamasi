@@ -15,6 +15,7 @@ class Route {
   GeoPoint? location;
   DateTime? locationLastUpdate;
   String? weather;
+  String? userImage;
   DateTime? weatherLastUpdate;
   String? speed;
   DateTime? speedLastUpdate;
@@ -40,6 +41,7 @@ class Route {
       this.speed,
       this.speedLastUpdate,
       this.estimatedFinishTime,
+      this.userImage,
       this.estimatedFinishTimeWeather});
 
   factory Route.fromFirestore(DocumentSnapshot doc) {
@@ -48,6 +50,7 @@ class Route {
       id: data["id"],
       ownerId: data["ownerId"],
       ownerName: data["ownerName"],
+      userImage: data["userImage"],
       plannedAt: data["plannedAt"].toDate(),
       startingLocation: data["startingLocation"],
       startingCity: data["startingCity"],
@@ -71,6 +74,7 @@ class Route {
         "id": id,
         "ownerId": ownerId,
         "ownerName": ownerName,
+        "userImage": userImage,
         "plannedAt": plannedAt,
         "startingLocation": startingLocation,
         "startingCity": startingCity,

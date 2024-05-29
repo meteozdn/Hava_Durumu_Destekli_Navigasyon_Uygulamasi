@@ -69,4 +69,14 @@ class UserController extends GetxController {
       throw Exception(error.toString());
     }
   }
+
+  Future<void> updateProfilePhoto(
+      {required String image, required String uid}) async {
+    try {
+      firestore
+          .collection(FirestoreCollections.users)
+          .doc(uid)
+          .update(({"image": image}));
+    } catch (e) {}
+  }
 }

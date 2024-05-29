@@ -8,23 +8,6 @@ import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/views/components/indicator.dart';
 import 'package:navigationapp/views/components/journey_card.dart';
 
-class Journey {
-  final String startDate;
-  final String endCity;
-  final String startCity;
-  final String endDate;
-  final String user;
-  final String time;
-
-  Journey(
-      {required this.startDate,
-      required this.endCity,
-      required this.startCity,
-      required this.endDate,
-      required this.user,
-      required this.time});
-}
-
 class JourneyScreen extends StatelessWidget {
   RxInt _selectedIndex = 0.obs;
   final PageController _pageviewontroller = PageController();
@@ -91,6 +74,8 @@ class JourneyScreen extends StatelessWidget {
                                     controller.userRoutes[index].plannedAt,
                                 endDate: DateTime.now(),
                                 user: controller.userRoutes[index].ownerName,
+                                userImage:
+                                    controller.userRoutes[index].userImage,
                                 time: '12 sa 10 dk',
                               ),
                             ),
@@ -125,6 +110,8 @@ class JourneyScreen extends StatelessWidget {
                                   endDate: DateTime.now(),
                                   user:
                                       controller.sharedRoutes[index].ownerName,
+                                  userImage:
+                                      controller.sharedRoutes[index].userImage,
                                   time: '12 sa 10 dk',
                                 )),
                           );
