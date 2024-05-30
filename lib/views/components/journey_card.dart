@@ -61,17 +61,25 @@ class JourneyWidget extends StatelessWidget {
                       ),
                       SizedBox(
                         child: CircleAvatar(
-                          backgroundImage: userImage != null
-                              ? NetworkImage(userImage!)
-                              : null,
-                          backgroundColor: ColorConstants.pictionBlueColor,
-                          // radius: 50.h,
-                          child: userImage == null
-                              ? Icon(
-                                  Icons.person,
-                                  size: 30.w,
-                                )
-                              : null,
+                          backgroundColor: isMY
+                              ? ColorConstants.pastelMagentaColor
+                              : ColorConstants.pictionBlueColor,
+                          radius: 19.h,
+                          child: CircleAvatar(
+                            radius: 17.h,
+
+                            backgroundImage: userImage != null
+                                ? NetworkImage(userImage!)
+                                : null,
+                            backgroundColor: ColorConstants.pictionBlueColor,
+                            // radius: 50.h,
+                            child: userImage == null
+                                ? Icon(
+                                    Icons.person,
+                                    size: 30.w,
+                                  )
+                                : null,
+                          ),
                         ),
                       ),
                       Padding(

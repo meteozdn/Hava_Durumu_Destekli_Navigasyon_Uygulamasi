@@ -119,17 +119,24 @@ class HomeScreen extends StatelessWidget {
                       Get.toNamed(NavigationConstants.profileView);
                     },
                     child: CircleAvatar(
-                      backgroundImage: userController.user.value!.image != null
-                          ? NetworkImage(userController.user.value!.image!)
-                          : null,
+                      radius: 20.h,
                       backgroundColor: ColorConstants.pictionBlueColor,
-                      // radius: 50.h,
-                      child: userController.user.value!.image == null
-                          ? Icon(
-                              Icons.person,
-                              size: 50.w,
-                            )
-                          : null,
+                      child: CircleAvatar(
+                        radius: 18.h,
+
+                        backgroundImage: userController.user.value!.image !=
+                                null
+                            ? NetworkImage(userController.user.value!.image!)
+                            : null,
+                        backgroundColor: ColorConstants.pictionBlueColor,
+                        // radius: 50.h,
+                        child: userController.user.value!.image == null
+                            ? Icon(
+                                Icons.person,
+                                size: 50.w,
+                              )
+                            : null,
+                      ),
                     ),
                   )
                 ],

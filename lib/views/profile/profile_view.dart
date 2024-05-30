@@ -36,13 +36,18 @@ class ProfileView extends StatelessWidget {
                   ),
                 );
               },
-              child: const CircleAvatar(
+              child: CircleAvatar(
+                radius: 20.r,
                 backgroundColor: ColorConstants.pictionBlueColor,
-                child: Padding(
-                  padding: EdgeInsets.only(left: 1.0),
-                  child: Icon(
-                    Icons.person_add_alt_1,
-                    color: ColorConstants.whiteColor,
+                child: CircleAvatar(
+                  radius: 19.r,
+                  backgroundColor: ColorConstants.whiteColor,
+                  child: const Padding(
+                    padding: EdgeInsets.only(left: 1.0),
+                    child: Icon(
+                      Icons.person_add_alt_1,
+                      color: ColorConstants.pictionBlueColor,
+                    ),
                   ),
                 ),
               ),
@@ -63,18 +68,22 @@ class ProfileView extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     children: [
                       CircleAvatar(
-                        backgroundImage: userController.user.value!.image !=
-                                null
-                            ? NetworkImage(userController.user.value!.image!)
-                            : null,
                         backgroundColor: ColorConstants.pictionBlueColor,
-                        radius: 50.h,
-                        child: userController.user.value!.image == null
-                            ? Icon(
-                                Icons.person,
-                                size: 50.w,
-                              )
-                            : null,
+                        radius: 52.h,
+                        child: CircleAvatar(
+                          backgroundImage: userController.user.value!.image !=
+                                  null
+                              ? NetworkImage(userController.user.value!.image!)
+                              : null,
+                          backgroundColor: ColorConstants.pictionBlueColor,
+                          radius: 50.h,
+                          child: userController.user.value!.image == null
+                              ? Icon(
+                                  Icons.person,
+                                  size: 50.w,
+                                )
+                              : null,
+                        ),
                       ),
                       GestureDetector(
                         onTap: () async {
@@ -110,8 +119,8 @@ class ProfileView extends StatelessWidget {
                               }
 
                               return AlertDialog(
-                                title: const Text('Dialog Title'),
-                                content: const Text('Dialog Content'),
+                                title: const Text('Resim Seçilmedi'),
+                                content: const Text('Tekrar Deneyiniz'),
                                 actions: [
                                   TextButton(
                                     onPressed: Navigator.of(context).pop,
@@ -124,7 +133,10 @@ class ProfileView extends StatelessWidget {
                         },
                         child: const CircleAvatar(
                           backgroundColor: ColorConstants.pictionBlueColor,
-                          child: Icon(Icons.camera_alt_sharp),
+                          child: Icon(
+                            Icons.camera_alt_sharp,
+                            color: ColorConstants.whiteColor,
+                          ),
                         ),
                       )
                     ],
@@ -147,7 +159,7 @@ class ProfileView extends StatelessWidget {
                     decoration: BoxDecoration(
                       border:
                           Border.all(color: ColorConstants.pictionBlueColor),
-                      borderRadius: BorderRadius.circular(20.r),
+                      borderRadius: BorderRadius.circular(12.r),
                       color: ColorConstants.whiteColor,
                     ),
                     child: GestureDetector(
@@ -183,7 +195,7 @@ class ProfileWidgets extends StatelessWidget {
       // height: 50.h,
       decoration: BoxDecoration(
         border: Border.all(color: ColorConstants.pictionBlueColor),
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(12.r),
         color: ColorConstants.whiteColor,
       ),
       child: Column(
@@ -202,6 +214,12 @@ class ProfileWidgets extends StatelessWidget {
               //    func: null,
             ),
           ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+            child: Divider(
+              height: 1.h,
+            ),
+          ),
           GestureDetector(
             onTap: () {
               Get.to(
@@ -216,6 +234,12 @@ class ProfileWidgets extends StatelessWidget {
               //    func: null,
             ),
           ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+            child: Divider(
+              height: 1.h,
+            ),
+          ),
           GestureDetector(
             onTap: () {
               Get.to(
@@ -228,6 +252,12 @@ class ProfileWidgets extends StatelessWidget {
               icon: Icons.person,
               text: "Arkadaşlar",
               //func: null,
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+            child: Divider(
+              height: 1.h,
             ),
           ),
           GestureDetector(
@@ -274,7 +304,7 @@ class ProfileButtons extends StatelessWidget {
                     decoration: BoxDecoration(
                         border: Border.all(
                             color: ColorConstants.pictionBlueColor, width: 2),
-                        borderRadius: BorderRadius.circular(20.r)),
+                        borderRadius: BorderRadius.circular(12.r)),
                     child: Padding(
                       padding: EdgeInsets.all(2.0.w),
                       child: Icon(
@@ -295,10 +325,10 @@ class ProfileButtons extends StatelessWidget {
               ],
             ),
           ),
-          const Icon(
+          Icon(
             Icons.navigate_next_rounded,
             color: ColorConstants.pictionBlueColor,
-            size: 30,
+            size: 30.r,
           )
         ],
       ),

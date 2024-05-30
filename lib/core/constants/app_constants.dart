@@ -32,7 +32,9 @@ class ColorConstants {
   static const Color lightBlue = Color(0xFFE0EEFD);
   static const Color pastelMagentaColor = Color(0xFFBD1742);
   static const Color blackColor = Color(0xFF2C3333);
-  static const Color pictionBlueColor = Color(0xFF61B9ED);
+  //static const Color pictionBlueColor = Color(0xFF61B9ED);
+  static const Color pictionBlueColor = Color(0xFF2C3333);
+
   static const Color redColor = Color(0xFFD94555);
   static const Color pinkColor = Color(0xFFE24E74);
   static const Color greyColor = Color(0xFFD9D9D9);
