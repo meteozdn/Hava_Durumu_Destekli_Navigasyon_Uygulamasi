@@ -32,14 +32,18 @@ class CreateGroupView extends StatelessWidget {
             ElevatedButton(
               onPressed: () async {
                 if (groupNameController.text.isEmpty) {
-                  Get.snackbar("Error", "Group name is empty!");
+                  print("Group name is empty!");
+                  //Get.snackbar("Error", "Group name is empty!");
                 } else if (selectedFriends.isEmpty) {
-                  Get.snackbar(
-                      "Error", "At least one friend must be selected!");
+                  // Get.snackbar(
+                  //     "Error", "At least one friend must be selected!");
+                  print("At least one friend must be selected!");
                 } else {
                   selectedFriends.add(userController.user.value!.id);
                   await chatGroupController.createChatGroup(
-                      members: selectedFriends, name: groupNameController.text);
+                      members: selectedFriends,
+                      image: "GRUP_IMAGE", ////////////////////////
+                      name: groupNameController.text);
                 }
                 Get.back();
               },
