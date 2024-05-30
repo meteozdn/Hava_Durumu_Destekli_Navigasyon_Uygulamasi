@@ -42,12 +42,12 @@ class AuthController extends GetxController {
           .createUserWithEmailAndPassword(email: email, password: password);
       // Create user to Firestore.
       model.User user = model.User(
-        id: credential.user!.uid,
-        username: username,
-        name: name,
-        surname: surname,
-        registerAt: DateTime.now(),
-      );
+          id: credential.user!.uid,
+          username: username,
+          name: name,
+          surname: surname,
+          registerAt: DateTime.now(),
+          image: "");
       // Access the UserController instance.;
       Get.find<UserController>().createUser(user: user);
     } catch (error) {
@@ -70,8 +70,8 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     await getAuth().signOut();
     ChatGroupController chatGroupController = Get.find<ChatGroupController>();
-    for (var chatController in chatGroupController.chatControllers) {
-      Get.delete<ChatController>(tag: chatController.chatGroupId);
+    for (var chatGroup in chatGroupController.chatGroups) {
+      Get.delete<ChatController>(tag: chatGroup.id, force: true);
     }
     Get.delete<UserController>();
     Get.delete<ChatGroupController>();

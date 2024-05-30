@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/controllers/chat_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
-import 'package:navigationapp/views/message/chat_view.dart';
+import 'package:navigationapp/views/message/create_group_view.dart';
+import 'package:navigationapp/views/message/message_tile.dart';
 
 class MessageView extends StatelessWidget {
-  MessageView({super.key});
-  final PageController _pageController = PageController();
+  const MessageView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class MessageView extends StatelessWidget {
                 backgroundColor: ColorConstants.pictionBlueColor,
               ),
               onPressed: () {
-                //   Get.find<AuthController>().logout();
+                Get.to(() => CreateGroupView());
               },
               child: const Icon(
                 Icons.message,
@@ -46,22 +45,19 @@ class MessageView extends StatelessWidget {
                   itemCount: controller.chatGroups.length,
                   itemBuilder: (context, index) {
                     final chatGroup = controller.chatGroups[index];
-                    final chatController = controller.chatControllers[index];
+                    final chatController =
+                        Get.find<ChatController>(tag: chatGroup.id);
                     return Obx(() {
-                      String message;
-                      bool isSeen = true;
-                      String userId = Get.find<UserController>().user.value!.id;
-                      try {
-                        message = chatController.messages.last.text;
-                        isSeen = chatController.messages.last.seen
-                            .any((id) => id == userId);
-                      } catch (error) {
-                        message = "Mesaj Gönderin!";
-                      }
+                      final lastMessage = chatController.messages.isNotEmpty
+                          ? chatController.messages.last.text
+                          : "Mesaj Gönderin!";
+                      final isSeen = chatController.messages.isNotEmpty
+                          ? chatController.messages.last.seen.contains(
+                              Get.find<UserController>().user.value!.id)
+                          : true;
                       return MessageTile(
-                        sender: chatGroup.name,
-                        chatGroupId: chatGroup.id,
-                        message: message,
+                        chatGroup: chatGroup,
+                        lastMessage: lastMessage,
                         isSeen: isSeen,
                       );
                     });
@@ -72,84 +68,6 @@ class MessageView extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class CirclePersonCard extends StatelessWidget {
-  const CirclePersonCard({
-    super.key,
-    required this.user,
-  });
-  final String user;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.only(left: 12.0.w),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            backgroundColor: ColorConstants.pictionBlueColor,
-            radius: 25.r,
-          ),
-          SizedBox(
-              width: 55.h,
-              // height: 15.h,
-              child: Center(child: Text(user)))
-        ],
-      ),
-    );
-  }
-}
-
-class MessageTile extends StatelessWidget {
-  const MessageTile(
-      {super.key,
-      required this.sender,
-      required this.message,
-      required this.isSeen,
-      required this.chatGroupId});
-  final String sender;
-  final String message;
-  final bool isSeen;
-  final String chatGroupId;
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      onTap: () async {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ChatView(
-              chatGroupId: chatGroupId,
-              name: sender,
-            ),
-          ),
-        );
-        if (!isSeen) {
-          await Get.find<ChatController>(tag: chatGroupId).seeMessage();
-        }
-      },
-      subtitle: Text(message,
-          style: isSeen
-              ? null
-              : const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: ColorConstants.pictionBlueColor)),
-      title: Text(
-        sender,
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
-      ),
-      visualDensity: const VisualDensity(vertical: 4), // to compact
-
-      leading: CircleAvatar(
-        backgroundColor: ColorConstants.pictionBlueColor,
-        radius: 30.r,
-      ),
-      trailing: const Icon(Icons.navigate_next),
     );
   }
 }

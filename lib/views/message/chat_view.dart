@@ -4,33 +4,31 @@ import 'package:get/get.dart';
 import 'package:navigationapp/controllers/chat_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/models/chat_group.dart';
 import 'package:navigationapp/models/message.dart';
 
 class ChatView extends StatelessWidget {
-  final String chatGroupId;
-  final String name;
-
-  const ChatView({
-    super.key,
-    required this.chatGroupId,
-    required this.name,
-  });
+  const ChatView({super.key, required this.chatGroup});
+  final ChatGroup chatGroup;
 
   @override
   Widget build(BuildContext context) {
     final ChatController chatController =
-        Get.find<ChatController>(tag: chatGroupId);
+        Get.find<ChatController>(tag: chatGroup.id);
 
     return Scaffold(
       appBar: AppBar(
           title: Row(
         children: [
           CircleAvatar(
+            backgroundImage: chatGroup.image.isNotEmpty
+                ? NetworkImage(chatGroup.image)
+                : null,
             backgroundColor: ColorConstants.pictionBlueColor,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(name),
+            child: Text(chatGroup.name),
           ),
         ],
       )),
