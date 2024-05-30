@@ -8,7 +8,6 @@ import 'package:navigationapp/models/chat_group.dart';
 class ChatGroupController extends GetxController {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final RxList<ChatGroup> chatGroups = <ChatGroup>[].obs;
-  final RxList<ChatController> chatControllers = <ChatController>[].obs;
 
   @override
   void onInit() async {
@@ -19,7 +18,6 @@ class ChatGroupController extends GetxController {
   Future<void> fetchUserChatGroups() async {
     try {
       chatGroups.clear();
-      chatControllers.clear();
       String currentUserId = Get.find<UserController>().user.value!.id;
       List<String> ids =
           Get.find<UserController>().user.value!.chatGroups ?? [];
@@ -41,9 +39,10 @@ class ChatGroupController extends GetxController {
         }
         chatGroups.add(chatGroup);
         // Initialize ChatController for each chat group.
-        ChatController chatController =
-            Get.put(ChatController(chatGroup.id), tag: chatGroup.id);
-        chatControllers.add(chatController);
+        if (!Get.isRegistered<ChatController>(tag: chatGroup.id)) {
+          Get.put(ChatController(chatGroup.id),
+              tag: chatGroup.id, permanent: true);
+        }
       }
     } catch (error) {
       throw Exception(error.toString());
