@@ -25,7 +25,7 @@ class MessageView extends StatelessWidget {
                 backgroundColor: ColorConstants.pictionBlueColor,
               ),
               onPressed: () {
-                Get.find<AuthController>().logout();
+                //   Get.find<AuthController>().logout();
               },
               child: const Icon(
                 Icons.message,

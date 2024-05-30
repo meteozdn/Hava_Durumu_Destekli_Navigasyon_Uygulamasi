@@ -24,13 +24,14 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> screens = [
-      const NavigationScreen(),
+      NavigationScreen(),
       JourneyScreen(),
     ];
 
     return Obx(() {
       return Scaffold(
         backgroundColor: Colors.white,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: _index.value == 1
             ? FloatingActionButton(
                 onPressed: () {
@@ -41,7 +42,16 @@ class HomeScreen extends StatelessWidget {
                   color: ColorConstants.whiteColor,
                 ),
               )
-            : ExpandableFab(
+            : FloatingActionButton(
+                onPressed: () {
+                  //Get.toNamed(NavigationConstants.message);
+                },
+                child: const Icon(
+                  Icons.navigation_rounded,
+                  color: ColorConstants.whiteColor,
+                ),
+              )
+        /*   ExpandableFab(
                 openIcon: const Icon(
                   Icons.add,
                   color: ColorConstants.whiteColor,
@@ -97,7 +107,8 @@ class HomeScreen extends StatelessWidget {
                     },
                   ),
                 ],
-              ),
+              ),*/
+        ,
         body: Stack(
           children: [
             screens[_index.value],
