@@ -42,12 +42,12 @@ class AuthController extends GetxController {
           .createUserWithEmailAndPassword(email: email, password: password);
       // Create user to Firestore.
       model.User user = model.User(
-        id: credential.user!.uid,
-        username: username,
-        name: name,
-        surname: surname,
-        registerAt: DateTime.now(),
-      );
+          id: credential.user!.uid,
+          username: username,
+          name: name,
+          surname: surname,
+          registerAt: DateTime.now(),
+          image: "");
       // Access the UserController instance.;
       Get.find<UserController>().createUser(user: user);
     } catch (error) {

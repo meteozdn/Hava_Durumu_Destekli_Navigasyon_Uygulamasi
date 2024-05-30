@@ -89,7 +89,7 @@ class FriendRequestController extends GetxController {
       await updateUserFriendList(userId: senderId, friendId: recipientId);
       // Create chatGroup.
       await Get.find<ChatGroupController>()
-          .createChatGroup(members: [senderId, recipientId]);
+          .createChatGroup(members: [senderId, recipientId], image: "");
       // Delete the friend request document.
       await deleteFriendRequest(senderId: senderId, recipientId: recipientId);
     } catch (error) {

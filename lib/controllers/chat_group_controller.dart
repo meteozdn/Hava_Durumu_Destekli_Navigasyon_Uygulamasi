@@ -35,6 +35,7 @@ class ChatGroupController extends GetxController {
               chatGroup.members.firstWhere((id) => id != currentUserId);
           Get.find<UserController>().fetchUser(userId: friendId).then((value) {
             chatGroup.name = value.username;
+            chatGroup.image = value.image;
           });
         }
         chatGroups.add(chatGroup);
@@ -51,6 +52,7 @@ class ChatGroupController extends GetxController {
 
   Future<void> createChatGroup({
     required List<String> members,
+    required String image,
     String name = "",
   }) async {
     try {
@@ -69,8 +71,8 @@ class ChatGroupController extends GetxController {
       // Create auto Id.
       final id = firestore.collection(FirestoreCollections.chatGroups).doc().id;
       // Create ChatGroup model.
-      ChatGroup chatGroup =
-          ChatGroup(id: id, name: name, members: members, sharedRoutes: []);
+      ChatGroup chatGroup = ChatGroup(
+          id: id, name: name, image: image, members: members, sharedRoutes: []);
       // Save ChatGroup to local.
       Get.find<UserController>().user.value!.chatGroups?.add(id);
       // Save ChatGroup to fireStore.
