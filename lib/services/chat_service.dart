@@ -32,7 +32,8 @@ class ChatService extends ChangeNotifier {
           .collection(FirestoreCollections.chatGroups)
           .doc(chatGroupId)
           .collection(FirestoreCollections.messages)
-          .add(message.toJson());
+          .doc(id)
+          .set(message.toJson());
     } catch (error) {
       throw Exception(error.toString());
     }

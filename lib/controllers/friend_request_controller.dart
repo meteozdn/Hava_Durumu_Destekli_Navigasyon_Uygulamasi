@@ -8,12 +8,9 @@ import 'package:navigationapp/models/user.dart';
 
 class FriendRequestController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final RxList<FriendRequest> _friendRequestsIn = <FriendRequest>[].obs;
-  List<FriendRequest> get friendRequestsIn => _friendRequestsIn;
-  final RxList<FriendRequest> _friendRequestsOut = <FriendRequest>[].obs;
-  List<FriendRequest> get friendRequestsOut => _friendRequestsOut;
-  final RxList<User> _friends = <User>[].obs;
-  List<User> get friends => _friends;
+  final RxList<FriendRequest> friendRequestsIn = <FriendRequest>[].obs;
+  final RxList<FriendRequest> friendRequestsOut = <FriendRequest>[].obs;
+  final RxList<User> friends = <User>[].obs;
 
   @override
   void onInit() async {
@@ -119,19 +116,19 @@ class FriendRequestController extends GetxController {
       {required String userId, required String buttonText}) async {
     String currentUserId = Get.find<UserController>().user.value!.id;
     switch (buttonText) {
-      case "Remove Request":
+      case "İsteği Sil":
         await deleteFriendRequest(senderId: currentUserId, recipientId: userId);
         break;
-      case "Accept Request":
+      case "Kabul Et":
         await acceptFriendRequest(senderId: userId, recipientId: currentUserId);
         break;
-      case "Remove Friend":
+      case "Kaldır":
         await updateUserFriendList(
             userId: currentUserId, friendId: userId, isAdding: false);
         await updateUserFriendList(
             userId: userId, friendId: currentUserId, isAdding: false);
         break;
-      case "Add Friend":
+      case "Arkadaş Ekle":
         String recipientUsername = await Get.find<UserController>()
             .fetchUser(userId: userId)
             .then((value) => value.username);
@@ -153,21 +150,14 @@ class FriendRequestController extends GetxController {
       bool isAdding = true}) async {
     try {
       // Save to firestore.
-      if (isAdding) {
-        await firestore
-            .collection(FirestoreCollections.users)
-            .doc(userId)
-            .update({
-          "friends": FieldValue.arrayUnion([friendId])
-        });
-      } else {
-        await firestore
-            .collection(FirestoreCollections.users)
-            .doc(userId)
-            .update({
-          "friends": FieldValue.arrayRemove([friendId])
-        });
-      }
+      await firestore
+          .collection(FirestoreCollections.users)
+          .doc(userId)
+          .update({
+        "friends": isAdding
+            ? FieldValue.arrayUnion([friendId])
+            : FieldValue.arrayRemove([friendId])
+      });
     } catch (error) {
       throw Exception(error.toString());
     }
