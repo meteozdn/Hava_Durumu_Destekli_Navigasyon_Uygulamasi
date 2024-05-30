@@ -70,8 +70,8 @@ class AuthController extends GetxController {
   Future<void> logout() async {
     await getAuth().signOut();
     ChatGroupController chatGroupController = Get.find<ChatGroupController>();
-    for (var chatController in chatGroupController.chatControllers) {
-      Get.delete<ChatController>(tag: chatController.chatGroupId);
+    for (var chatGroup in chatGroupController.chatGroups) {
+      Get.delete<ChatController>(tag: chatGroup.id, force: true);
     }
     Get.delete<UserController>();
     Get.delete<ChatGroupController>();
