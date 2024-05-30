@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/controllers/chat_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/views/message/chat_view.dart';
+import 'package:navigationapp/views/message/create_group_view.dart';
 
 class MessageView extends StatelessWidget {
   MessageView({super.key});
@@ -25,7 +25,7 @@ class MessageView extends StatelessWidget {
                 backgroundColor: ColorConstants.pictionBlueColor,
               ),
               onPressed: () {
-                Get.find<AuthController>().logout();
+                Get.to(() => CreateGroupView());
               },
               child: const Icon(
                 Icons.message,
@@ -46,7 +46,8 @@ class MessageView extends StatelessWidget {
                   itemCount: controller.chatGroups.length,
                   itemBuilder: (context, index) {
                     final chatGroup = controller.chatGroups[index];
-                    final chatController = controller.chatControllers[index];
+                    final chatController =
+                        Get.find<ChatController>(tag: chatGroup.id);
                     return Obx(() {
                       String message;
                       bool isSeen = true;
