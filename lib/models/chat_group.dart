@@ -4,6 +4,7 @@ import 'package:navigationapp/models/message.dart';
 class ChatGroup {
   final String id;
   String name;
+  String image;
   List<String> members;
   List<String> sharedRoutes;
   List<Message>? messages;
@@ -11,6 +12,7 @@ class ChatGroup {
   ChatGroup(
       {required this.id,
       required this.name,
+      required this.image,
       required this.members,
       required this.sharedRoutes,
       this.messages});
@@ -24,6 +26,7 @@ class ChatGroup {
     return ChatGroup(
         id: data["id"],
         name: data["name"],
+        image: data["image"],
         members: (data["members"] as List<dynamic>).cast<String>(),
         sharedRoutes: (data["sharedRoutes"] as List<dynamic>).cast<String>(),
         messages: messages);
@@ -32,6 +35,7 @@ class ChatGroup {
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
+        "image": image,
         "members": members,
         "sharedRoutes": sharedRoutes,
       };

@@ -5,8 +5,8 @@ class User {
   final String username;
   final String name;
   final String surname;
-  final String? image;
   final DateTime registerAt;
+  String image;
   List<String>? friends;
   List<String>? chatGroups;
   List<String>? routes;
@@ -16,8 +16,8 @@ class User {
       required this.username,
       required this.name,
       required this.surname,
-      this.image,
       required this.registerAt,
+      required this.image,
       this.friends = const [],
       this.chatGroups = const [],
       this.routes = const []});
@@ -26,11 +26,11 @@ class User {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
     return User(
         id: data["id"],
-        image: data["image"],
         username: data["username"],
         name: data["name"],
         surname: data["surname"],
         registerAt: data["registerAt"].toDate(),
+        image: data["image"],
         friends: List<String>.from(data["friends"]),
         chatGroups: List<String>.from(data["chatGroups"]),
         routes: List<String>.from(data["routes"]));
@@ -38,11 +38,11 @@ class User {
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "image": image,
         "username": username,
         "name": name,
         "surname": surname,
         "registerAt": registerAt,
+        "image": image,
         "friends": friends,
         "chatGroups": chatGroups,
         "routes": routes,
