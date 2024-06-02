@@ -16,7 +16,6 @@ Future<void> main() async {
   await initializeDateFormatting("tr_TR", null).then((_) {
     final format = DateFormat('yyyy-MM-dd HH:mm', "tr_TR");
     date.value = format.parse(date.value.toString().substring(0, 16));
-    print(date.value.toString());
   });
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(

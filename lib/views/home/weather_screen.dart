@@ -103,6 +103,7 @@ class WeatherScreenBottomWidgets extends StatelessWidget {
       child: BluredContainer(
         height: 150.h,
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Stack(
               alignment: AlignmentDirectional.centerStart,
@@ -125,8 +126,11 @@ class WeatherScreenBottomWidgets extends StatelessWidget {
                 ),
               ],
             ),
-            WeatherScreenIndicator(
-                weatherScreenController: weatherScreenController)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 5.0),
+              child: WeatherScreenIndicator(
+                  weatherScreenController: weatherScreenController),
+            )
           ],
         ),
         //   width: 300.w,
@@ -186,15 +190,65 @@ class Daily24HourTemp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: Colors.pink,
-      child: Center(
-          child: ElevatedButton(
-        child: Text("Daily24Hour"),
-        onPressed: () {
-          // service.fetch16DaysWeatherData(39.925533, 36.33);
-        },
-      )),
-    );
+        //color: Colors.pink,
+        child: Padding(
+      padding: EdgeInsets.all(10.0.r),
+      child: Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28.0),
+          child: Container(
+              height: 150,
+              width: 100,
+              child: ListView.builder(
+                  itemCount: 3,
+                  itemBuilder: (BuildContext context, index) {
+                    return Container(
+                      height: 130,
+                      //   width: 100,
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              ...List.generate(4, (index) {
+                                return Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: .0),
+                                  child: Container(
+                                    height: 100,
+                                    //width: 70,
+                                    //color: Colors.red,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text("0$index"),
+                                        Image.asset(
+                                          WeatherIcons.snow,
+                                          width: 50,
+                                        ),
+                                        const Text("25°"),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              })
+                            ],
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Divider(
+                              height: 5,
+                            ),
+                          )
+                        ],
+                      ),
+                    );
+                  })),
+        ),
+      ),
+    ));
   }
 }
 
@@ -332,7 +386,7 @@ class BluredContainer extends StatelessWidget {
             height: height,
             width: width,
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.3),
+              color: Colors.white.withOpacity(0.5),
               borderRadius: BorderRadius.circular(15.r),
               border: Border.all(
                 color: Colors.grey.withOpacity(0.2),
@@ -368,7 +422,7 @@ class NowTemp extends StatelessWidget {
             Image.asset(
                 //width: 120.w,
                 height: 90.w,
-                WeatherIcons.sunny),
+                WeatherIcons.thunder),
             Column(
               children: [
                 Text(
@@ -411,7 +465,7 @@ class WeatherScreenAppBar extends StatelessWidget {
               child: Text(
                 "Samsun-Atakum",
                 style: TextStyle(
-                    color: ColorConstants.greyColor,
+                    color: ColorConstants.blackColor,
                     fontSize: 20.sp,
                     fontWeight: FontWeight.bold),
               ),
