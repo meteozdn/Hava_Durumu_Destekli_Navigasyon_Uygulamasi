@@ -2,6 +2,7 @@ import 'package:get/get_navigation/src/routes/get_route.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/auth/auth_screen.dart';
 import 'package:navigationapp/views/home/home_screen.dart';
+import 'package:navigationapp/views/home/weather_screen.dart';
 import 'package:navigationapp/views/main/main_screen.dart';
 import 'package:navigationapp/views/message/message_list_view.dart';
 import 'package:navigationapp/views/profile/profile_view.dart';
@@ -34,6 +35,10 @@ class NavigationService {
       page: () => SearchView(
         title: "",
       ),
+    ),
+    GetPage(
+      name: NavigationConstants.weather,
+      page: () => WeatherScreen(),
     ),
   ];
 }

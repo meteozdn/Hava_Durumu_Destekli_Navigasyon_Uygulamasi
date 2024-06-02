@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
@@ -5,21 +6,39 @@ import 'package:get/get.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:navigationapp/controllers/map_controller/map_controller.dart';
+import 'package:navigationapp/controllers/map_controller/map_weather_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/core/constants/navigation_constants.dart';
 
-class NavigationScreen extends StatelessWidget {
+class NavigationScreen extends StatefulWidget {
   NavigationScreen({super.key});
+
+  @override
+  State<NavigationScreen> createState() => _NavigationScreenState();
+}
+
+class _NavigationScreenState extends State<NavigationScreen> {
   final NavigationController _mapController = Get.put(NavigationController());
+
+  Set<TileOverlay> _tileOverlays = {};
+
+  initTiles() async {
+    final String overlayId = DateTime.now().millisecondsSinceEpoch.toString();
+    final tileOverlay = TileOverlay(
+        tileOverlayId: TileOverlayId(overlayId),
+        tileProvider: ForecastTileProvider());
+    setState(() {
+      _tileOverlays = {tileOverlay};
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    RxInt x = 5.obs;
-
     Set<Marker> markers = {};
     late GoogleMapController googlemapController;
-    final LatLng _center = LatLng(41.28667, 36.33);
+    const LatLng center = LatLng(41.28667, 36.33);
 
-    _onMapCreated(GoogleMapController controller) {
+    _onMapCreated(GoogleMapController controller) async {
       googlemapController = controller;
     }
 
@@ -33,14 +52,16 @@ class NavigationScreen extends StatelessWidget {
             initialCameraPosition: CameraPosition(
                 target: _mapController.currentPositionLL.value != null
                     ? _mapController.currentPositionLL.value!
-                    : _center,
+                    : center,
                 zoom: 7.h),
-            onMapCreated: _onMapCreated, compassEnabled: true,
-            myLocationButtonEnabled: false, zoomControlsEnabled: false,
+            onMapCreated: (GoogleMapController controller) {
+              googlemapController = controller;
+            },
+            compassEnabled: false,
+            myLocationButtonEnabled: false,
+            zoomControlsEnabled: false,
             mapType: MapType.normal,
-
-            // mapType: MapType.hybrid,
-            //myLocationButtonEnabled: true,
+            tileOverlays: _tileOverlays,
           );
         }),
         Padding(
@@ -92,23 +113,28 @@ class ElevatedWidgetButton extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(10.r),
       elevation: 3.h,
-      child: SizedBox(
-        width: width.w,
-        height: height.h,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SizedBox(
-                height: 20.w,
-                child: Image.asset(
-                  image,
-                  height: 20.h,
-                )),
-            Text(
-              "$text°",
-              style: AppTextStyle.midBlack,
-            )
-          ],
+      child: GestureDetector(
+        onTap: () {
+          Get.toNamed(NavigationConstants.weather);
+        },
+        child: SizedBox(
+          width: width.w,
+          height: height.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(
+                  height: 20.w,
+                  child: Image.asset(
+                    image,
+                    height: 20.h,
+                  )),
+              Text(
+                "$text°",
+                style: AppTextStyle.midBlack,
+              )
+            ],
+          ),
         ),
       ),
     );

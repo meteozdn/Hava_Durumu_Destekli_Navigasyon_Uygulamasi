@@ -3,14 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class AppConstants {
   static const String appName = 'Navi App';
-  static String baseURL = 'https://kindergardenapp.com:8000';
-  static const String fontFamily = 'Roboto';
-  static const String defaultLanguage = 'tr';
+  static String openWeatherApiKey = 'd23f3624098ff746d0953cb3c0640e1b';
+
   // static const int responseTimeout = 60;
   // static int? userType;
 }
 
 class AppTextStyle {
+  static final smallWhite = TextStyle(color: ColorConstants.whiteColor);
   static final midBlack = TextStyle(fontSize: 20.sp, color: Colors.black);
 }
 
@@ -37,19 +37,16 @@ class ColorConstants {
 
   static const Color redColor = Color(0xFFD94555);
   static const Color pinkColor = Color(0xFFE24E74);
-  static const Color greyColor = Color(0xFFD9D9D9);
+  static const Color greyColor = Color(0xFF999999);
   static const Color whiteColor = Color(0xFFFFFFFF);
 }
 
 class WeatherIcons {
   static const sunny = "lib/assets/icons/sunny.png";
-  static const sunny2d = "lib/assets/icons/sunny2d.png";
-  static const rainy2d = "lib/assets/icons/rainy2d.png";
+  static const partlyCloudy = "lib/assets/icons/partlyCloudy.png";
+  static const thunder = "lib/assets/icons/thunder.png";
   static const rainy = "lib/assets/icons/rainy.png";
   static const snow = "lib/assets/icons/snow.png";
-  static const snow2d = "lib/assets/icons/snow2d.png";
-  static const thunder = "lib/assets/icons/thunder.png";
-  static const thunder2d = "lib/assets/icons/thunder2d.png";
 }
 
 class Animations {
