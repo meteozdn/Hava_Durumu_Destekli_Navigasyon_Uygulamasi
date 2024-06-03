@@ -4,7 +4,7 @@ import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class NavigationController extends GetxController {
-  var _currentPosition = Rxn<Position>();
+  final _currentPosition = Rxn<Position>();
   var currentPositionLL = Rxn<LatLng>();
   var state = true.obs;
 

@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart';
-import 'package:navigationapp/controllers/friend_request_controller.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/search_friend_controller.dart';
-import 'package:navigationapp/controllers/search_user_controller.dart';
-import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/user.dart';
 
@@ -21,7 +17,7 @@ class FriendsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Arkadaşlar"),
+          title: const Text("Arkadaşlar"),
         ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),

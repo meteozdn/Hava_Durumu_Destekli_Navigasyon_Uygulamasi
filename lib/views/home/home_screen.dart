@@ -1,19 +1,15 @@
-import 'package:animated_expandable_fab/expandable_fab/action_button.dart';
-import 'package:animated_expandable_fab/expandable_fab/expandable_fab.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/home/journeys/journey_screen.dart';
 import 'package:navigationapp/views/home/navigation_screen.dart';
-import 'package:navigationapp/views/home/weather_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
-  RxInt _index = 0.obs;
+  final RxInt _index = 0.obs;
   final List<String> titles = ["Hava Durumu", "Navigasyon", "Yolcluk"];
   final UserController userController = Get.find();
 
@@ -137,7 +133,7 @@ class HomeScreen extends StatelessWidget {
 
                         backgroundImage: userController.user.value!.image !=
                                 null
-                            ? NetworkImage(userController.user.value!.image!)
+                            ? NetworkImage(userController.user.value!.image)
                             : null,
                         backgroundColor: ColorConstants.pictionBlueColor,
                         // radius: 50.h,

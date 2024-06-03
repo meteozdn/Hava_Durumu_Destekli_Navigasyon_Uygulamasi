@@ -5,7 +5,6 @@ import 'package:navigationapp/core/constants/firestore_collections.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/models/chat_group.dart';
 import 'package:navigationapp/models/route.dart';
-import 'package:navigationapp/models/user.dart';
 
 class RouteController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;

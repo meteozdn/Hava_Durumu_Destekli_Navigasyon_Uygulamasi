@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:navigationapp/controllers/map_controller/map_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
@@ -17,9 +16,9 @@ class NavigationScreen extends StatelessWidget {
 
     Set<Marker> markers = {};
     late GoogleMapController googlemapController;
-    final LatLng _center = LatLng(41.28667, 36.33);
+    const LatLng center = LatLng(41.28667, 36.33);
 
-    _onMapCreated(GoogleMapController controller) {
+    onMapCreated(GoogleMapController controller) {
       googlemapController = controller;
     }
 
@@ -33,9 +32,9 @@ class NavigationScreen extends StatelessWidget {
             initialCameraPosition: CameraPosition(
                 target: _mapController.currentPositionLL.value != null
                     ? _mapController.currentPositionLL.value!
-                    : _center,
+                    : center,
                 zoom: 7.h),
-            onMapCreated: _onMapCreated, compassEnabled: true,
+            onMapCreated: onMapCreated, compassEnabled: true,
             myLocationButtonEnabled: false, zoomControlsEnabled: false,
             mapType: MapType.normal,
 

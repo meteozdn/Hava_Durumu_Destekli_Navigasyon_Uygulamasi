@@ -7,7 +7,7 @@ class SavedRotatesView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Kayıtlı Rotalar"),
+        title: const Text("Kayıtlı Rotalar"),
       ),
     );
   }

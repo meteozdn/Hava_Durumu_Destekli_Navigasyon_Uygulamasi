@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_rx/src/rx_types/rx_types.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/views/components/indicator.dart';
 import 'package:navigationapp/views/components/journey_card.dart';
 
 class JourneyScreen extends StatelessWidget {
-  RxInt _selectedIndex = 0.obs;
+  final RxInt _selectedIndex = 0.obs;
   final PageController _pageviewontroller = PageController();
   JourneyScreen({super.key});
 

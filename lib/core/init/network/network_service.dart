@@ -1,8 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
-import 'package:navigationapp/core/base/ibase_model.dart';
-import 'package:navigationapp/core/constants/enums/methods_enum.dart';
-import 'package:navigationapp/core/init/locale/locale_manager.dart';
 /*
 class NetworkService {
   static final NetworkService _instance = NetworkService._init();

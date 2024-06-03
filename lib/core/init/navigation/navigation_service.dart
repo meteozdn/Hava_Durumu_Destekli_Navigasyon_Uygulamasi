@@ -11,7 +11,7 @@ class NavigationService {
   static List<GetPage> routes = [
     GetPage(
       name: NavigationConstants.message,
-      page: () => MessageView(),
+      page: () => const MessageView(),
     ),
     GetPage(
       name: NavigationConstants.home,

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/controllers/picker_controller/picker_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
-import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/profile/friends.dart';
 import 'package:navigationapp/views/profile/saved_locations.dart';
 import 'package:navigationapp/views/profile/saved_rotates.dart';
@@ -73,7 +71,7 @@ class ProfileView extends StatelessWidget {
                         child: CircleAvatar(
                           backgroundImage: userController.user.value!.image !=
                                   null
-                              ? NetworkImage(userController.user.value!.image!)
+                              ? NetworkImage(userController.user.value!.image)
                               : null,
                           backgroundColor: ColorConstants.pictionBlueColor,
                           radius: 50.h,
@@ -167,7 +165,7 @@ class ProfileView extends StatelessWidget {
                         authController.logout();
                         // Get.back();
                       },
-                      child: ProfileButtons(
+                      child: const ProfileButtons(
                         text: "Çıkış Yap",
                         icon: Icons.logout_sharp,
                         //     func: authController.logout(),
@@ -208,7 +206,7 @@ class ProfileWidgets extends StatelessWidget {
                     ),
               );
             },
-            child: ProfileButtons(
+            child: const ProfileButtons(
               icon: Icons.location_on,
               text: "Kayıtlı Yerler",
               //    func: null,
@@ -228,7 +226,7 @@ class ProfileWidgets extends StatelessWidget {
                     ),
               );
             },
-            child: ProfileButtons(
+            child: const ProfileButtons(
               icon: Icons.route_rounded,
               text: "Kayıtlı Rotalar",
               //    func: null,
@@ -248,7 +246,7 @@ class ProfileWidgets extends StatelessWidget {
                     ),
               );
             },
-            child: ProfileButtons(
+            child: const ProfileButtons(
               icon: Icons.person,
               text: "Arkadaşlar",
               //func: null,
@@ -268,7 +266,7 @@ class ProfileWidgets extends StatelessWidget {
                     ),
               );
             },
-            child: ProfileButtons(
+            child: const ProfileButtons(
               icon: Icons.settings,
               text: "Ayarlar",
               //func: null,
@@ -281,7 +279,7 @@ class ProfileWidgets extends StatelessWidget {
 }
 
 class ProfileButtons extends StatelessWidget {
-  ProfileButtons({
+  const ProfileButtons({
     super.key,
     required this.text,
     required this.icon,
