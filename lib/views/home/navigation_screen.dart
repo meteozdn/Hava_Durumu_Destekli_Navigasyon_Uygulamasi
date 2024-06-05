@@ -24,7 +24,6 @@ class NavigationScreen extends StatelessWidget {
                   controller.mapController = mapController;
                 },
                 polylines: controller.polylines.toSet(),
-                onTap: controller.onMapTapped,
                 zoomControlsEnabled: false,
               )),
           Align(
