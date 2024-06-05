@@ -158,9 +158,10 @@ class CreateRouteView extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   if (originController.text.isNotEmpty &&
-                      destinationController.text.isNotEmpty &&
-                      dateController.text.isNotEmpty) {
-                    Get.find<NavigationController>().fetchRoute(
+                          destinationController.text.isNotEmpty
+                      // && dateController.text.isNotEmpty
+                      ) {
+                    await Get.find<NavigationController>().fetchRoute(
                       origin: originController.text,
                       destination: destinationController.text,
                       //dateTime: dateController.text,
