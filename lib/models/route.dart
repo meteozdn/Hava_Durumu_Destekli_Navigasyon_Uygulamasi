@@ -10,6 +10,7 @@ class Route {
   final GeoPoint destinationLocation;
   final String destinationCity;
   bool isActive;
+  List<String> sharedChatGroups;
   DateTime? startedAt;
   String? startedWeather;
   GeoPoint? location;
@@ -32,6 +33,7 @@ class Route {
       required this.destinationLocation,
       required this.destinationCity,
       required this.isActive,
+      required this.sharedChatGroups,
       this.startedAt,
       this.startedWeather,
       this.location,
@@ -57,6 +59,8 @@ class Route {
       destinationLocation: data["destinationLocation"],
       destinationCity: data["destinationCity"],
       isActive: data["isActive"],
+      sharedChatGroups:
+          (data["sharedChatGroups"] as List<dynamic>).cast<String>(),
       startedAt: data["startedAt"]?.toDate(),
       startedWeather: data["startedWeather"],
       location: data["location"],
@@ -81,6 +85,7 @@ class Route {
         "destinationLocation": destinationLocation,
         "destinationCity": destinationCity,
         "isActive": isActive,
+        "sharedChatGroups": sharedChatGroups,
         "startedAt": startedAt,
         "startedWeather": startedWeather,
         "location": location,
