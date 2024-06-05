@@ -44,7 +44,31 @@ class HomeScreen extends StatelessWidget {
               )
             : FloatingActionButton(
                 onPressed: () {
-                  Get.to(() => CreateRouteView());
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Get.to(() => CreateRouteView(isPlanned: false));
+                            },
+                            child: const Text("Yolculuğa Başla"),
+                          ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Get.to(() => CreateRouteView(isPlanned: true));
+                            },
+                            child: const Text("Yolculuk Planla"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: const Icon(
                   Icons.navigation_rounded,
