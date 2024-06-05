@@ -9,7 +9,6 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/home/journeys/journey_screen.dart';
 import 'package:navigationapp/views/home/navigation/create_route_view.dart';
-import 'package:navigationapp/views/home/navigation/navigation_sheet.dart';
 import 'package:navigationapp/views/home/navigation_screen.dart';
 
 class HomeScreen extends StatelessWidget {
