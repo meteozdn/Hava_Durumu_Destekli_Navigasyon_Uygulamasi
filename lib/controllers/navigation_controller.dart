@@ -9,14 +9,15 @@ import 'dart:convert';
 
 class NavigationController extends GetxController {
   GoogleMapController? mapController;
-  var startingLocation = Rxn<LatLng>();
-  var destinationLocation = Rxn<LatLng>();
+  final RouteController _routeController = Get.find<RouteController>();
+  var currentLocation = Rxn<LatLng>();
+  var startingLocation = <String, dynamic>{};
+  var destinationLocation = <String, dynamic>{};
+  // DateTime dateTime;
   var polylines = <Polyline>[].obs;
   var routePoints = <LatLng>[].obs;
-  final RouteController _routeController = Get.find<RouteController>();
   var originSuggestions = [].obs;
   var destinationSuggestions = [].obs;
-  //var suggestions = [].obs;
   final String apiKey = "AIzaSyDA9541Tfh0jVOTKmYz-nFn03i6Eb9cO4E";
   // final String apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
 
@@ -113,9 +114,9 @@ class NavigationController extends GetxController {
     try {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
-      startingLocation.value = LatLng(position.latitude, position.longitude);
+      currentLocation.value = LatLng(position.latitude, position.longitude);
       mapController
-          ?.animateCamera(CameraUpdate.newLatLng(startingLocation.value!));
+          ?.animateCamera(CameraUpdate.newLatLng(currentLocation.value!));
     } catch (e) {
       Get.snackbar("Error", "Failed to get current location");
     }
@@ -178,45 +179,15 @@ class NavigationController extends GetxController {
     return poly;
   }
 
-  void onMapTapped(LatLng position) {
-    // if (startingLocation.value == null) {
-    //   startingLocation.value = position;
-    // } else {
-    //   destinationLocation.value = position;
-    //   _showRoute();
-    // }
-  }
-
-  // Future<void> _showRoute() async {
-  //   if (startingLocation.value != null && destinationLocation.value != null) {
-  //     // Fetch the route from Google Directions API
-  //     // Here you would call your Google Directions API to get the route
-  //     // For simplicity, let's assume you get a list of LatLng points
-
-  //     List<LatLng> points =
-  //         []; // This should be fetched from Google Directions API
-
-  //     polylines.clear();
-  //     polylines.add(Polyline(
-  //       polylineId: PolylineId("route"),
-  //       points: points,
-  //       color: Colors.blue,
-  //       width: 5,
-  //     ));
-  //   }
-  // }
-
   Future<void> saveRoute() async {
-    if (startingLocation.value != null && destinationLocation.value != null) {
+    if (startingLocation.isNotEmpty && destinationLocation.isNotEmpty) {
       await _routeController.createRoute(
-        startingLocation: GeoPoint(startingLocation.value!.latitude,
-            startingLocation.value!.longitude),
-        startingCity: "Starting City", // Get this dynamically
-        destinationLocation: GeoPoint(destinationLocation.value!.latitude,
-            destinationLocation.value!.longitude),
-        destinationCity: "Destination City", // Get this dynamically
-        dateTime: DateTime.now(),
-        sharedChatGroups: [], // Add the relevant chat groups
+        startingLocation: startingLocation["location"],
+        startingCity: startingLocation["cityName"],
+        destinationLocation: destinationLocation["location"],
+        destinationCity: destinationLocation["cityName"],
+        dateTime: DateTime.now(), //dateTime
+        sharedChatGroups: [],
       );
       Get.snackbar("Success", "Route saved successfully");
     }
