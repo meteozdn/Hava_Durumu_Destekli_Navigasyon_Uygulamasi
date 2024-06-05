@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:navigationapp/controllers/navigation_controller.dart';
 
 class CreateRouteView extends StatelessWidget {
-  CreateRouteView({super.key});
+  CreateRouteView({super.key, required this.isPlanned});
 
   final NavigationController controller = Get.find<NavigationController>();
   final FocusNode startFocusNode = FocusNode();
@@ -11,9 +11,15 @@ class CreateRouteView extends StatelessWidget {
   final dateController = TextEditingController();
   final originController = TextEditingController();
   final destinationController = TextEditingController();
+  final bool isPlanned;
 
   @override
   Widget build(BuildContext context) {
+    if (!isPlanned) {
+      originController.text = "Şimdiki Konum";
+      dateController.text = "Not Applicable";
+    }
+
     startFocusNode.addListener(() {
       if (!startFocusNode.hasFocus) {
         controller.originSuggestions.clear();
@@ -34,6 +40,7 @@ class CreateRouteView extends StatelessWidget {
           child: Column(
             children: [
               TextField(
+                enabled: isPlanned,
                 controller: originController,
                 focusNode: startFocusNode,
                 onChanged: (value) => controller.fetchOriginSuggestions(value),
@@ -103,10 +110,10 @@ class CreateRouteView extends StatelessWidget {
                               .fetchPlaceDetails(suggestion["place_id"]);
                           Get.defaultDialog(
                               middleText:
-                                  "Selected Origin City: ${placeDetails["cityName"]}");
+                                  "Selected Destination City: ${placeDetails["cityName"]}");
                           Get.defaultDialog(
                               middleText:
-                                  "Selected Origin GeoPoint: ${placeDetails["location"].latitude}, ${placeDetails["location"].longitude}");
+                                  "Selected Destination GeoPoint: ${placeDetails["location"].latitude}, ${placeDetails["location"].longitude}");
                           controller.destinationSuggestions.clear();
                         },
                       );
@@ -114,58 +121,64 @@ class CreateRouteView extends StatelessWidget {
                   ),
                 );
               }),
-              TextField(
-                controller: dateController,
-                readOnly: true,
-                onTap: () async {
-                  DateTime? picked = await showDatePicker(
-                    context: context,
-                    initialDate: DateTime.now(),
-                    firstDate: DateTime.now(),
-                    lastDate: DateTime(2100),
-                  );
-                  if (picked != null) {
-                    TimeOfDay? time = await showTimePicker(
+              if (isPlanned)
+                TextField(
+                  controller: dateController,
+                  readOnly: true,
+                  onTap: () async {
+                    DateTime? picked = await showDatePicker(
                       context: context,
-                      initialTime: TimeOfDay.now(),
-                      initialEntryMode: TimePickerEntryMode.dial,
-                      builder: (BuildContext context, Widget? child) {
-                        return MediaQuery(
-                          data: MediaQuery.of(context)
-                              .copyWith(alwaysUse24HourFormat: true),
-                          child: child!,
-                        );
-                      },
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime.now(),
+                      lastDate: DateTime(2100),
                     );
-                    if (time != null) {
-                      picked = DateTime(
-                        picked.year,
-                        picked.month,
-                        picked.day,
-                        time.hour,
-                        time.minute,
+                    if (picked != null) {
+                      TimeOfDay? time = await showTimePicker(
+                        context: context,
+                        initialTime: TimeOfDay.now(),
+                        initialEntryMode: TimePickerEntryMode.dial,
+                        builder: (BuildContext context, Widget? child) {
+                          return MediaQuery(
+                            data: MediaQuery.of(context)
+                                .copyWith(alwaysUse24HourFormat: true),
+                            child: child!,
+                          );
+                        },
                       );
-                      dateController.text = picked.toString().substring(0, 16);
+                      if (time != null) {
+                        picked = DateTime(
+                          picked.year,
+                          picked.month,
+                          picked.day,
+                          time.hour,
+                          time.minute,
+                        );
+                        dateController.text =
+                            picked.toString().substring(0, 16);
+                      }
                     }
-                  }
-                },
-                decoration: const InputDecoration(
-                  labelText: "Gün ve Zaman",
-                  suffixIcon: Icon(Icons.calendar_today),
+                  },
+                  decoration: const InputDecoration(
+                    labelText: "Gün ve Zaman",
+                    suffixIcon: Icon(Icons.calendar_today),
+                  ),
                 ),
-              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   if (originController.text.isNotEmpty &&
-                          destinationController.text.isNotEmpty
-                      // && dateController.text.isNotEmpty
-                      ) {
-                    await Get.find<NavigationController>().fetchRoute(
-                      origin: originController.text,
-                      destination: destinationController.text,
-                      //dateTime: dateController.text,
-                    );
+                      destinationController.text.isNotEmpty) {
+                    if (isPlanned && dateController.text.isNotEmpty) {
+                      await Get.find<NavigationController>().fetchRoute(
+                        origin: originController.text,
+                        destination: destinationController.text,
+                        //dateTime: dateController.text,
+                      );
+                    } else {
+                      await Get.find<NavigationController>().fetchRoute(
+                          origin: originController.text,
+                          destination: destinationController.text);
+                    }
                   }
                   Navigator.pop(context);
                 },
