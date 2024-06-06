@@ -24,7 +24,9 @@ class ProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      //backgroundColor: ColorConstants.greyColor,
       appBar: AppBar(
+        backgroundColor: Colors.grey.withOpacity(0.2),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.w),
@@ -36,19 +38,11 @@ class ProfileView extends StatelessWidget {
                   ),
                 );
               },
-              child: CircleAvatar(
-                radius: 20.r,
-                backgroundColor: ColorConstants.pictionBlueColor,
-                child: CircleAvatar(
-                  radius: 19.r,
-                  backgroundColor: ColorConstants.whiteColor,
-                  child: const Padding(
-                    padding: EdgeInsets.only(left: 1.0),
-                    child: Icon(
-                      Icons.person_add_alt_1,
-                      color: ColorConstants.pictionBlueColor,
-                    ),
-                  ),
+              child: const Padding(
+                padding: EdgeInsets.only(left: 1.0),
+                child: Icon(
+                  Icons.person_add_alt_1,
+                  color: ColorConstants.pictionBlueColor,
                 ),
               ),
             ),
@@ -57,7 +51,7 @@ class ProfileView extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          color: ColorConstants.whiteColor,
+          color: Colors.grey.withOpacity(0.2),
           child: Padding(
             padding: EdgeInsets.only(left: 20.h, right: 20.h),
             child: Column(
@@ -157,8 +151,8 @@ class ProfileView extends StatelessWidget {
                   child: Container(
                     //height: 50.h,
                     decoration: BoxDecoration(
-                      border:
-                          Border.all(color: ColorConstants.pictionBlueColor),
+                      //border:
+                      //   Border.all(color: ColorConstants.pictionBlueColor),
                       borderRadius: BorderRadius.circular(12.r),
                       color: ColorConstants.whiteColor,
                     ),
@@ -194,7 +188,7 @@ class ProfileWidgets extends StatelessWidget {
     return Container(
       // height: 50.h,
       decoration: BoxDecoration(
-        border: Border.all(color: ColorConstants.pictionBlueColor),
+        //  border: Border.all(color: ColorConstants.pictionBlueColor),
         borderRadius: BorderRadius.circular(12.r),
         color: ColorConstants.whiteColor,
       ),
@@ -302,14 +296,21 @@ class ProfileButtons extends StatelessWidget {
               children: [
                 Container(
                     decoration: BoxDecoration(
-                        border: Border.all(
-                            color: ColorConstants.pictionBlueColor, width: 2),
-                        borderRadius: BorderRadius.circular(12.r)),
+                      //   border: Border.all(
+                      //      color: ColorConstants.pictionBlueColor, width: 2),
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
                     child: Padding(
                       padding: EdgeInsets.all(2.0.w),
-                      child: Icon(
-                        icon,
-                        color: ColorConstants.pictionBlueColor,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            color: ColorConstants.greyColor,
+                            border: Border.all(color: ColorConstants.greyColor),
+                            borderRadius: BorderRadius.circular(5.r)),
+                        child: Icon(
+                          icon,
+                          color: ColorConstants.whiteColor,
+                        ),
                       ),
                     )),
                 Padding(
@@ -317,8 +318,8 @@ class ProfileButtons extends StatelessWidget {
                   child: Text(
                     text,
                     style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 18.sp,
+                        //  fontWeight: FontWeight.bold,
                         color: ColorConstants.pictionBlueColor),
                   ),
                 ),
@@ -327,7 +328,7 @@ class ProfileButtons extends StatelessWidget {
           ),
           Icon(
             Icons.navigate_next_rounded,
-            color: ColorConstants.pictionBlueColor,
+            color: ColorConstants.greyColor,
             size: 30.r,
           )
         ],

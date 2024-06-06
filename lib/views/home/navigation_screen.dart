@@ -22,16 +22,6 @@ class _NavigationScreenState extends State<NavigationScreen> {
 
   Set<TileOverlay> _tileOverlays = {};
 
-  initTiles() async {
-    final String overlayId = DateTime.now().millisecondsSinceEpoch.toString();
-    final tileOverlay = TileOverlay(
-        tileOverlayId: TileOverlayId(overlayId),
-        tileProvider: ForecastTileProvider());
-    setState(() {
-      _tileOverlays = {tileOverlay};
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     Set<Marker> markers = {};
