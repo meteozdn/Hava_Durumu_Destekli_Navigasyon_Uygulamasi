@@ -5,6 +5,7 @@ class NavigationConstants {
   static const profileView = "/profile";
   static const message = "/message";
   static const search = "/search";
+  static const weather = "/weather";
 
   //static const changeLanguage = "/changeLanguage";
 }

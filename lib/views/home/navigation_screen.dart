@@ -1,14 +1,18 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/navigation_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/core/constants/navigation_constants.dart';
 
 class NavigationScreen extends StatelessWidget {
   NavigationScreen({super.key});
 
   final NavigationController controller = Get.find<NavigationController>();
+
+  Set<TileOverlay> _tileOverlays = {};
 
   @override
   Widget build(BuildContext context) {
@@ -72,23 +76,28 @@ class ElevatedWidgetButton extends StatelessWidget {
     return Material(
       borderRadius: BorderRadius.circular(10.r),
       elevation: 3.h,
-      child: SizedBox(
-        width: width.w,
-        height: height.h,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            SizedBox(
-                height: 20.w,
-                child: Image.asset(
-                  image,
-                  height: 20.h,
-                )),
-            Text(
-              "$text°",
-              style: AppTextStyle.midBlack,
-            )
-          ],
+      child: GestureDetector(
+        onTap: () {
+          Get.toNamed(NavigationConstants.weather);
+        },
+        child: SizedBox(
+          width: width.w,
+          height: height.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              SizedBox(
+                  height: 20.w,
+                  child: Image.asset(
+                    image,
+                    height: 20.h,
+                  )),
+              Text(
+                "$text°",
+                style: AppTextStyle.midBlack,
+              )
+            ],
+          ),
         ),
       ),
     );
