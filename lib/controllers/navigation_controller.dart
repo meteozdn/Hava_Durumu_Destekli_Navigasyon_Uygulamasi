@@ -189,7 +189,7 @@ class NavigationController extends GetxController {
         dateTime: DateTime.now(), //dateTime
         sharedChatGroups: [],
       );
-      Get.snackbar("Success", "Route saved successfully");
+      //Get.snackbar("Success", "Route saved successfully");
     }
   }
 }
