@@ -1,15 +1,15 @@
-import 'package:animated_expandable_fab/expandable_fab/action_button.dart';
-import 'package:animated_expandable_fab/expandable_fab/expandable_fab.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_connect/http/src/utils/utils.dart';
+import 'package:google_maps_webservice/places.dart';
+import 'package:navigationapp/controllers/navigation_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/home/journeys/journey_screen.dart';
+import 'package:navigationapp/views/home/navigation/create_route_view.dart';
 import 'package:navigationapp/views/home/navigation_screen.dart';
-import 'package:navigationapp/views/home/weather_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -44,7 +44,31 @@ class HomeScreen extends StatelessWidget {
               )
             : FloatingActionButton(
                 onPressed: () {
-                  //Get.toNamed(NavigationConstants.message);
+                  showModalBottomSheet(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Get.to(() => CreateRouteView(isPlanned: false));
+                            },
+                            child: const Text("Yolculuğa Başla"),
+                          ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                              Get.to(() => CreateRouteView(isPlanned: true));
+                            },
+                            child: const Text("Yolculuk Planla"),
+                          ),
+                        ],
+                      );
+                    },
+                  );
                 },
                 child: const Icon(
                   Icons.navigation_rounded,

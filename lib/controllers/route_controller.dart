@@ -5,14 +5,12 @@ import 'package:navigationapp/core/constants/firestore_collections.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/models/chat_group.dart';
 import 'package:navigationapp/models/route.dart';
-import 'package:navigationapp/models/user.dart';
 
 class RouteController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final RxList<Route> _userRoutes = <Route>[].obs;
-  List<Route> get userRoutes => _userRoutes;
-  final RxList<Route> _sharedRoutes = <Route>[].obs;
-  List<Route> get sharedRoutes => _sharedRoutes;
+  final RxList<Route> userRoutes = <Route>[].obs;
+  final RxList<Route> sharedRoutes = <Route>[].obs;
+
   @override
   void onInit() async {
     super.onInit();
@@ -54,11 +52,6 @@ class RouteController extends GetxController {
     } catch (error) {
       throw Exception(error.toString());
     }
-
-    try {} catch (e) {
-      print(e);
-    }
-    print(_sharedRoutes);
   }
 
   Future<void> createRoute(
@@ -66,7 +59,8 @@ class RouteController extends GetxController {
       required String startingCity,
       required GeoPoint destinationLocation,
       required String destinationCity,
-      required DateTime dateTime}) async {
+      required DateTime dateTime,
+      required List<String> sharedChatGroups}) async {
     try {
       // Create auto Id.
       final id = firestore.collection(FirestoreCollections.routes).doc().id;
@@ -83,6 +77,7 @@ class RouteController extends GetxController {
         destinationLocation: destinationLocation,
         destinationCity: destinationCity,
         isActive: false,
+        sharedChatGroups: sharedChatGroups,
       );
       // Save Route to local.
       Get.find<UserController>().user.value!.routes?.add(id);
@@ -106,21 +101,14 @@ class RouteController extends GetxController {
     try {
       String currentUserId = Get.find<UserController>().user.value!.id;
       // Save to firestore.
-      if (isAdding) {
-        await firestore
-            .collection(FirestoreCollections.users)
-            .doc(currentUserId)
-            .update({
-          "routes": FieldValue.arrayUnion([routeId])
-        });
-      } else {
-        await firestore
-            .collection(FirestoreCollections.users)
-            .doc(currentUserId)
-            .update({
-          "routes": FieldValue.arrayRemove([routeId])
-        });
-      }
+      await firestore
+          .collection(FirestoreCollections.users)
+          .doc(currentUserId)
+          .update({
+        "routes": isAdding
+            ? FieldValue.arrayUnion([routeId])
+            : FieldValue.arrayRemove([routeId])
+      });
     } catch (error) {
       throw Exception(error.toString());
     }

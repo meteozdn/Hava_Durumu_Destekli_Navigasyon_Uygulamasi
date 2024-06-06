@@ -107,4 +107,16 @@ class ChatGroupController extends GetxController {
       throw Exception(error.toString());
     }
   }
+
+  Future<void> updateChatGroupPhoto(
+      {required String image, required String chatGroupId}) async {
+    try {
+      firestore
+          .collection(FirestoreCollections.chatGroups)
+          .doc(chatGroupId)
+          .update(({"image": image}));
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
 }

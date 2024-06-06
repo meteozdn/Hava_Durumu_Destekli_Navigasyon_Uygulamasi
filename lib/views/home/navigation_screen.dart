@@ -1,76 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:navigationapp/controllers/map_controller/map_controller.dart';
+import 'package:get/get.dart';
+import 'package:navigationapp/controllers/navigation_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class NavigationScreen extends StatelessWidget {
   NavigationScreen({super.key});
-  final NavigationController _mapController = Get.put(NavigationController());
+
+  final NavigationController controller = Get.find<NavigationController>();
 
   @override
   Widget build(BuildContext context) {
-    RxInt x = 5.obs;
-
-    Set<Marker> markers = {};
-    late GoogleMapController googlemapController;
-    final LatLng _center = LatLng(41.28667, 36.33);
-
-    _onMapCreated(GoogleMapController controller) {
-      googlemapController = controller;
-    }
-
-    return Stack(
-      alignment: Alignment.bottomRight,
-      children: [
-        Obx(() {
-          _mapController.state.value;
-          return GoogleMap(
-            markers: markers,
-            initialCameraPosition: CameraPosition(
-                target: _mapController.currentPositionLL.value != null
-                    ? _mapController.currentPositionLL.value!
-                    : _center,
-                zoom: 7.h),
-            onMapCreated: _onMapCreated, compassEnabled: true,
-            myLocationButtonEnabled: false, zoomControlsEnabled: false,
-            mapType: MapType.normal,
-
-            // mapType: MapType.hybrid,
-            //myLocationButtonEnabled: true,
-          );
-        }),
-        Padding(
-          padding: EdgeInsets.only(bottom: 15.0.h, right: 20.w),
-          child: GestureDetector(
-            child: CircleAvatar(
-              backgroundColor: ColorConstants.pictionBlueColor,
-              radius: 30.r,
-              child: IconButton(
-                  color: ColorConstants.whiteColor,
-                  onPressed: () async {
-                    Position position =
-                        await _mapController.determinePosition();
-
-                    googlemapController.animateCamera(
-                        CameraUpdate.newCameraPosition(CameraPosition(
-                            zoom: 18,
-                            target: LatLng(
-                                position.latitude, position.longitude))));
-                    markers.add(Marker(
-                        markerId: const MarkerId("CurrentId"),
-                        position:
-                            LatLng(position.latitude, position.longitude)));
-                    //print(markers);
-                  },
-                  icon: const Icon(Icons.location_searching_outlined)),
+    return Scaffold(
+      body: Stack(
+        children: [
+          Obx(() => GoogleMap(
+                initialCameraPosition: const CameraPosition(
+                  target: LatLng(41.28667, 36.33),
+                  zoom: 10,
+                ),
+                onMapCreated: (mapController) {
+                  controller.mapController = mapController;
+                },
+                polylines: controller.polylines.toSet(),
+                zoomControlsEnabled: false,
+              )),
+          Align(
+            alignment: Alignment.bottomRight,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: 15.0, right: 20.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  GestureDetector(
+                    child: CircleAvatar(
+                      backgroundColor: ColorConstants.pictionBlueColor,
+                      radius: 30.0,
+                      child: IconButton(
+                          color: ColorConstants.whiteColor,
+                          onPressed: () async {
+                            await controller.getCurrentLocation();
+                          },
+                          icon: const Icon(Icons.location_searching_outlined)),
+                    ),
+                  )
+                ],
+              ),
             ),
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 }
