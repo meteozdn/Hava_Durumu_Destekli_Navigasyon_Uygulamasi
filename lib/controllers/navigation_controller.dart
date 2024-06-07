@@ -2,12 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:navigationapp/models/chat_group.dart';
+
 class NavigationController extends GetxController {
+  final ChatGroupController chatGroupController = Get.find();
   GoogleMapController? mapController;
   final RouteController _routeController = Get.find<RouteController>();
   var currentLocation = Rxn<LatLng>();
@@ -19,12 +23,44 @@ class NavigationController extends GetxController {
   var originSuggestions = [].obs;
   var destinationSuggestions = [].obs;
   final String apiKey = "AIzaSyDA9541Tfh0jVOTKmYz-nFn03i6Eb9cO4E";
+
+  //Yolculuk Planla View
+  RxList<ChatGroup> allChatGroups = <ChatGroup>[].obs;
+  RxSet<int> selectedChatGroups = <int>{}.obs;
+  RxBool isShared = false.obs;
+  RxBool isRotateCreated = false.obs;
+
+  void clearSelected() {
+    selectedChatGroups.clear();
+  }
+
+  void isRotateCreatedController() {
+    isRotateCreated(!isRotateCreated.value);
+  }
+
+  void shareStateChange() {
+    isShared(!isShared.value);
+  }
+
+  void selectUnselectFunc() {
+    if (selectedChatGroups.length == allChatGroups.length) {
+      for (var i = 0; i < allChatGroups.length; i++) {
+        clearSelected();
+      }
+    } else {
+      for (var index = 0; index < allChatGroups.length; index++) {
+        selectedChatGroups.add(index);
+      }
+    }
+  }
+
   // final String apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
 
   @override
   void onInit() {
     super.onInit();
     getCurrentLocation();
+    allChatGroups = chatGroupController.chatGroups;
   }
 
   void fetchOriginSuggestions(String input) async {

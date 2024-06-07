@@ -141,9 +141,8 @@ class WeatherScreenAppBar extends StatelessWidget {
                     fontWeight: FontWeight.bold),
               ),
             )),
-        const SizedBox(
-          width: 50,
-        )
+        IconButton(
+            onPressed: () {}, icon: const Icon(Icons.notification_important))
       ],
     );
   }
