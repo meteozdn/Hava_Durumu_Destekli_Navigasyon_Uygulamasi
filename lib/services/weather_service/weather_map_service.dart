@@ -5,8 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class WeatherMapService implements TileProvider {
-  // final String mapType;
-  final String maptype = WeatherMapTypes.wnd;
+  WeatherMapService({required this.mapType});
+
+  final String mapType;
 //  ForecastTileProvider({required this.mapType});
   @override
   Future<Tile> getTile(int x, int y, int? zoom) async {
@@ -17,13 +18,13 @@ class WeatherMapService implements TileProvider {
       //      "https://tile.openweathermap.org/map/temp_new/$zoom/$x/$y.png?appid=d23f3624098ff746d0953cb3c0640e1b";
 
       final url2 =
-          "http://maps.openweathermap.org/maps/2.0/weather/${maptype}/$zoom/$x/$y?&appid=${AppConstants.openWeatherApiKey}";
+          "http://maps.openweathermap.org/maps/2.0/weather/${mapType}/$zoom/$x/$y?&appid=${AppConstants.openWeatherApiKey}";
       final uri = Uri.parse(url2);
       final imageData = await NetworkAssetBundle(uri).load("");
 
       tileBytes = imageData.buffer.asUint8List();
       http.Response response = await http.get(uri);
-      print(maptype);
+      print(mapType);
       // print(response.headers);
       //print(tileBytes);
     } catch (e) {

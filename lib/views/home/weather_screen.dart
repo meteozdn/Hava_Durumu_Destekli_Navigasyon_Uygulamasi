@@ -86,6 +86,8 @@ class WeatherScreenBottomWidgets extends StatelessWidget {
                     child: PageView(
                       controller: PageController(),
                       onPageChanged: (index) {
+                        mapWeatherController.changePage();
+                        print(index);
                         mapWeatherController.pageViewIndex.value = index;
                       },
                       children: [

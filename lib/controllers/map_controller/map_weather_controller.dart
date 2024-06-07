@@ -4,7 +4,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:navigationapp/controllers/map_controller/map_controller.dart';
+import 'package:navigationapp/controllers/navigation_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/weather/current_weather.dart';
 import 'package:navigationapp/services/weather_service/weather_map_service.dart';
@@ -21,7 +21,7 @@ class MapWeatherController extends GetxController {
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
   final date = DateTime.now();
   final WeathersService weathersService = WeathersService();
-  //final format = DateFormat('yyyy-MM-dd HH:mm', "tr_TR");
+  var pageViewIndex = 0.obs;
   Rx<CurrentWeatherModel> currentWeatherModel =
       Rx<CurrentWeatherModel>(CurrentWeatherModel());
   RxSet<TileOverlay> tileOverlays = <TileOverlay>{}.obs;
@@ -58,24 +58,23 @@ class MapWeatherController extends GetxController {
     return icon;
   }
 
-  var pageViewIndex = 0.obs;
-  indexInc() {
-    pageViewIndex(pageViewIndex.value + 1);
-  }
-
-  indexDown() {
-    pageViewIndex(pageViewIndex.value + -1);
+  changePage() {
+    if (pageViewIndex == 0) {
+      print("sıfır");
+      _setTiles(WeatherMapTypes.ta2);
+    } else if (pageViewIndex == 3) {
+      _setTiles(WeatherMapTypes.wnd);
+    }
   }
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    _initTiles();
+    _setTiles(WeatherMapTypes.ta2);
     getCurrentLocation();
     getCurrentWeather();
     currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
         center.longitude, center.longitude);
-    // _initTiles();
     load();
   }
 
@@ -83,8 +82,8 @@ class MapWeatherController extends GetxController {
     markers.add(Marker(
         icon: BitmapDescriptor.defaultMarkerWithHue(30),
         markerId: const MarkerId("CurrentId"),
-        position: _navigationController.currentPositionLL.value != null
-            ? _navigationController.currentPositionLL.value!
+        position: _navigationController.currentLocation.value != null
+            ? _navigationController.currentLocation.value!
             : center));
     load();
   }
@@ -92,7 +91,7 @@ class MapWeatherController extends GetxController {
   late GoogleMapController googlemapController;
   onMapCreated(GoogleMapController controller) async {
     googlemapController = controller;
-    _initTiles();
+    //  _setTiles();
     _applyMapStyle();
     load();
   }
@@ -101,11 +100,14 @@ class MapWeatherController extends GetxController {
     weatherService.fetchCurrentWeatherData(41.32859, 36.2846729);
   }
 
-  _initTiles() {
+  _setTiles(String mapType) {
+    print(tileOverlays);
+    // tileOverlays.clear();
     final String overlayId = DateTime.now().millisecondsSinceEpoch.toString();
     final tileOverlay = TileOverlay(
         tileOverlayId: TileOverlayId(overlayId),
-        tileProvider: WeatherMapService());
+        tileProvider: WeatherMapService(mapType: mapType));
+    //print(tileOverlays.);
 
     tileOverlays = {tileOverlay}.obs;
     load();

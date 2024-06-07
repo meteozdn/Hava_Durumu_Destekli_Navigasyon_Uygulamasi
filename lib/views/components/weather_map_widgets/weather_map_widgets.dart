@@ -616,7 +616,7 @@ class NowTemp extends StatelessWidget {
     return Obx(() {
       _mapWeatherController.load();
       return _mapWeatherController.currentWeatherModel.value.main == null
-          ? Center(child: const CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator())
           : Column(
               children: [
                 Padding(
