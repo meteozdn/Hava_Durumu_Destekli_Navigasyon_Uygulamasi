@@ -17,8 +17,8 @@ class MapWeatherController extends GetxController {
   final LatLng center = const LatLng(41.32859, 36.2846729);
   RxSet<Marker> markers = <Marker>{}.obs;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
-  final WeathersService weatherService = WeathersService();
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
+  final WeathersService weatherService = WeathersService();
   final date = DateTime.now();
   final WeathersService weathersService = WeathersService();
   var pageViewIndex = 0.obs;
@@ -86,6 +86,10 @@ class MapWeatherController extends GetxController {
             ? _navigationController.currentLocation.value!
             : center));
     load();
+  }
+
+  getAllerts() {
+    weatherService.fetchAllertWeatherData();
   }
 
   late GoogleMapController googlemapController;

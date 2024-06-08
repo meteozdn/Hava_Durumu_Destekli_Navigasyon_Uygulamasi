@@ -8,8 +8,8 @@ import 'package:navigationapp/models/route.dart';
 
 class RouteController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final RxList<Route> userRoutes = <Route>[].obs;
-  final RxList<Route> sharedRoutes = <Route>[].obs;
+  final RxList<RouteModel> userRoutes = <RouteModel>[].obs;
+  final RxList<RouteModel> sharedRoutes = <RouteModel>[].obs;
 
   @override
   void onInit() async {
@@ -30,7 +30,7 @@ class RouteController extends GetxController {
             .doc(id)
             .get();
         // Create Route model.
-        Route route = Route.fromFirestore(snapshot);
+        RouteModel route = RouteModel.fromFirestore(snapshot);
         userRoutes.add(route);
       }
       // Get shared routes Ids from chatGroups
@@ -46,7 +46,7 @@ class RouteController extends GetxController {
             .doc(id)
             .get();
         // Create Route model.
-        Route route = Route.fromFirestore(snapshot);
+        RouteModel route = RouteModel.fromFirestore(snapshot);
         sharedRoutes.add(route);
       }
     } catch (error) {
@@ -65,7 +65,7 @@ class RouteController extends GetxController {
       // Create auto Id.
       final id = firestore.collection(FirestoreCollections.routes).doc().id;
       // Create Route model.
-      Route route = Route(
+      RouteModel route = RouteModel(
         id: id,
         ownerId: Get.find<UserController>().user.value!.id,
         userImage: Get.find<UserController>().user.value?.image,

@@ -121,6 +121,49 @@ class WeatherScreenAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    _showAlertDialog() {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Doğal Afetler'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Column(
+                      children: [
+                        Image.asset(
+                          ImageConst.disaster,
+                          width: 100.w,
+                        ),
+                        Text(
+                          "Çevrenizde Kritik\nDurum Yok",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 15.sp, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Tamam'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -142,7 +185,12 @@ class WeatherScreenAppBar extends StatelessWidget {
               ),
             )),
         IconButton(
-            onPressed: () {}, icon: const Icon(Icons.notification_important))
+            onPressed: () {
+              final MapWeatherController weatherScreenController = Get.find();
+              weatherScreenController.getAllerts();
+              _showAlertDialog();
+            },
+            icon: const Icon(Icons.notification_important))
       ],
     );
   }

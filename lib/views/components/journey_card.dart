@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
-import 'package:navigationapp/models/user.dart';
+import 'package:navigationapp/core/constants/navigation_constants.dart';
+import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/views/components/rotate_line.dart';
+import 'package:navigationapp/views/home/journeys/journeys.detail.dart';
 
 class JourneyWidget extends StatelessWidget {
   JourneyWidget({
@@ -19,7 +19,10 @@ class JourneyWidget extends StatelessWidget {
     required this.time,
     required this.isMY,
     this.userImage,
+    // required this.index,
+    required this.route,
   });
+  final RouteModel route;
   final String startCity;
   final String endCity;
   final DateTime startDate;
@@ -85,6 +88,7 @@ class JourneyWidget extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.all(10.0.w),
                         child: Text(
+                          //route.sharedChatGroups
                           user,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 17.sp),
@@ -160,7 +164,9 @@ class JourneyWidget extends StatelessWidget {
                                       ? ColorConstants.pastelMagentaColor
                                       : ColorConstants.pictionBlueColor,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Get.to(() => JourneyDetail(route: route));
+                                },
                                 child: const Icon(
                                   Icons.navigate_next,
                                   color: ColorConstants.whiteColor,
