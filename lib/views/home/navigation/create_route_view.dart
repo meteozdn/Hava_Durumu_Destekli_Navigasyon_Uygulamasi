@@ -17,6 +17,9 @@ class CreateRouteView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (!controller.isRotateCreated.value) {
+      controller.clearSelected();
+    }
     if (!isPlanned) {
       originController.text = "Şimdiki Konum";
       dateController.text = "Not Applicable";
@@ -80,12 +83,10 @@ class CreateRouteView extends StatelessWidget {
                           originController.text = suggestion["description"];
                           final placeDetails = await controller
                               .fetchPlaceDetails(suggestion["place_id"]);
-                          Get.defaultDialog(
-                              middleText:
-                                  "Selected Origin City: ${placeDetails["cityName"]}");
-                          Get.defaultDialog(
-                              middleText:
-                                  "Selected Origin GeoPoint: ${placeDetails["location"].latitude}, ${placeDetails["location"].longitude}");
+                          controller.startingLocation["cityName"] =
+                              placeDetails["cityName"];
+                          controller.startingLocation["location"] =
+                              placeDetails["location"];
                           controller.originSuggestions.clear();
                         },
                       );
@@ -103,6 +104,7 @@ class CreateRouteView extends StatelessWidget {
                   border: OutlineInputBorder(),
                 ),
               ),
+              const SizedBox(height: 10),
               Obx(() {
                 return ConstrainedBox(
                   constraints: BoxConstraints(
@@ -121,12 +123,10 @@ class CreateRouteView extends StatelessWidget {
                               suggestion["description"];
                           final placeDetails = await controller
                               .fetchPlaceDetails(suggestion["place_id"]);
-                          Get.defaultDialog(
-                              middleText:
-                                  "Selected Destination City: ${placeDetails["cityName"]}");
-                          Get.defaultDialog(
-                              middleText:
-                                  "Selected Destination GeoPoint: ${placeDetails["location"].latitude}, ${placeDetails["location"].longitude}");
+                          controller.destinationLocation["cityName"] =
+                              placeDetails["cityName"];
+                          controller.destinationLocation["location"] =
+                              placeDetails["location"];
                           controller.destinationSuggestions.clear();
                         },
                       );
@@ -227,17 +227,18 @@ class CreateRouteView extends StatelessWidget {
                         await Get.find<NavigationController>().fetchRoute(
                           origin: originController.text,
                           destination: destinationController.text,
-                          //dateTime: dateController.text,
+                          dateTime: dateController.text,
                         );
                         controller.isRotateCreatedController();
                       } else {
                         await Get.find<NavigationController>().fetchRoute(
                             origin: originController.text,
-                            destination: destinationController.text);
+                            destination: destinationController.text,
+                            dateTime: "");
                         controller.isRotateCreatedController();
                       }
                     }
-                    controller.clearSelected();
+
                     Navigator.pop(context);
                   },
                   child: const Text("Rotayı Görüntüle"),
