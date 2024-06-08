@@ -81,12 +81,8 @@ class CreateRouteView extends StatelessWidget {
                         title: Text(suggestion["description"]),
                         onTap: () async {
                           originController.text = suggestion["description"];
-                          final placeDetails = await controller
-                              .fetchPlaceDetails(suggestion["place_id"]);
-                          controller.startingLocation["cityName"] =
-                              placeDetails["cityName"];
-                          controller.startingLocation["location"] =
-                              placeDetails["location"];
+                          controller.startingLocation = await controller
+                              .setCityNameAndLocation(originController.text);
                           controller.originSuggestions.clear();
                         },
                       );
@@ -121,12 +117,9 @@ class CreateRouteView extends StatelessWidget {
                         onTap: () async {
                           destinationController.text =
                               suggestion["description"];
-                          final placeDetails = await controller
-                              .fetchPlaceDetails(suggestion["place_id"]);
-                          controller.destinationLocation["cityName"] =
-                              placeDetails["cityName"];
-                          controller.destinationLocation["location"] =
-                              placeDetails["location"];
+                          controller.destinationLocation =
+                              await controller.setCityNameAndLocation(
+                                  destinationController.text);
                           controller.destinationSuggestions.clear();
                         },
                       );
@@ -170,6 +163,8 @@ class CreateRouteView extends StatelessWidget {
                           );
                           dateController.text =
                               picked.toString().substring(0, 16);
+                          controller.dateTime =
+                              DateTime.parse(dateController.text);
                         }
                       }
                     },
@@ -224,21 +219,22 @@ class CreateRouteView extends StatelessWidget {
                     if (originController.text.isNotEmpty &&
                         destinationController.text.isNotEmpty) {
                       if (isPlanned && dateController.text.isNotEmpty) {
-                        await Get.find<NavigationController>().fetchRoute(
-                          origin: originController.text,
-                          destination: destinationController.text,
-                          dateTime: dateController.text,
-                        );
-                        controller.isRotateCreatedController();
+                        await controller.getPolylinePoints().then((points) {
+                          controller.generatePolylineFromPoints(points: points);
+                        });
                       } else {
-                        await Get.find<NavigationController>().fetchRoute(
-                            origin: originController.text,
-                            destination: destinationController.text,
-                            dateTime: "");
-                        controller.isRotateCreatedController();
+                        await controller.getCurrentLocation();
+                        controller.startingLocation["cityName"] =
+                            controller.currentCity.value;
+                        controller.startingLocation["location"] =
+                            controller.currentLocation.value;
+                        controller.dateTime = DateTime.now();
+                        await controller.getPolylinePoints().then((points) {
+                          controller.generatePolylineFromPoints(points: points);
+                        });
                       }
                     }
-
+                    controller.isRotateCreatedController();
                     Navigator.pop(context);
                   },
                   child: const Text("Rotayı Görüntüle"),
