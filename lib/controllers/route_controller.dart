@@ -52,7 +52,6 @@ class RouteController extends GetxController {
           //&& !sharedRoutes.contains(route)
           sharedRoutes.add(route);
         }
-        sharedRoutes.add(route);
       }
     } catch (error) {
       throw Exception(error.toString());
