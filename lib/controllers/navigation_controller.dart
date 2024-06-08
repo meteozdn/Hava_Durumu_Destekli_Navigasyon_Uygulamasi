@@ -17,7 +17,7 @@ class NavigationController extends GetxController {
   var currentLocation = Rxn<LatLng>();
   var startingLocation = <String, dynamic>{};
   var destinationLocation = <String, dynamic>{};
-  // DateTime dateTime;
+  DateTime dateTime = DateTime.now();
   var polylines = <Polyline>[].obs;
   var routePoints = <LatLng>[].obs;
   var originSuggestions = [].obs;
@@ -53,8 +53,6 @@ class NavigationController extends GetxController {
       }
     }
   }
-
-  // final String apiKey = "YOUR_GOOGLE_MAPS_API_KEY";
 
   @override
   void onInit() {
@@ -121,7 +119,7 @@ class NavigationController extends GetxController {
 
       String cityName = "Bilinmeyen";
       GeoPoint location = const GeoPoint(0.0, 0.0);
-      // Extract city name
+      // Extract city name.
       if (result["address_components"] != null) {
         for (var component in result["address_components"]) {
           if (component["types"].contains("locality") ||
@@ -132,7 +130,7 @@ class NavigationController extends GetxController {
           }
         }
       }
-      // Extract location
+      // Extract location.
       if (result["geometry"] != null &&
           result["geometry"]["location"] != null) {
         final lat = result["geometry"]["location"]["lat"];
@@ -159,7 +157,9 @@ class NavigationController extends GetxController {
   }
 
   Future<void> fetchRoute(
-      {required String origin, required String destination}) async {
+      {required String origin,
+      required String destination,
+      required String dateTime}) async {
     try {
       final String url =
           "https://maps.googleapis.com/maps/api/directions/json?origin=$origin&destination=$destination&key=$apiKey";
@@ -177,6 +177,7 @@ class NavigationController extends GetxController {
             color: Colors.black,
             width: 5,
           ));
+          this.dateTime = DateTime.parse(dateTime);
         } else {
           Get.snackbar("Error", "No routes found");
         }
@@ -217,15 +218,18 @@ class NavigationController extends GetxController {
 
   Future<void> saveRoute() async {
     if (startingLocation.isNotEmpty && destinationLocation.isNotEmpty) {
+      List<String> sharedChatGroups = [];
+      for (var index in selectedChatGroups) {
+        sharedChatGroups.add(allChatGroups[index].id);
+      }
       await _routeController.createRoute(
         startingLocation: startingLocation["location"],
         startingCity: startingLocation["cityName"],
         destinationLocation: destinationLocation["location"],
         destinationCity: destinationLocation["cityName"],
-        dateTime: DateTime.now(), //dateTime
-        sharedChatGroups: [],
+        dateTime: dateTime,
+        sharedChatGroups: sharedChatGroups,
       );
-      //Get.snackbar("Success", "Route saved successfully");
     }
   }
 }
