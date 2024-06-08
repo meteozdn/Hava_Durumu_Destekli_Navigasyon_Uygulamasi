@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/friend_request_controller.dart';
+import 'package:navigationapp/controllers/journey_controller.dart';
 import 'package:navigationapp/controllers/navigation_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
@@ -53,6 +54,7 @@ class MainScreen extends StatelessWidget {
     Get.put(RouteController());
     Get.put(FriendRequestController());
     Get.put(NavigationController());
+    Get.put(JourneyController());
   }
 
   Widget _buildLoadingScreen() {

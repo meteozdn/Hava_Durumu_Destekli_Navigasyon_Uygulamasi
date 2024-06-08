@@ -10,6 +10,7 @@ class RouteController extends GetxController {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   final RxList<RouteModel> userRoutes = <RouteModel>[].obs;
   final RxList<RouteModel> sharedRoutes = <RouteModel>[].obs;
+  UserController userController = Get.find<UserController>();
 
   @override
   void onInit() async {
@@ -22,7 +23,7 @@ class RouteController extends GetxController {
       userRoutes.clear();
       sharedRoutes.clear();
       // Store routes in local.
-      List<String> ids = Get.find<UserController>().user.value!.routes ?? [];
+      List<String> ids = userController.user.value!.routes ?? [];
       // Get routes from firestore.
       for (String id in ids) {
         DocumentSnapshot snapshot = await firestore
@@ -39,7 +40,7 @@ class RouteController extends GetxController {
       for (ChatGroup chatGroup in chatGroups) {
         sharedIds.addAll(chatGroup.sharedRoutes);
       }
-      // Get routes from firestore.
+      // Get shared routes from firestore.
       for (String id in sharedIds) {
         DocumentSnapshot snapshot = await firestore
             .collection(FirestoreCollections.routes)
@@ -47,6 +48,10 @@ class RouteController extends GetxController {
             .get();
         // Create Route model.
         RouteModel route = RouteModel.fromFirestore(snapshot);
+        if (route.ownerId != userController.user.value!.id) {
+          //&& !sharedRoutes.contains(route)
+          sharedRoutes.add(route);
+        }
         sharedRoutes.add(route);
       }
     } catch (error) {
