@@ -41,6 +41,7 @@ class NavigationScreen extends StatelessWidget {
                       ? GestureDetector(
                           onTap: () {
                             //rota silinecek
+                            controller.polylines.clear();
                             controller.isRotateCreatedController();
                           },
                           child: Material(
@@ -66,6 +67,7 @@ class NavigationScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () {
                       controller.isRotateCreatedController();
+                      controller.saveRoute();
                     },
                     child: Material(
                       borderRadius: BorderRadius.circular(10),
