@@ -9,7 +9,7 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/views/home/journeys/journey_screen.dart';
 import 'package:navigationapp/views/home/navigation/create_route_view.dart';
-import 'package:navigationapp/views/home/navigation_screen.dart';
+import 'package:navigationapp/views/home/navigation/navigation_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -47,25 +47,67 @@ class HomeScreen extends StatelessWidget {
                   showModalBottomSheet(
                     context: context,
                     builder: (BuildContext context) {
-                      return Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Get.to(() => CreateRouteView(isPlanned: false));
-                            },
-                            child: const Text("Yolculuğa Başla"),
+                      return SizedBox(
+                        width: 500.h,
+                        height: 200.h,
+                        child: Center(
+                          child: Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              //  mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        Get.to(() =>
+                                            CreateRouteView(isPlanned: false));
+                                      },
+                                      icon: Icon(
+                                        Icons.navigation,
+                                        size: 50.r,
+                                      ),
+                                    ),
+                                    Text(
+                                      "Güvenli\nSürüş",
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyle.midBlack,
+                                    )
+                                  ],
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 50.0),
+                                  child: VerticalDivider(
+                                    width: 2,
+                                  ),
+                                ),
+                                //  const SizedBox(height: 10),
+                                Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        Get.to(() =>
+                                            CreateRouteView(isPlanned: true));
+                                      },
+                                      icon: Icon(Icons.watch_later, size: 50.r),
+                                    ),
+                                    Text(
+                                      "Sürüş\nPlanla",
+                                      textAlign: TextAlign.center,
+                                      style: AppTextStyle.midBlack,
+                                    )
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(height: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                              Get.to(() => CreateRouteView(isPlanned: true));
-                            },
-                            child: const Text("Yolculuk Planla"),
-                          ),
-                        ],
+                        ),
                       );
                     },
                   );

@@ -3,12 +3,19 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 
 class ProjectIndicator extends StatelessWidget {
   final bool isActive;
-  const ProjectIndicator({
+  final int? index;
+  Color? firstColor;
+  Color? secondColor;
+  bool? isTwo;
+
+  ProjectIndicator({
     super.key,
     required this.isActive,
+    this.firstColor = ColorConstants.blackColor,
+    this.secondColor = ColorConstants.redColor,
+    this.isTwo = false,
     this.index,
   });
-  final int? index;
 
   @override
   Widget build(BuildContext context) {
@@ -18,13 +25,17 @@ class ProjectIndicator extends StatelessWidget {
       width: isActive ? 40.0 : 10.0,
       height: 10.0,
       decoration: BoxDecoration(
-          color: index == 0
+          color: !isTwo!
               ? isActive
-                  ? ColorConstants.pastelMagentaColor
-                  : ColorConstants.pictionBlueColor
-              : isActive
-                  ? ColorConstants.pictionBlueColor
-                  : ColorConstants.pastelMagentaColor,
+                  ? firstColor
+                  : secondColor
+              : index == 0
+                  ? isActive
+                      ? secondColor
+                      : firstColor
+                  : isActive
+                      ? firstColor
+                      : secondColor,
           borderRadius: BorderRadius.circular(8)),
     );
   }
