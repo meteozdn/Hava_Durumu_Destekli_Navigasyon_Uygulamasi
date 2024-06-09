@@ -68,6 +68,7 @@ class NavigationScreen extends StatelessWidget {
                     onTap: () {
                       controller.isRotateCreatedController();
                       controller.saveRoute();
+                      controller.polylines.clear();
                     },
                     child: Material(
                       borderRadius: BorderRadius.circular(10),
