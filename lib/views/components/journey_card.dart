@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,7 +31,9 @@ class JourneyWidget extends StatelessWidget {
   final String user;
   final String time;
   final bool isMY;
-  final DateFormat formatterDate = DateFormat('dd.mm.yyyy', 'tr_TR');
+  final DateFormat formatterDate = DateFormat('dd MM yyyy', 'tr_TR');
+  final DateFormat formatterDateDay = DateFormat('dd MMMM', 'tr_TR');
+
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
   final String? userImage;
   @override
@@ -71,9 +74,8 @@ class JourneyWidget extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 17.h,
 
-                            backgroundImage: userImage != null
-                                ? NetworkImage(userImage!)
-                                : null,
+                            backgroundImage:
+                                CachedNetworkImageProvider(userImage!),
                             backgroundColor: ColorConstants.pictionBlueColor,
                             // radius: 50.h,
                             child: userImage == null
@@ -95,10 +97,10 @@ class JourneyWidget extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 35.0.w),
+                        padding: EdgeInsets.only(left: 50.0.w),
                         child: Text(
                           textAlign: TextAlign.center,
-                          formatterDate.format(startDate),
+                          formatterDateDay.format(startDate),
                           style: TextStyle(
                             fontSize: 13.sp,
                           ),
@@ -128,7 +130,7 @@ class JourneyWidget extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.sp),
                               ),
                               Text(
-                                formatterHour.format(startDate),
+                                formatterDate.format(startDate),
                                 style: TextStyle(fontSize: 12.sp),
                               ),
                             ],

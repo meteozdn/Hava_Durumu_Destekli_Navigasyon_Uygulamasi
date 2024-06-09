@@ -37,7 +37,7 @@ class JourneyDetail extends StatelessWidget {
                   borderRadius: BorderRadius.circular(15),
                   //    color: ColorConstants.redColor,
                 ),
-                height: 350,
+                height: 380,
                 width: 350,
                 child: Column(
                   children: [

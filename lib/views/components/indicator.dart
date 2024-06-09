@@ -25,14 +25,14 @@ class ProjectIndicator extends StatelessWidget {
       width: isActive ? 40.0 : 10.0,
       height: 10.0,
       decoration: BoxDecoration(
-          color: !isTwo!
+          color: isTwo!
               ? isActive
                   ? firstColor
                   : secondColor
               : index == 0
                   ? isActive
-                      ? secondColor
-                      : firstColor
+                      ? firstColor
+                      : secondColor
                   : isActive
                       ? firstColor
                       : secondColor,

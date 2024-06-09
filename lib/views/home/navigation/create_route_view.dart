@@ -237,7 +237,10 @@ class CreateRouteView extends StatelessWidget {
                     controller.isRotateCreatedController();
                     Navigator.pop(context);
                   },
-                  child: const Text("Rotayı Görüntüle"),
+                  child: const Text(
+                    "Rotayı Görüntüle",
+                    style: TextStyle(color: ColorConstants.whiteColor),
+                  ),
                 ),
               ),
             ],

@@ -51,9 +51,11 @@ class ChatView extends StatelessWidget {
       }
 
       return ListView.builder(
+        reverse: true,
         itemCount: chatController.messages.length,
         itemBuilder: (context, index) {
           Message message = chatController.messages[index];
+          message.sentAt;
           //   return _buildMessageItem(message);
           return _ChatBubble(
             message: message,
@@ -156,8 +158,8 @@ class _ChatBubble extends StatelessWidget {
       SizedBox(width: 12.w),
       Flexible(
         child: Material(
-          shadowColor: ColorConstants.greyColor,
-          elevation: 4,
+          // shadowColor: ColorConstants.whiteColor,
+          elevation: 10,
           borderRadius: isMine ? myBorder : senderBorder,
           child: Container(
             padding: EdgeInsets.symmetric(
@@ -167,7 +169,7 @@ class _ChatBubble extends StatelessWidget {
             decoration: BoxDecoration(
                 color: isMine
                     ? ColorConstants.lightBlue
-                    : ColorConstants.greyColor,
+                    : ColorConstants.whiteColor,
                 borderRadius: isMine ? myBorder : senderBorder,
                 border: Border.all(
                     color: isMine
