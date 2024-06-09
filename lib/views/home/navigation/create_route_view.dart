@@ -129,7 +129,7 @@ class CreateRouteView extends StatelessWidget {
               }),
               if (isPlanned)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: 30.0.h),
                   child: TextField(
                     controller: dateController,
                     readOnly: true,
@@ -237,7 +237,10 @@ class CreateRouteView extends StatelessWidget {
                     controller.isRotateCreatedController();
                     Navigator.pop(context);
                   },
-                  child: const Text("Rotayı Görüntüle"),
+                  child: const Text(
+                    "Rotayı Görüntüle",
+                    style: TextStyle(color: ColorConstants.whiteColor),
+                  ),
                 ),
               ),
             ],

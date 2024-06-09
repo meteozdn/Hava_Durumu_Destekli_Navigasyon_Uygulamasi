@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,7 +31,7 @@ class HomeScreen extends StatelessWidget {
 
     return Obx(() {
       return Scaffold(
-        backgroundColor: Colors.white,
+        //  backgroundColor: Colors.white,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         floatingActionButton: _index.value == 1
             ? FloatingActionButton(
@@ -201,10 +202,8 @@ class HomeScreen extends StatelessWidget {
                       child: CircleAvatar(
                         radius: 18.h,
 
-                        backgroundImage: userController.user.value!.image !=
-                                null
-                            ? NetworkImage(userController.user.value!.image!)
-                            : null,
+                        backgroundImage: CachedNetworkImageProvider(
+                            userController.user.value!.image),
                         backgroundColor: ColorConstants.pictionBlueColor,
                         // radius: 50.h,
                         child: userController.user.value!.image == null
@@ -228,7 +227,7 @@ class HomeScreen extends StatelessWidget {
 
   NavigationBar bottomNav() {
     return NavigationBar(
-      shadowColor: Colors.transparent, backgroundColor: Colors.white,
+      shadowColor: Colors.transparent,
       elevation: 0,
       height: 55.h,
       //  backgroundColor: ProjectColors.paleCornflowerBlue,
