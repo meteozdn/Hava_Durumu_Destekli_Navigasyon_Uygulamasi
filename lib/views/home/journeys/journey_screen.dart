@@ -65,6 +65,7 @@ class JourneyScreen extends StatelessWidget {
                               borderRadius: BorderRadius.circular(20.r),
                               elevation: 10.h,
                               child: JourneyWidget(
+                                route: controller.userRoutes[index],
                                 isMY: true,
                                 startCity:
                                     controller.userRoutes[index].startingCity,
@@ -100,6 +101,7 @@ class JourneyScreen extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(20.r),
                                 elevation: 10.h,
                                 child: JourneyWidget(
+                                  route: controller.sharedRoutes[index],
                                   isMY: false,
                                   startCity: controller
                                       .sharedRoutes[index].startingCity,

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Route {
+class RouteModel {
   final String id;
   final String ownerId;
   final String ownerName;
@@ -23,7 +23,7 @@ class Route {
   DateTime? estimatedFinishTime;
   String? estimatedFinishTimeWeather;
 
-  Route(
+  RouteModel(
       {required this.id,
       required this.ownerId,
       required this.ownerName,
@@ -46,9 +46,9 @@ class Route {
       this.userImage,
       this.estimatedFinishTimeWeather});
 
-  factory Route.fromFirestore(DocumentSnapshot doc) {
+  factory RouteModel.fromFirestore(DocumentSnapshot doc) {
     Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-    return Route(
+    return RouteModel(
       id: data["id"],
       ownerId: data["ownerId"],
       ownerName: data["ownerName"],

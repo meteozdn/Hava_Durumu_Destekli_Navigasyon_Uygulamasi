@@ -44,15 +44,32 @@ class WeathersService {
       double lan, double lat) async {
     try {
       final url =
-          "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lan&appid=${AppConstants.openWeatherApiKey}";
+          "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lan&units=metric&appid=${AppConstants.openWeatherApiKey}";
       final uri = Uri.parse(url);
       http.Response response = await http.get(uri);
       String data = response.body;
       print(response.body);
       return CurrentWeatherModel.fromRawJson(data);
     } catch (e) {
-      print(e);
+      // print(e);
       return CurrentWeatherModel();
+    }
+
+    // return Tile(256, 256, tileBytes);
+  }
+
+  Future<void> fetchAllertWeatherData() async {
+    try {
+      final url =
+          "https://api.weatherbit.io/v2.0/alerts?lat=41.279703&lon=36.336067&key=${AppConstants.weatherBitApiKey}";
+      final uri = Uri.parse(url);
+      http.Response response = await http.get(uri);
+      String data = response.body;
+      print(response.body);
+      //  return CurrentWeatherModel.fromRawJson(data);
+    } catch (e) {
+      print(e);
+      //   return CurrentWeatherModel();
     }
 
     // return Tile(256, 256, tileBytes);

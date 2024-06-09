@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
+import 'package:navigationapp/controllers/journey_controller.dart';
 import 'package:navigationapp/controllers/map_controller/map_weather_controller.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/weather_screen_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
@@ -86,8 +88,8 @@ class WeatherScreenBottomWidgets extends StatelessWidget {
                     child: PageView(
                       controller: PageController(),
                       onPageChanged: (index) {
-                        mapWeatherController.changePage();
-                        print(index);
+                        // mapWeatherController.changePage();
+                        //  print(index);
                         mapWeatherController.pageViewIndex.value = index;
                       },
                       children: [
@@ -121,6 +123,56 @@ class WeatherScreenAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final JourneyController controller = Get.find();
+
+    _showAlertDialog() {
+      final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
+
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: false, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: const Text('Doğal Afetler'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: Column(
+                      children: [
+                        //   Image.asset(
+                        //    ImageConst.disaster,
+                        //   width: 100.w,
+                        //  ),
+                        Text(
+                          //   "Çevrenizde Kritik\nDurum Yok",
+
+                          "${controller.weatherData["data"][0]} \n ${formatterHour.format(DateTime.now().add(const Duration(minutes: 15)))} "
+                              .toString(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 15.sp, fontWeight: FontWeight.bold),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Tamam'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -142,7 +194,15 @@ class WeatherScreenAppBar extends StatelessWidget {
               ),
             )),
         IconButton(
-            onPressed: () {}, icon: const Icon(Icons.notification_important))
+            onPressed: () async {
+              await controller.fetchWeatherData(41.28667, 36.33,
+                  DateTime.now().add(const Duration(minutes: 15)));
+              _showAlertDialog();
+              // final MapWeatherController weatherScreenController = Get.find();
+              // weatherScreenController.getAllerts();
+              //  _showAlertDialog();
+            },
+            icon: const Icon(Icons.notification_important))
       ],
     );
   }

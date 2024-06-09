@@ -14,25 +14,18 @@ class MessageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Get.to(() => CreateGroupView());
+        },
+        child: const Icon(
+          Icons.message,
+          color: ColorConstants.whiteColor,
+        ),
+      ),
       appBar: AppBar(
-        backgroundColor: ColorConstants.whiteColor,
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 30.0),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: ColorConstants.pictionBlueColor,
-              ),
-              onPressed: () {
-                Get.to(() => CreateGroupView());
-              },
-              child: const Icon(
-                Icons.message,
-                color: ColorConstants.whiteColor,
-              ),
-            ),
-          )
-        ],
+        title: Text("Mesajlar"),
+        //backgroundColor: ColorConstants.whiteColor,
       ),
       body: Column(
         children: [

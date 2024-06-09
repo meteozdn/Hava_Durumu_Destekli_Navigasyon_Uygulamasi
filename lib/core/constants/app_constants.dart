@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class AppConstants {
   static const String appName = 'Navi App';
   static String openWeatherApiKey = 'd23f3624098ff746d0953cb3c0640e1b';
-  //static String openWeatherApiKey = '73e9da68f37de14125b5fb8e7bfb0efe';
+  static String weatherBitApiKey = 'aab6d70cac1f4119ade84672d50f0618';
 
   // static const int responseTimeout = 60;
   // static int? userType;
@@ -39,6 +39,7 @@ class ColorConstants {
   static const Color purpleColor = Color(0xFF7C5DA4);
   static const Color blackPurpleColor = Color(0xFF3D2E6B);
   static const Color leftPlateColor = Color(0xFFF8BA43);
+  static const Color lightGrey = Color(0xFFECECEC);
 
   static const Color greenColor = Color(0xFF8EC148);
   static const Color yellow = Color(0xFFFFFF00);
@@ -67,6 +68,7 @@ class Animations {
 
 class IconsConst {
   static const root = "lib/assets/icons/";
+  static const friends = "lib/assets/icons/friends.png";
 
   static const blackNavigateIcon = "lib/assets/icons/navigate.png";
   static const windIcon = "lib/assets/icons/wind.png";
@@ -79,4 +81,5 @@ class ImageConst {
   static const sad = "lib/assets/images/sad.png";
   static const smile = "lib/assets/images/smile.png";
   static const neutral = "lib/assets/images/neutral.png";
+  static const disaster = "lib/assets/images/disaster.png";
 }

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -43,8 +44,9 @@ class MessageTile extends StatelessWidget {
       ),
       visualDensity: const VisualDensity(vertical: 4), // to compact
       leading: CircleAvatar(
-        backgroundImage:
-            chatGroup.image.isNotEmpty ? NetworkImage(chatGroup.image) : null,
+        backgroundImage: chatGroup.image.isNotEmpty
+            ? CachedNetworkImageProvider(chatGroup.image)
+            : null,
         backgroundColor: ColorConstants.pictionBlueColor,
         radius: 30.r,
       ),

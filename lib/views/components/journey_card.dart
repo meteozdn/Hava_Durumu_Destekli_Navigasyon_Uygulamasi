@@ -1,12 +1,13 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get_core/src/get_main.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
-import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
-import 'package:navigationapp/models/user.dart';
+import 'package:navigationapp/core/constants/navigation_constants.dart';
+import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/views/components/rotate_line.dart';
+import 'package:navigationapp/views/home/journeys/journeys.detail.dart';
 
 class JourneyWidget extends StatelessWidget {
   JourneyWidget({
@@ -19,7 +20,10 @@ class JourneyWidget extends StatelessWidget {
     required this.time,
     required this.isMY,
     this.userImage,
+    // required this.index,
+    required this.route,
   });
+  final RouteModel route;
   final String startCity;
   final String endCity;
   final DateTime startDate;
@@ -27,7 +31,9 @@ class JourneyWidget extends StatelessWidget {
   final String user;
   final String time;
   final bool isMY;
-  final DateFormat formatterDate = DateFormat('dd.mm.yyyy', 'tr_TR');
+  final DateFormat formatterDate = DateFormat('dd MM yyyy', 'tr_TR');
+  final DateFormat formatterDateDay = DateFormat('dd MMMM', 'tr_TR');
+
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
   final String? userImage;
   @override
@@ -68,9 +74,8 @@ class JourneyWidget extends StatelessWidget {
                           child: CircleAvatar(
                             radius: 17.h,
 
-                            backgroundImage: userImage != null
-                                ? NetworkImage(userImage!)
-                                : null,
+                            backgroundImage:
+                                CachedNetworkImageProvider(userImage!),
                             backgroundColor: ColorConstants.pictionBlueColor,
                             // radius: 50.h,
                             child: userImage == null
@@ -85,16 +90,17 @@ class JourneyWidget extends StatelessWidget {
                       Padding(
                         padding: EdgeInsets.all(10.0.w),
                         child: Text(
+                          //route.sharedChatGroups
                           user,
                           style: TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 17.sp),
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 35.0.w),
+                        padding: EdgeInsets.only(left: 50.0.w),
                         child: Text(
                           textAlign: TextAlign.center,
-                          formatterDate.format(startDate),
+                          formatterDateDay.format(startDate),
                           style: TextStyle(
                             fontSize: 13.sp,
                           ),
@@ -124,7 +130,7 @@ class JourneyWidget extends StatelessWidget {
                                 style: TextStyle(fontSize: 15.sp),
                               ),
                               Text(
-                                formatterHour.format(startDate),
+                                formatterDate.format(startDate),
                                 style: TextStyle(fontSize: 12.sp),
                               ),
                             ],
@@ -160,7 +166,9 @@ class JourneyWidget extends StatelessWidget {
                                       ? ColorConstants.pastelMagentaColor
                                       : ColorConstants.pictionBlueColor,
                                 ),
-                                onPressed: () {},
+                                onPressed: () {
+                                  Get.to(() => JourneyDetail(route: route));
+                                },
                                 child: const Icon(
                                   Icons.navigate_next,
                                   color: ColorConstants.whiteColor,

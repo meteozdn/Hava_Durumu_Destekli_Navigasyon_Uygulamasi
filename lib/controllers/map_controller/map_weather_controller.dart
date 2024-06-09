@@ -17,8 +17,8 @@ class MapWeatherController extends GetxController {
   final LatLng center = const LatLng(41.32859, 36.2846729);
   RxSet<Marker> markers = <Marker>{}.obs;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
-  final WeathersService weatherService = WeathersService();
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
+  final WeathersService weatherService = WeathersService();
   final date = DateTime.now();
   final WeathersService weathersService = WeathersService();
   var pageViewIndex = 0.obs;
@@ -28,27 +28,6 @@ class MapWeatherController extends GetxController {
 
   String getdate() {
     return formatterDate.format(date);
-  }
-
-  String getCelcius(WeatherState state) {
-    String temp = "";
-
-    switch (state) {
-      case WeatherState.current:
-        temp =
-            (currentWeatherModel.value.main!.temp! - 283.12).toStringAsFixed(1);
-        break;
-      case WeatherState.min:
-        temp = (currentWeatherModel.value.main!.tempMin! - 283.12)
-            .toStringAsFixed(1);
-        break;
-      case WeatherState.max:
-        temp = (currentWeatherModel.value.main!.tempMax! - 283.12)
-            .toStringAsFixed(1);
-        break;
-      default:
-    }
-    return temp;
   }
 
   String getIcon() {
@@ -72,9 +51,9 @@ class MapWeatherController extends GetxController {
     super.onInit();
     _setTiles(WeatherMapTypes.ta2);
     getCurrentLocation();
-    getCurrentWeather();
+    // getCurrentWeather();
     currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
-        center.longitude, center.longitude);
+        center.longitude, center.latitude);
     load();
   }
 
@@ -86,6 +65,10 @@ class MapWeatherController extends GetxController {
             ? _navigationController.currentLocation.value!
             : center));
     load();
+  }
+
+  getAllerts() {
+    weatherService.fetchAllertWeatherData();
   }
 
   late GoogleMapController googlemapController;

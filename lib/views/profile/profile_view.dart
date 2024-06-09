@@ -26,7 +26,6 @@ class ProfileView extends StatelessWidget {
     return Scaffold(
       //backgroundColor: ColorConstants.greyColor,
       appBar: AppBar(
-        backgroundColor: Colors.grey.withOpacity(0.2),
         actions: [
           Padding(
             padding: EdgeInsets.only(right: 20.w),
@@ -51,7 +50,6 @@ class ProfileView extends StatelessWidget {
       ),
       body: Center(
         child: Container(
-          color: Colors.grey.withOpacity(0.2),
           child: Padding(
             padding: EdgeInsets.only(left: 20.h, right: 20.h),
             child: Column(
@@ -156,16 +154,13 @@ class ProfileView extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12.r),
                       color: ColorConstants.whiteColor,
                     ),
-                    child: GestureDetector(
-                      onTap: () {
+                    child: ProfileButtons(
+                      text: "Çıkış Yap",
+                      icon: Icons.logout_sharp,
+                      onPressed: () {
                         authController.logout();
-                        // Get.back();
                       },
-                      child: ProfileButtons(
-                        text: "Çıkış Yap",
-                        icon: Icons.logout_sharp,
-                        //     func: authController.logout(),
-                      ),
+                      //     func: authController.logout(),
                     ),
                   ),
                 ),
@@ -194,19 +189,17 @@ class ProfileWidgets extends StatelessWidget {
       ),
       child: Column(
         children: [
-          GestureDetector(
-            onTap: () {
+          ProfileButtons(
+            icon: Icons.location_on,
+            text: "Kayıtlı Yerler",
+            onPressed: () {
               Get.to(
                 () => const SavedLocationsView(
                     //  title: 'Kullanıcı Ara',
                     ),
               );
             },
-            child: ProfileButtons(
-              icon: Icons.location_on,
-              text: "Kayıtlı Yerler",
-              //    func: null,
-            ),
+            //    func: null,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.0.w),
@@ -214,19 +207,17 @@ class ProfileWidgets extends StatelessWidget {
               height: 1.h,
             ),
           ),
-          GestureDetector(
-            onTap: () {
+          ProfileButtons(
+            icon: Icons.route_rounded,
+            text: "Kayıtlı Rotalar",
+            onPressed: () {
               Get.to(
                 () => const SavedRotatesView(
                     //  title: 'Kullanıcı Ara',
                     ),
               );
             },
-            child: ProfileButtons(
-              icon: Icons.route_rounded,
-              text: "Kayıtlı Rotalar",
-              //    func: null,
-            ),
+            //    func: null,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.0.w),
@@ -234,19 +225,17 @@ class ProfileWidgets extends StatelessWidget {
               height: 1.h,
             ),
           ),
-          GestureDetector(
-            onTap: () {
+          ProfileButtons(
+            icon: Icons.person,
+            text: "Arkadaşlar",
+            onPressed: () {
               Get.to(
                 () => FriendsView(
                     //  title: 'Kullanıcı Ara',
                     ),
               );
             },
-            child: ProfileButtons(
-              icon: Icons.person,
-              text: "Arkadaşlar",
-              //func: null,
-            ),
+            //func: null,
           ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 15.0.w),
@@ -254,19 +243,17 @@ class ProfileWidgets extends StatelessWidget {
               height: 1.h,
             ),
           ),
-          GestureDetector(
-            onTap: () {
+          ProfileButtons(
+            onPressed: () {
               Get.to(
                 () => const SettingsView(
                     //  title: 'Kullanıcı Ara',
                     ),
               );
             },
-            child: ProfileButtons(
-              icon: Icons.settings,
-              text: "Ayarlar",
-              //func: null,
-            ),
+            icon: Icons.settings,
+            text: "Ayarlar",
+            //func: null,
           ),
         ],
       ),
@@ -279,8 +266,11 @@ class ProfileButtons extends StatelessWidget {
     super.key,
     required this.text,
     required this.icon,
+    required this.onPressed,
     //  required this.func,
   });
+  final VoidCallback onPressed;
+
   final String text;
   final IconData icon;
   // final Future<void>? func;
@@ -289,49 +279,53 @@ class ProfileButtons extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(10.0.r),
-      child: Row(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Container(
-                    decoration: BoxDecoration(
-                      //   border: Border.all(
-                      //      color: ColorConstants.pictionBlueColor, width: 2),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsets.all(2.0.w),
-                      child: Container(
-                        decoration: BoxDecoration(
-                            color: ColorConstants.greyColor,
-                            border: Border.all(color: ColorConstants.greyColor),
-                            borderRadius: BorderRadius.circular(5.r)),
-                        child: Icon(
-                          icon,
-                          color: ColorConstants.whiteColor,
-                        ),
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Row(
+          children: [
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                      decoration: BoxDecoration(
+                        //   border: Border.all(
+                        //      color: ColorConstants.pictionBlueColor, width: 2),
+                        borderRadius: BorderRadius.circular(12.r),
                       ),
-                    )),
-                Padding(
-                  padding: EdgeInsets.only(left: 15.0.w),
-                  child: Text(
-                    text,
-                    style: TextStyle(
-                        fontSize: 18.sp,
-                        //  fontWeight: FontWeight.bold,
-                        color: ColorConstants.pictionBlueColor),
+                      child: Padding(
+                        padding: EdgeInsets.all(2.0.w),
+                        child: Container(
+                          decoration: BoxDecoration(
+                              color: ColorConstants.greyColor,
+                              border:
+                                  Border.all(color: ColorConstants.greyColor),
+                              borderRadius: BorderRadius.circular(5.r)),
+                          child: Icon(
+                            icon,
+                            color: ColorConstants.whiteColor,
+                          ),
+                        ),
+                      )),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15.0.w),
+                    child: Text(
+                      text,
+                      style: TextStyle(
+                          fontSize: 18.sp,
+                          //  fontWeight: FontWeight.bold,
+                          color: ColorConstants.pictionBlueColor),
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Icon(
-            Icons.navigate_next_rounded,
-            color: ColorConstants.greyColor,
-            size: 30.r,
-          )
-        ],
+            Icon(
+              Icons.navigate_next_rounded,
+              color: ColorConstants.greyColor,
+              size: 30.r,
+            )
+          ],
+        ),
       ),
     );
   }
