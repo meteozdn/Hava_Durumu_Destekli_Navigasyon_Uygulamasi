@@ -90,9 +90,9 @@ class RouteController extends GetxController {
           .collection(FirestoreCollections.routes)
           .doc(id)
           .set(route.toJson());
-      // Save Route to ChatGroups.
-      for (var chatGroup in sharedChatGroups) {
-        await updateChatGroupsRouteList(chatGroupId: chatGroup, routeId: id);
+      // Save Route to ChatGroups in firestore.
+      for (var chatGroupId in sharedChatGroups) {
+        await updateChatGroupsRouteList(chatGroupId: chatGroupId, routeId: id);
       }
       await updateUserRouteList(routeId: route.id);
       await fetchUserRoutes();
@@ -122,6 +122,7 @@ class RouteController extends GetxController {
     }
   }
 
+  //Method to update chatGropus sharedRoute list.
   Future<void> updateChatGroupsRouteList({
     required String chatGroupId,
     required String routeId,
