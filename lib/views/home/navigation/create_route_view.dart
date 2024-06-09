@@ -129,7 +129,7 @@ class CreateRouteView extends StatelessWidget {
               }),
               if (isPlanned)
                 Padding(
-                  padding: const EdgeInsets.only(bottom: 10.0),
+                  padding: EdgeInsets.only(bottom: 30.0.h),
                   child: TextField(
                     controller: dateController,
                     readOnly: true,
