@@ -11,10 +11,12 @@ class RouteController extends GetxController {
   final RxList<RouteModel> userRoutes = <RouteModel>[].obs;
   final RxList<RouteModel> sharedRoutes = <RouteModel>[].obs;
   UserController userController = Get.find<UserController>();
+  ChatGroupController chatGroupController = Get.find<ChatGroupController>();
 
   @override
   void onInit() async {
     super.onInit();
+    await chatGroupController.fetchUserChatGroups();
     await fetchUserRoutes();
   }
 

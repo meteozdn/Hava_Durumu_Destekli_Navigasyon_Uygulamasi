@@ -9,12 +9,6 @@ class ChatGroupController extends GetxController {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final RxList<ChatGroup> chatGroups = <ChatGroup>[].obs;
 
-  @override
-  void onInit() async {
-    super.onInit();
-    await fetchUserChatGroups();
-  }
-
   Future<void> fetchUserChatGroups() async {
     try {
       chatGroups.clear();
