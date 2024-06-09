@@ -46,11 +46,7 @@ class MainScreen extends StatelessWidget {
   Future<void> _initializeControllers(String userId) async {
     final userController = Get.find<UserController>();
     await userController.setAuthenticatedUser(userId: userId);
-
-    Future chatGroupControllerFuture = Future(() {
-      Get.put(ChatGroupController());
-    });
-    await Future.wait([chatGroupControllerFuture]);
+    Get.put(ChatGroupController());
     Get.put(RouteController());
     Get.put(FriendRequestController());
     Get.put(NavigationController());
