@@ -90,6 +90,10 @@ class RouteController extends GetxController {
           .collection(FirestoreCollections.routes)
           .doc(id)
           .set(route.toJson());
+      // Save Route to ChatGroups.
+      for (var chatGroup in sharedChatGroups) {
+        await updateChatGroupsRouteList(chatGroupId: chatGroup, routeId: id);
+      }
       await updateUserRouteList(routeId: route.id);
       await fetchUserRoutes();
     } catch (error) {
@@ -110,6 +114,26 @@ class RouteController extends GetxController {
           .doc(currentUserId)
           .update({
         "routes": isAdding
+            ? FieldValue.arrayUnion([routeId])
+            : FieldValue.arrayRemove([routeId])
+      });
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
+  Future<void> updateChatGroupsRouteList({
+    required String chatGroupId,
+    required String routeId,
+    bool isAdding = true,
+  }) async {
+    try {
+      // Save to firestore.
+      await firestore
+          .collection(FirestoreCollections.chatGroups)
+          .doc(chatGroupId)
+          .update({
+        "sharedRoutes": isAdding
             ? FieldValue.arrayUnion([routeId])
             : FieldValue.arrayRemove([routeId])
       });
