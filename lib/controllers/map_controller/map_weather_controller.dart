@@ -30,27 +30,6 @@ class MapWeatherController extends GetxController {
     return formatterDate.format(date);
   }
 
-  String getCelcius(WeatherState state) {
-    String temp = "";
-
-    switch (state) {
-      case WeatherState.current:
-        temp =
-            (currentWeatherModel.value.main!.temp! - 283.12).toStringAsFixed(1);
-        break;
-      case WeatherState.min:
-        temp = (currentWeatherModel.value.main!.tempMin! - 283.12)
-            .toStringAsFixed(1);
-        break;
-      case WeatherState.max:
-        temp = (currentWeatherModel.value.main!.tempMax! - 283.12)
-            .toStringAsFixed(1);
-        break;
-      default:
-    }
-    return temp;
-  }
-
   String getIcon() {
     String icon =
         "${IconsConst.root}${currentWeatherModel.value.weather!.first.icon!}_t@4x.png";
@@ -72,9 +51,9 @@ class MapWeatherController extends GetxController {
     super.onInit();
     _setTiles(WeatherMapTypes.ta2);
     getCurrentLocation();
-    getCurrentWeather();
+    // getCurrentWeather();
     currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
-        center.longitude, center.longitude);
+        center.longitude, center.latitude);
     load();
   }
 

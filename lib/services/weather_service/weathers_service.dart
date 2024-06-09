@@ -44,11 +44,11 @@ class WeathersService {
       double lan, double lat) async {
     try {
       final url =
-          "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lan&appid=${AppConstants.openWeatherApiKey}";
+          "https://api.openweathermap.org/data/2.5/weather?lat=$lat&lon=$lan&units=metric&appid=${AppConstants.openWeatherApiKey}";
       final uri = Uri.parse(url);
       http.Response response = await http.get(uri);
       String data = response.body;
-      //  print(response.body);
+      print(response.body);
       return CurrentWeatherModel.fromRawJson(data);
     } catch (e) {
       // print(e);

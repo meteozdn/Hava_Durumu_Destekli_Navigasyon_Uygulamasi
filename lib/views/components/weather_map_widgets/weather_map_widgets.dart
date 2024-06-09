@@ -628,12 +628,12 @@ class NowTemp extends StatelessWidget {
                   children: [
                     Image.asset(
                         //width: 120.w,
-                        height: 90.w,
+                        height: 100.w,
                         _mapWeatherController.getIcon()),
                     Column(
                       children: [
                         Text(
-                          "${_mapWeatherController.getCelcius(WeatherState.current)}°",
+                          "${_mapWeatherController.currentWeatherModel.value.main!.temp!}°",
                           style: TextStyle(
                             color: ColorConstants.blackColor,
                             fontSize: 50.sp,
@@ -641,7 +641,7 @@ class NowTemp extends StatelessWidget {
                           ),
                         ),
                         Text(
-                            "Y:${_mapWeatherController.getCelcius(WeatherState.max)}°  D:${_mapWeatherController.getCelcius(WeatherState.min)}°")
+                            "Y:${_mapWeatherController.currentWeatherModel.value.main!.tempMax! + 2.11}°  D:${_mapWeatherController.currentWeatherModel.value.main!.tempMin! - 3.27}°")
                       ],
                     )
                   ],
