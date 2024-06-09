@@ -21,7 +21,7 @@ class CreateRouteView extends StatelessWidget {
       controller.clearSelected();
     }
     if (!isPlanned) {
-      originController.text = "Şimdiki Konum";
+      originController.text = controller.currentCity.value;
       dateController.text = "Not Applicable";
     }
 
