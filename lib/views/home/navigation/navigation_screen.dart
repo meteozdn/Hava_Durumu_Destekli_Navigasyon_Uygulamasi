@@ -19,17 +19,22 @@ class NavigationScreen extends StatelessWidget {
         alignment: Alignment.bottomRight,
         children: [
           Obx(() => GoogleMap(
-                myLocationButtonEnabled: false,
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(41.28667, 36.33),
-                  zoom: 10,
-                ),
-                onMapCreated: (mapController) {
-                  controller.mapController = mapController;
-                },
-                polylines: controller.polylines.toSet(),
-                zoomControlsEnabled: false,
-              )),
+              myLocationButtonEnabled: false,
+              initialCameraPosition: controller.currentLocation.value != null
+                  ? CameraPosition(
+                      target: controller.currentLocation.value!,
+                      zoom: 16,
+                    )
+                  : const CameraPosition(
+                      target: LatLng(41.28667, 36.33),
+                      zoom: 16,
+                    ),
+              onMapCreated: (mapController) {
+                controller.mapController = mapController;
+              },
+              polylines: controller.polylines.toSet(),
+              zoomControlsEnabled: false,
+              markers: controller.markers.values.toSet())),
           Padding(
             padding: const EdgeInsets.only(bottom: 50.0, right: 10.0, left: 10),
             child: Obx(() {
@@ -40,8 +45,7 @@ class NavigationScreen extends StatelessWidget {
                   controller.isRotateCreated.value
                       ? GestureDetector(
                           onTap: () {
-                            //rota silinecek
-                            controller.polylines.clear();
+                            controller.clearRoute();
                             controller.isRotateCreatedController();
                           },
                           child: Material(
@@ -68,7 +72,8 @@ class NavigationScreen extends StatelessWidget {
                     onTap: () {
                       controller.isRotateCreatedController();
                       controller.saveRoute();
-                      controller.polylines.clear();
+                      // if it is Planned Route show success message, otherwise start route.
+                      controller.clearRoute();
                     },
                     child: Material(
                       borderRadius: BorderRadius.circular(10),
