@@ -69,6 +69,8 @@ class Animations {
 class IconsConst {
   static const root = "lib/assets/icons/";
   static const friends = "lib/assets/icons/friends.png";
+  static const sunnyIcon = "lib/assets/icons/01d.png";
+  static const thunderIcon = "lib/assets/icons/11n.png";
 
   static const blackNavigateIcon = "lib/assets/icons/navigate.png";
   static const windIcon = "lib/assets/icons/wind.png";

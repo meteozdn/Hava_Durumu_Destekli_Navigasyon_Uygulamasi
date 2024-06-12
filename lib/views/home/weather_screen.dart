@@ -51,6 +51,7 @@ class WeatherScreen extends StatelessWidget {
                 children: [
                   const WeatherScreenAppBar(),
                   const TempViewerWidget(),
+                  //  WeatherMarker(),
                   WeatherScreenBottomWidgets(
                       mapWeatherController: mapWeatherController)
                 ],

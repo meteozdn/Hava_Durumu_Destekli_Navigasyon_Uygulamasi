@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -9,6 +10,9 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/weather/current_weather.dart';
 import 'package:navigationapp/services/weather_service/weather_map_service.dart';
 import 'package:navigationapp/services/weather_service/weathers_service.dart';
+import 'package:navigationapp/views/components/weather_map_widgets/weather_map_marker.dart';
+import 'package:navigationapp/views/home/weather_screen.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class MapWeatherController extends GetxController {
   final NavigationController _navigationController = Get.find();
@@ -32,7 +36,7 @@ class MapWeatherController extends GetxController {
 
   String getIcon() {
     String icon =
-        "${IconsConst.root}${currentWeatherModel.value.weather!.first.icon!}_t@4x.png";
+        "${IconsConst.root}${currentWeatherModel.value.weather!.first.icon!}.png";
 
     return icon;
   }
@@ -49,17 +53,19 @@ class MapWeatherController extends GetxController {
   @override
   Future<void> onInit() async {
     super.onInit();
-    _setTiles(WeatherMapTypes.ta2);
-    getCurrentLocation();
+    //  _setTiles(WeatherMapTypes.ta2);
+    await getCurrentLocation();
     // getCurrentWeather();
     currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
         center.longitude, center.latitude);
+
     load();
   }
 
-  getCurrentLocation() {
+  getCurrentLocation() async {
     markers.add(Marker(
-        icon: BitmapDescriptor.defaultMarkerWithHue(30),
+        icon: await const WeatherMarker().toBitmapDescriptor(
+            logicalSize: const Size(150, 150), imageSize: const Size(150, 150)),
         markerId: const MarkerId("CurrentId"),
         position: _navigationController.currentLocation.value != null
             ? _navigationController.currentLocation.value!
@@ -106,6 +112,30 @@ class MapWeatherController extends GetxController {
 
   load() {
     isLoad(isLoad.value);
+  }
+
+  Future determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error("LocationServices disabled ");
+    }
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error("LocationPermission Denied");
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error("LocationPermission Denied");
+    }
+  }
+
+  LatLng? getPosition(double latitude, double longitude) {
+    return LatLng(latitude, longitude);
   }
 }
 
