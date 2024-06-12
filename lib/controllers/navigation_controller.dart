@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
@@ -13,19 +14,21 @@ import 'dart:convert';
 import 'package:navigationapp/models/chat_group.dart';
 
 class NavigationController extends GetxController {
-  //Other controllers.
-  final ChatGroupController chatGroupController = Get.find();
+  //Controllers.
   GoogleMapController? mapController;
+  final ChatGroupController _chatGroupController = Get.find();
   final RouteController _routeController = Get.find<RouteController>();
 
   //Navigation variables.
-  var polylines = <Polyline>[].obs;
   Rxn<LatLng> currentLocation = Rxn<LatLng>();
   RxString currentCity = RxString("");
+  var markers = <MarkerId, Marker>{}.obs;
+  var polylines = <Polyline>[].obs;
+  var polylineCoordinates = <LatLng>[].obs;
+  var startingLocation = <String, dynamic>{}; // "cityName", "location"
+  var destinationLocation = <String, dynamic>{}; // "cityName", "location"
 
   //Other variables.
-  var startingLocation = <String, dynamic>{};
-  var destinationLocation = <String, dynamic>{};
   DateTime dateTime = DateTime.now();
   var originSuggestions = [].obs;
   var destinationSuggestions = [].obs;
@@ -36,13 +39,19 @@ class NavigationController extends GetxController {
   RxSet<int> selectedChatGroups = <int>{}.obs;
   RxBool isShared = false.obs;
   RxBool isRotateCreated = false.obs;
+  RxBool isRouteStarted = false.obs;
 
   void clearSelected() {
     selectedChatGroups.clear();
   }
 
-  void clearPolylines() {
+  void clearRoute() async {
+    startingLocation.clear();
+    destinationLocation.clear();
     polylines.clear();
+    polylineCoordinates.clear();
+    markers.clear();
+    await getCurrentLocation();
   }
 
   void isRotateCreatedController() {
@@ -69,7 +78,7 @@ class NavigationController extends GetxController {
   void onInit() {
     super.onInit();
     getCurrentLocation();
-    allChatGroups = chatGroupController.chatGroups;
+    allChatGroups = _chatGroupController.chatGroups;
   }
 
   Future<void> getCurrentLocation() async {
@@ -77,16 +86,30 @@ class NavigationController extends GetxController {
       Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high);
       currentLocation.value = LatLng(position.latitude, position.longitude);
-      mapController
-          ?.animateCamera(CameraUpdate.newLatLng(currentLocation.value!));
       currentCity.value = await _getCityNameFromLatLng(LatLng(
         position.latitude,
         position.longitude,
       ));
-      //print('City: ${currentCity.value}');
-    } catch (e) {
+      if (currentLocation.value != null) {
+        moveGoogleMapCamera(target: currentLocation.value!);
+        if (!markers.keys.any((marker) => marker.value == "current")) {
+          const markerId = MarkerId("current");
+          final marker =
+              Marker(markerId: markerId, position: currentLocation.value!);
+          markers[markerId] = marker;
+        }
+      }
+    } catch (error) {
       Get.snackbar("Error", "Failed to get current location");
     }
+  }
+
+  Future<void> moveGoogleMapCamera(
+      {required LatLng target, double bearing = 0}) async {
+    CameraPosition newCameraPosition =
+        CameraPosition(target: target, zoom: 16, bearing: bearing);
+    mapController
+        ?.animateCamera(CameraUpdate.newCameraPosition(newCameraPosition));
   }
 
   Future<Map<String, dynamic>> setCityNameAndLocation(String address) async {
@@ -129,9 +152,8 @@ class NavigationController extends GetxController {
     }
   }
 
-  Future<List<LatLng>> getPolylinePoints() async {
+  Future<void> setPolylinePoints() async {
     try {
-      List<LatLng> polylineCoordinates = [];
       PolylinePoints polylinePoints = PolylinePoints();
       var start = startingLocation["location"];
       var finish = destinationLocation["location"];
@@ -143,21 +165,28 @@ class NavigationController extends GetxController {
         for (var point in result.points) {
           polylineCoordinates.add(LatLng(point.latitude, point.longitude));
         }
-        return polylineCoordinates;
+        PolylineId id = const PolylineId("polylineName");
+        Polyline polyline = Polyline(
+            polylineId: id,
+            color: Colors.blue,
+            points: polylineCoordinates,
+            width: 4);
+        polylines.add(polyline);
       } else {
         Get.snackbar("Error", result.errorMessage.toString());
-        return [];
       }
     } catch (error) {
       Get.snackbar("Error", "An error occurred while fetching the route.");
-      return [];
     }
   }
 
-  void generatePolylineFromPoints({required List<LatLng> points}) {
-    PolylineId id = const PolylineId("Unique");
-    Polyline polyline =
-        Polyline(polylineId: id, color: Colors.black, points: points, width: 8);
+  void generatePolylineFromPoints({required String polylineName}) {
+    PolylineId id = PolylineId(polylineName);
+    Polyline polyline = Polyline(
+        polylineId: id,
+        color: Colors.blue,
+        points: polylineCoordinates,
+        width: 4);
     polylines.add(polyline);
   }
 

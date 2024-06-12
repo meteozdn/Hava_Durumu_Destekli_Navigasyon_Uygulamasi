@@ -7,28 +7,22 @@ import 'package:navigationapp/models/chat_group.dart';
 import 'package:navigationapp/models/route.dart';
 
 class RouteController extends GetxController {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final UserController _userController = Get.find<UserController>();
+  final ChatGroupController _chatGroupController =
+      Get.find<ChatGroupController>();
   final RxList<RouteModel> userRoutes = <RouteModel>[].obs;
   final RxList<RouteModel> sharedRoutes = <RouteModel>[].obs;
-  UserController userController = Get.find<UserController>();
-  ChatGroupController chatGroupController = Get.find<ChatGroupController>();
-
-  @override
-  void onInit() async {
-    super.onInit();
-    await chatGroupController.fetchUserChatGroups();
-    await fetchUserRoutes();
-  }
 
   Future<void> fetchUserRoutes() async {
     try {
       userRoutes.clear();
       sharedRoutes.clear();
-      // Store routes in local.
-      List<String> ids = userController.user.value!.routes ?? [];
+      // Get user's routeIds from userController.
+      List<String> ids = _userController.user.value!.routes ?? [];
       // Get routes from firestore.
       for (String id in ids) {
-        DocumentSnapshot snapshot = await firestore
+        DocumentSnapshot snapshot = await _firestore
             .collection(FirestoreCollections.routes)
             .doc(id)
             .get();
@@ -36,21 +30,20 @@ class RouteController extends GetxController {
         RouteModel route = RouteModel.fromFirestore(snapshot);
         userRoutes.add(route);
       }
-      // Get shared routes Ids from chatGroups
-      List<ChatGroup> chatGroups = Get.find<ChatGroupController>().chatGroups;
+      // Get shared routesIds from chatGroupController.
       List<String> sharedIds = [];
-      for (ChatGroup chatGroup in chatGroups) {
+      for (ChatGroup chatGroup in _chatGroupController.chatGroups) {
         sharedIds.addAll(chatGroup.sharedRoutes);
       }
       // Get shared routes from firestore.
       for (String id in sharedIds) {
-        DocumentSnapshot snapshot = await firestore
+        DocumentSnapshot snapshot = await _firestore
             .collection(FirestoreCollections.routes)
             .doc(id)
             .get();
         // Create Route model.
         RouteModel route = RouteModel.fromFirestore(snapshot);
-        if (route.ownerId != userController.user.value!.id) {
+        if (route.ownerId != _userController.currentUserId) {
           //&& !sharedRoutes.contains(route)
           sharedRoutes.add(route);
         }
@@ -69,14 +62,14 @@ class RouteController extends GetxController {
       required List<String> sharedChatGroups}) async {
     try {
       // Create auto Id.
-      final id = firestore.collection(FirestoreCollections.routes).doc().id;
+      final id = _firestore.collection(FirestoreCollections.routes).doc().id;
       // Create Route model.
       RouteModel route = RouteModel(
         id: id,
-        ownerId: Get.find<UserController>().user.value!.id,
-        userImage: Get.find<UserController>().user.value?.image,
+        ownerId: _userController.currentUserId,
+        userImage: _userController.user.value?.image,
         ownerName:
-            "${Get.find<UserController>().user.value!.name} ${Get.find<UserController>().user.value!.surname}",
+            "${_userController.user.value!.name} ${_userController.user.value!.surname}",
         plannedAt: dateTime,
         startingLocation: startingLocation,
         startingCity: startingCity,
@@ -85,10 +78,7 @@ class RouteController extends GetxController {
         isActive: false,
         sharedChatGroups: sharedChatGroups,
       );
-      // Save Route to local.
-      Get.find<UserController>().user.value!.routes?.add(id);
-      // Save Route to firestore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.routes)
           .doc(id)
           .set(route.toJson());
@@ -97,7 +87,6 @@ class RouteController extends GetxController {
         await updateChatGroupsRouteList(chatGroupId: chatGroupId, routeId: id);
       }
       await updateUserRouteList(routeId: route.id);
-      await fetchUserRoutes();
     } catch (error) {
       throw Exception(error.toString());
     }
@@ -109,9 +98,9 @@ class RouteController extends GetxController {
     bool isAdding = true,
   }) async {
     try {
-      String currentUserId = Get.find<UserController>().user.value!.id;
+      String currentUserId = _userController.currentUserId;
       // Save to firestore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.users)
           .doc(currentUserId)
           .update({
@@ -132,7 +121,7 @@ class RouteController extends GetxController {
   }) async {
     try {
       // Save to firestore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.chatGroups)
           .doc(chatGroupId)
           .update({

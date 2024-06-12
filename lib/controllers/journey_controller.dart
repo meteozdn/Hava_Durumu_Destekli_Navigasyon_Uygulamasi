@@ -1,6 +1,10 @@
+import 'dart:async';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:navigationapp/controllers/navigation_controller.dart';
 
 class JourneyController extends GetxController {
   List<String> adverseWeathers = [
@@ -20,6 +24,36 @@ class JourneyController extends GetxController {
   ];
   Map<String, dynamic> weatherData = {};
   final String apiKey = "b3baa2e76f1fde182c7a298d21287a93";
+
+  late StreamSubscription<Position> positionStream;
+  late Completer<GoogleMapController> googleMapsController = Completer();
+  final NavigationController _navigationController =
+      Get.find<NavigationController>();
+
+  @override
+  void onInit() {
+    super.onInit();
+    initializeLocationTracking();
+  }
+
+  @override
+  void onClose() {
+    positionStream.cancel();
+    super.onClose();
+  }
+
+  void initializeLocationTracking() async {
+    // Subscribe to location changes.
+    positionStream = Geolocator.getPositionStream(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
+      ),
+    ).listen((Position position) {
+      _navigationController.currentLocation.value =
+          LatLng(position.latitude, position.longitude);
+    });
+  }
 
   // Function to fetch weather data.
   Future<void> fetchWeatherData(
