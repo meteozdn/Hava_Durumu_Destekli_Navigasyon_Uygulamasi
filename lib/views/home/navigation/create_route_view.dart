@@ -219,9 +219,7 @@ class CreateRouteView extends StatelessWidget {
                     if (originController.text.isNotEmpty &&
                         destinationController.text.isNotEmpty) {
                       if (isPlanned && dateController.text.isNotEmpty) {
-                        await controller.getPolylinePoints().then((points) {
-                          controller.generatePolylineFromPoints(points: points);
-                        });
+                        await controller.setPolylinePoints();
                       } else {
                         await controller.getCurrentLocation();
                         controller.startingLocation["cityName"] =
@@ -229,9 +227,7 @@ class CreateRouteView extends StatelessWidget {
                         controller.startingLocation["location"] =
                             controller.currentLocation.value;
                         controller.dateTime = DateTime.now();
-                        await controller.getPolylinePoints().then((points) {
-                          controller.generatePolylineFromPoints(points: points);
-                        });
+                        await controller.setPolylinePoints();
                       }
                     }
                     controller.isRotateCreatedController();
