@@ -48,96 +48,98 @@ class NavigationScreen extends StatelessWidget {
             child: Obx(() {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   mainAxisSize: MainAxisSize.min,
                 children: [
                   mapController.isRouteCreated.value
-                      ? GestureDetector(
-                          onTap: () {
-                            mapController.clearRoute();
-                          },
-                          child: Material(
-                            borderRadius: BorderRadius.circular(10),
-                            elevation: 20,
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstants.pictionBlueColor,
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                color: ColorConstants.whiteColor,
-                              ),
-                            ),
-                          ),
-                        )
-                      : const SizedBox(
-                          width: 50,
-                        ),
-                  GestureDetector(
-                    onTap: () async {
-                      if (mapController.isPlanned) {
-                        //await controller.saveRoute();
-                        Get.snackbar("Success", "The route has been saved.");
-                        //controller.clearRoute();
-                      } else {
-                        Get.snackbar(
-                            "Navigation", "The navigation has been preparing.");
-                        await locationController.startRoute();
-                      }
-                    },
-                    child: Material(
-                      borderRadius: BorderRadius.circular(10),
-                      elevation: 20,
-                      child: mapController.isRouteCreated.value
-                          ? Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstants.pictionBlueColor,
-                              ),
-                              height: 50,
-                              width: 200,
-                              child: Center(
-                                child: Text(
-                                  mapController.isPlanned
-                                      ? "Yolculuğu Kayıt Et"
-                                      : "Yolculuğa Başla",
-                                  style: const TextStyle(
-                                      color: ColorConstants.whiteColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            )
-                          : const SizedBox(
-                              width: 200,
-                            ),
-                    ),
-                  ),
-                  GestureDetector(
-                    child: SizedBox(
-                      width: 60.w,
-                      child: CircleAvatar(
-                        backgroundColor: ColorConstants.pictionBlueColor,
-                        radius: 30.0,
-                        child: IconButton(
-                            color: ColorConstants.whiteColor,
-                            onPressed: () async {
-                              await locationController.getCurrentLocation();
-                              // Get.snackbar("Navigation",
-                              //     "The navigation has been preparing.");
-                              // await locationController.startRoute();
-                            },
-                            icon:
-                                const Icon(Icons.location_searching_outlined)),
-                      ),
-                    ),
-                  )
+                      ? clearRouteButton()
+                      : const SizedBox(width: 50),
+                  mapController.isRouteCreated.value
+                      ? routeActionButton()
+                      : const SizedBox(width: 200),
+                  currentLocationButton(),
                 ],
               );
             }),
           )
         ],
+      ),
+    );
+  }
+
+  Widget clearRouteButton() {
+    return GestureDetector(
+      onTap: () {
+        mapController.clearRoute();
+      },
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        elevation: 20,
+        child: Container(
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: ColorConstants.pictionBlueColor,
+          ),
+          child: const Icon(
+            Icons.close,
+            color: ColorConstants.whiteColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget routeActionButton() {
+    return GestureDetector(
+      onTap: () async {
+        if (mapController.isPlanned) {
+          Get.snackbar("Success", "The route has been saved.");
+          //await mapController.saveRoute();
+          mapController.clearRoute();
+        } else {
+          Get.snackbar("Navigation", "The navigation has been preparing.");
+          //await mapController.saveRoute();
+          await mapController.startRoute();
+        }
+      },
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        elevation: 20,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: ColorConstants.pictionBlueColor,
+          ),
+          height: 50,
+          width: 200,
+          child: Center(
+            child: Text(
+              mapController.isPlanned
+                  ? "Yolculuğu Kayıt Et"
+                  : "Yolculuğa Başla",
+              style: const TextStyle(
+                color: ColorConstants.whiteColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget currentLocationButton() {
+    return GestureDetector(
+      child: CircleAvatar(
+        backgroundColor: ColorConstants.pictionBlueColor,
+        radius: 30.0,
+        child: IconButton(
+          color: ColorConstants.whiteColor,
+          onPressed: () async {
+            await locationController.getCurrentLocation();
+          },
+          icon: const Icon(Icons.location_searching_outlined),
+        ),
       ),
     );
   }
