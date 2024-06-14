@@ -3,7 +3,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:navigationapp/controllers/chat_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/friend_request_controller.dart';
-import 'package:navigationapp/controllers/navigation_controller.dart';
+import 'package:navigationapp/controllers/journey_controller.dart';
+import 'package:navigationapp/controllers/location_controller.dart';
+import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/models/user.dart' as model;
@@ -78,7 +80,9 @@ class AuthController extends GetxController {
     Get.delete<ChatGroupController>();
     Get.delete<FriendRequestController>();
     Get.delete<RouteController>();
-    Get.delete<NavigationController>();
+    Get.delete<JourneyController>();
+    Get.delete<LocationController>();
+    Get.delete<MapController>();
     Get.back();
   }
 }
