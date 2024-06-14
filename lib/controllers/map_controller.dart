@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:navigationapp/controllers/journey_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/utils/location_utils.dart';
+import 'package:http/http.dart' as http;
 
 class MapController extends GetxController {
   late Completer<GoogleMapController> googleMapsController = Completer();
@@ -18,27 +21,34 @@ class MapController extends GetxController {
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
 
-  Future<void> setPolylinePoints(
-      {required LatLng start, required LatLng finish}) async {
+  Future<void> startRoute() async {
     try {
-      PolylinePoints polylinePoints = PolylinePoints();
-      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        AppConstants.googleMapsApiKey,
-        PointLatLng(start.latitude, start.longitude),
-        PointLatLng(finish.latitude, finish.longitude),
-      );
-      if (result.points.isNotEmpty) {
+      isRouteStarted.value = true;
+      await Get.putAsync<JourneyController>(() async => JourneyController());
+    } catch (error) {
+      Get.snackbar("Error", "Failed to create JourneyController.");
+    }
+  }
+
+  Future<void> setPolylinePoints(
+      {required LatLng start, required LatLng destination}) async {
+    try {
+      String url = "https://maps.googleapis.com/maps/api/directions/json?"
+          "origin=${start.latitude},${start.longitude}&"
+          "destination=${destination.latitude},${destination.longitude}&"
+          "mode=driving&"
+          "key=${AppConstants.googleMapsApiKey}";
+      var response = await http.get(Uri.parse(url));
+      var data = json.decode(response.body);
+      var routes = data["routes"];
+      if (routes.isNotEmpty) {
+        var points = PolylinePoints()
+            .decodePolyline(routes[0]["overview_polyline"]["points"]);
         polylineCoordinates.clear();
-        for (var point in result.points) {
-          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        }
+        polylineCoordinates.addAll(points
+            .map((point) => LatLng(point.latitude, point.longitude))
+            .toList());
         updatePolyline();
-        LatLngBounds bounds =
-            LocationUtils.calculateBounds(polylineCoordinates);
-        var googleMaps = await googleMapsController.future;
-        googleMaps.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
-      } else {
-        Get.snackbar("Error", result.errorMessage.toString());
       }
     } catch (error) {
       Get.snackbar("Error", "PolylinePoints could not be set.");
@@ -73,6 +83,12 @@ class MapController extends GetxController {
     googleMaps.animateCamera(CameraUpdate.newCameraPosition(newCameraPosition));
   }
 
+  Future<void> moveCameraToAllRoute() async {
+    LatLngBounds bounds = LocationUtils.calculateBounds(polylineCoordinates);
+    var googleMaps = await googleMapsController.future;
+    googleMaps.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+  }
+
   bool isOffRoute({required LatLng location, double threshold = 50}) {
     for (LatLng point in polylineCoordinates) {
       double distance = LocationUtils.calculateDistance(location, point);
@@ -88,21 +104,25 @@ class MapController extends GetxController {
   Future<void> recalculateRoute(
       {required LatLng start, required LatLng destination}) async {
     try {
-      PolylinePoints polylinePoints = PolylinePoints();
-      PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-        AppConstants.googleMapsApiKey,
-        PointLatLng(start.latitude, start.longitude),
-        PointLatLng(destination.latitude, destination.longitude),
-      );
-      if (result.points.isNotEmpty) {
+      String url = "https://maps.googleapis.com/maps/api/directions/json?"
+          "origin=${start.latitude},${start.longitude}&"
+          "destination=${destination.latitude},${destination.longitude}&"
+          "mode=driving&"
+          "key=${AppConstants.googleMapsApiKey}";
+      var response = await http.get(Uri.parse(url));
+      var data = json.decode(response.body);
+      var routes = data["routes"];
+      if (routes.isNotEmpty) {
+        var points = PolylinePoints()
+            .decodePolyline(routes[0]["overview_polyline"]["points"]);
         polylineCoordinates.clear();
-        for (var point in result.points) {
-          polylineCoordinates.add(LatLng(point.latitude, point.longitude));
-        }
+        polylineCoordinates.addAll(points
+            .map((point) => LatLng(point.latitude, point.longitude))
+            .toList());
         updatePolyline();
       }
     } catch (error) {
-      Get.snackbar("Error", error.toString());
+      Get.snackbar("Error", "PolylinePoints could not be recalculateRouted.");
     }
   }
 
@@ -130,6 +150,7 @@ class MapController extends GetxController {
     polylineCoordinates.clear();
     markers.clear();
     isRouteCreated.value = false;
+    isRouteStarted.value = false;
   }
 
   void setRouteModel({required RouteModel route, required bool isPlanned}) {

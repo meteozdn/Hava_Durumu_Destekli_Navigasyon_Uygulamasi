@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
+import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
@@ -66,7 +67,10 @@ class CreateRouteController extends GetxController {
       );
       var mapController = Get.find<MapController>();
       mapController.setRouteModel(route: route, isPlanned: isPlanned);
-      await mapController.setPolylinePoints(start: start, finish: finish);
+      await mapController.setPolylinePoints(start: start, destination: finish);
+      await mapController.moveCameraToAllRoute();
+      var locationController = Get.find<LocationController>();
+      locationController.destination.value = finish;
       mapController.isRouteCreated.value = true;
     } catch (error) {
       // Get.snackbar("Error", error.toString());
@@ -100,7 +104,7 @@ class CreateRouteController extends GetxController {
               })
           .toList();
     } catch (error) {
-      Get.snackbar("Error", "Failed to fetch suggestions");
+      Get.snackbar("Error", "Failed to fetch suggestions.");
     }
   }
 }

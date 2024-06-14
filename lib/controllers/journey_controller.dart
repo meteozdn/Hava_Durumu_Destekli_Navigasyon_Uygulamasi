@@ -1,16 +1,12 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class JourneyController extends GetxController {
-  JourneyController(this.destination); //this.route,
-
-  final LatLng destination;
   Map<String, dynamic> weatherData = {};
   RxBool isRouteCompleted = false.obs;
   RxString distanceLeft = RxString("");
@@ -47,7 +43,8 @@ class JourneyController extends GetxController {
     try {
       String origin =
           "${_locationController.currentLocation.value!.latitude},${_locationController.currentLocation.value!.longitude}";
-      String dest = "${destination.latitude},${destination.longitude}";
+      String dest =
+          "${_locationController.destination.value!.latitude},${_locationController.destination.value!.longitude}";
       final String request =
           "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=$origin&destinations=$dest&key=${AppConstants.googleMapsApiKey}";
       final response = await http.get(Uri.parse(request));
@@ -63,6 +60,7 @@ class JourneyController extends GetxController {
         }
         if (distance < 20) {
           isRouteCompleted.value = true;
+          Get.snackbar("Completed", "You have arrived to your destination.");
         }
         distanceLeft.value = "${(distance / 1000).toStringAsFixed(2)} km";
         timeLeft.value = "${(duration / 60).toStringAsFixed(2)} dk";
