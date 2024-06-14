@@ -5,6 +5,25 @@ class AppConstants {
   static const String appName = 'Navi App';
   static String openWeatherApiKey = 'd23f3624098ff746d0953cb3c0640e1b';
   static String weatherBitApiKey = 'aab6d70cac1f4119ade84672d50f0618';
+  static String googleMapsApiKey = "AIzaSyDA9541Tfh0jVOTKmYz-nFn03i6Eb9cO4E";
+
+  // For JourneyController.
+  static const String weatherAPIKey = "b3baa2e76f1fde182c7a298d21287a93";
+  static const List<String> adverseWeathers = [
+    "Thunderstorm",
+    "Drizzle",
+    "Rain",
+    "Snow",
+    "Mist",
+    "Smoke",
+    "Haze",
+    "Dust",
+    "Fog",
+    "Sand",
+    "Ash",
+    "Squall",
+    "Tornado"
+  ];
 
   // static const int responseTimeout = 60;
   // static int? userType;
