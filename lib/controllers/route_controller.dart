@@ -53,6 +53,37 @@ class RouteController extends GetxController {
     }
   }
 
+  RouteModel createRouteModel(
+      {required GeoPoint startingLocation,
+      required String startingCity,
+      required GeoPoint destinationLocation,
+      required String destinationCity,
+      required DateTime dateTime,
+      required List<String> sharedChatGroups}) {
+    try {
+      // Create auto Id.
+      final id = _firestore.collection(FirestoreCollections.routes).doc().id;
+      // Create Route model.
+      RouteModel route = RouteModel(
+        id: id,
+        ownerId: _userController.currentUserId,
+        userImage: _userController.user.value?.image,
+        ownerName:
+            "${_userController.user.value!.name} ${_userController.user.value!.surname}",
+        plannedAt: dateTime,
+        startingLocation: startingLocation,
+        startingCity: startingCity,
+        destinationLocation: destinationLocation,
+        destinationCity: destinationCity,
+        isActive: false,
+        sharedChatGroups: sharedChatGroups,
+      );
+      return route;
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
   Future<void> createRoute(
       {required GeoPoint startingLocation,
       required String startingCity,
