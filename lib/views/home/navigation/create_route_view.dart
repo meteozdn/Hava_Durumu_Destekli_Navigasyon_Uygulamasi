@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:navigationapp/controllers/navigation_controller.dart';
+import 'package:navigationapp/controllers/create_route_controller.dart';
+import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class CreateRouteView extends StatelessWidget {
   CreateRouteView({super.key, required this.isPlanned});
 
-  final NavigationController controller = Get.find<NavigationController>();
+  final CreateRouteController controller = Get.find();
+  final LocationController locationController = Get.find();
   final FocusNode startFocusNode = FocusNode();
   final FocusNode destinationFocusNode = FocusNode();
   final dateController = TextEditingController();
@@ -17,14 +19,12 @@ class CreateRouteView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!controller.isRotateCreated.value) {
-      controller.clearSelected();
-    }
     if (!isPlanned) {
-      originController.text = controller.currentCity.value;
+      locationController.getCurrentCity().then((cityName) {
+        originController.text = cityName;
+      });
       dateController.text = "Not Applicable";
     }
-
     startFocusNode.addListener(() {
       if (!startFocusNode.hasFocus) {
         controller.originSuggestions.clear();
@@ -39,7 +39,7 @@ class CreateRouteView extends StatelessWidget {
       appBar: AppBar(
         leading: GestureDetector(
           onTap: () {
-            controller.clearSelected();
+            controller.clearSelections();
             controller.isShared(false);
             Get.back();
           },
@@ -60,7 +60,8 @@ class CreateRouteView extends StatelessWidget {
                 enabled: isPlanned,
                 controller: originController,
                 focusNode: startFocusNode,
-                onChanged: (value) => controller.fetchOriginSuggestions(value),
+                onChanged: (value) => controller.fetchSuggestions(
+                    input: value, suggestions: controller.originSuggestions),
                 decoration: const InputDecoration(
                   hintText: "Başlangıç",
                   border: OutlineInputBorder(),
@@ -81,7 +82,7 @@ class CreateRouteView extends StatelessWidget {
                         title: Text(suggestion["description"]),
                         onTap: () async {
                           originController.text = suggestion["description"];
-                          controller.startingLocation = await controller
+                          controller.origin = await controller
                               .setCityNameAndLocation(originController.text);
                           controller.originSuggestions.clear();
                         },
@@ -93,8 +94,9 @@ class CreateRouteView extends StatelessWidget {
               TextField(
                 controller: destinationController,
                 focusNode: destinationFocusNode,
-                onChanged: (value) =>
-                    controller.fetchDestinationSuggestions(value),
+                onChanged: (value) => controller.fetchSuggestions(
+                    input: value,
+                    suggestions: controller.destinationSuggestions),
                 decoration: const InputDecoration(
                   hintText: "Varılacak Yer",
                   border: OutlineInputBorder(),
@@ -117,7 +119,7 @@ class CreateRouteView extends StatelessWidget {
                         onTap: () async {
                           destinationController.text =
                               suggestion["description"];
-                          controller.destinationLocation =
+                          controller.destination =
                               await controller.setCityNameAndLocation(
                                   destinationController.text);
                           controller.destinationSuggestions.clear();
@@ -196,7 +198,7 @@ class CreateRouteView extends StatelessWidget {
                             return Switch(
                                 value: controller.isShared.value,
                                 onChanged: (bool value) {
-                                  controller.shareStateChange();
+                                  controller.changeShareState();
                                 });
                           }),
                         )
@@ -219,19 +221,17 @@ class CreateRouteView extends StatelessWidget {
                     if (originController.text.isNotEmpty &&
                         destinationController.text.isNotEmpty) {
                       if (isPlanned && dateController.text.isNotEmpty) {
-                        await controller.setPolylinePoints();
+                        await controller.createRouteOnMap(isPlanned: isPlanned);
                       } else {
-                        await controller.getCurrentLocation();
-                        controller.startingLocation["cityName"] =
-                            controller.currentCity.value;
-                        controller.startingLocation["location"] =
-                            controller.currentLocation.value;
+                        controller.origin["cityName"] =
+                            await locationController.getCurrentCity();
+                        controller.origin["location"] = locationController
+                            .getCurrentLocation(isCameraMove: false);
                         controller.dateTime = DateTime.now();
-                        await controller.setPolylinePoints();
+                        await controller.createRouteOnMap(isPlanned: isPlanned);
                       }
                     }
-                    controller.isRotateCreatedController();
-                    Navigator.pop(context);
+                    Get.back();
                   },
                   child: const Text(
                     "Rotayı Görüntüle",
@@ -253,7 +253,7 @@ class FriendsShareWidget extends StatelessWidget {
     required this.controller,
   });
 
-  final NavigationController controller;
+  final CreateRouteController controller;
 
   @override
   Widget build(BuildContext context) {
