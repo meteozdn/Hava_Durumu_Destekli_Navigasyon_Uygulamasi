@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
+import 'package:navigationapp/controllers/create_route_controller.dart';
 import 'package:navigationapp/controllers/friend_request_controller.dart';
-import 'package:navigationapp/controllers/journey_controller.dart';
-import 'package:navigationapp/controllers/navigation_controller.dart';
+import 'package:navigationapp/controllers/location_controller.dart';
+import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/views/auth/auth_screen.dart';
@@ -19,7 +20,6 @@ class MainScreen extends StatelessWidget {
       body: GetX<AuthController>(
         init: AuthController(),
         builder: (authController) {
-          Get.put(UserController());
           if (authController.user.value != null) {
             return _buildAuthenticatedScreens(authController);
           } else {
@@ -32,7 +32,7 @@ class MainScreen extends StatelessWidget {
 
   Widget _buildAuthenticatedScreens(AuthController authController) {
     return FutureBuilder<void>(
-      future: _initializeControllers(authController.user.value!.uid),
+      future: _initializeUserController(authController.user.value!.uid),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return _buildLoadingScreen();
@@ -43,14 +43,23 @@ class MainScreen extends StatelessWidget {
     );
   }
 
-  Future<void> _initializeControllers(String userId) async {
-    final userController = Get.find<UserController>();
-    await userController.setAuthenticatedUser(userId: userId);
-    Get.put(ChatGroupController());
-    Get.put(RouteController());
+  Future<void> _initializeUserController(String userId) async {
+    // Initialize controllers in order.
+    await Get.putAsync<MapController>(() async => MapController());
+    await Get.putAsync<LocationController>(() async => LocationController());
+
+    await Get.putAsync<UserController>(() async => UserController(userId));
+    await Get.find<UserController>().setAuthenticatedUser();
+
+    await Get.putAsync<ChatGroupController>(() async => ChatGroupController());
+    await Get.find<ChatGroupController>().fetchUserChatGroups();
+
+    await Get.putAsync<RouteController>(() async => RouteController());
+    await Get.find<RouteController>().fetchUserRoutes();
+
     Get.put(FriendRequestController());
-    Get.put(NavigationController());
-    Get.put(JourneyController());
+    Get.put(CreateRouteController());
+    Get.find<FriendRequestController>().fetchUserFriends();
   }
 
   Widget _buildLoadingScreen() {

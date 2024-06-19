@@ -1,23 +1,68 @@
+import 'dart:async';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:navigationapp/controllers/chat_group_controller.dart';
+import 'package:navigationapp/controllers/friend_request_controller.dart';
+import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/core/constants/firestore_collections.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/models/user.dart';
 
 class UserController extends GetxController {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  UserController(this.currentUserId);
+
+  final String currentUserId;
   Rx<User?> user = Rx<User?>(null);
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  StreamSubscription<DocumentSnapshot>? userSubscription;
+  DocumentReference? userDocRef;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    userDocRef =
+        _firestore.collection(FirestoreCollections.users).doc(currentUserId);
+    listenToUserUpdates();
+  }
+
+  @override
+  void onClose() {
+    userSubscription?.cancel();
+    super.onClose();
+  }
+
+  void listenToUserUpdates() {
+    userSubscription = userDocRef?.snapshots().listen((snapshot) {
+      if (snapshot.exists) {
+        User newUserData = User.fromFirestore(snapshot);
+        User? oldUserData = user.value;
+        user.value = newUserData;
+        if (oldUserData == null) {
+          return;
+        }
+        // Check for updates to "chatGroups" field.
+        if (oldUserData.chatGroups != newUserData.chatGroups) {
+          Get.find<ChatGroupController>().fetchUserChatGroups();
+        }
+        // Check for updates to "routes" field.
+        if (oldUserData.routes != newUserData.routes) {
+          Get.find<RouteController>().fetchUserRoutes();
+        }
+        // Check for updates to "friends" field.
+        if (oldUserData.friends != newUserData.friends) {
+          Get.find<FriendRequestController>().fetchUserFriends();
+        }
+      }
+    });
+  }
 
   // Method to set user data.
-  Future<void> setAuthenticatedUser({required String userId}) async {
+  Future<void> setAuthenticatedUser() async {
     try {
-      DocumentSnapshot snapshot = await firestore
-          .collection(FirestoreCollections.users)
-          .doc(userId)
-          .get();
-      // Create instance of user.
-      User user = User.fromFirestore(snapshot);
-      this.user.value = user;
+      DocumentSnapshot docSnapshot = await userDocRef!.get();
+      if (docSnapshot.exists) {
+        user.value = User.fromFirestore(docSnapshot);
+      }
     } catch (error) {
       throw Exception(error.toString());
     }
@@ -26,7 +71,7 @@ class UserController extends GetxController {
   // Method to fetch user data.
   Future<User> fetchUser({required String userId}) async {
     try {
-      DocumentSnapshot snapshot = await firestore
+      DocumentSnapshot snapshot = await _firestore
           .collection(FirestoreCollections.users)
           .doc(userId)
           .get();
@@ -41,7 +86,7 @@ class UserController extends GetxController {
   // Method to create a new user.
   Future<void> createUser({required User user}) async {
     try {
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.users)
           .doc(user.id)
           .set(user.toJson());
@@ -54,7 +99,7 @@ class UserController extends GetxController {
   Future<List<User>> searchUsersByUsername({required String search}) async {
     try {
       List<User> searchResults = [];
-      QuerySnapshot querySnapshot = await firestore
+      QuerySnapshot querySnapshot = await _firestore
           .collection(FirestoreCollections.users)
           .where("username", isGreaterThanOrEqualTo: search)
           .where("username", isLessThan: '${search}z')
@@ -73,7 +118,7 @@ class UserController extends GetxController {
   Future<void> updateProfilePhoto(
       {required String image, required String uid}) async {
     try {
-      firestore
+      _firestore
           .collection(FirestoreCollections.users)
           .doc(uid)
           .update(({"image": image}));

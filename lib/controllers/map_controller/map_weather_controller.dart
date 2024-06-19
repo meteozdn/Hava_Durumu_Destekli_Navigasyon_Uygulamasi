@@ -5,7 +5,7 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
-import 'package:navigationapp/controllers/navigation_controller.dart';
+import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/weather/current_weather.dart';
 import 'package:navigationapp/services/weather_service/weather_map_service.dart';
@@ -15,7 +15,7 @@ import 'package:navigationapp/views/home/weather_screen.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 class MapWeatherController extends GetxController {
-  final NavigationController _navigationController = Get.find();
+  final LocationController _locationController = Get.find();
   final PageController pageController = PageController();
   RxBool isLoad = false.obs;
   final LatLng center = const LatLng(41.32859, 36.2846729);
@@ -67,8 +67,8 @@ class MapWeatherController extends GetxController {
         icon: await const WeatherMarker().toBitmapDescriptor(
             logicalSize: const Size(150, 150), imageSize: const Size(150, 150)),
         markerId: const MarkerId("CurrentId"),
-        position: _navigationController.currentLocation.value != null
-            ? _navigationController.currentLocation.value!
+        position: _locationController.currentLocation.value != null
+            ? _locationController.currentLocation.value!
             : center));
     load();
   }

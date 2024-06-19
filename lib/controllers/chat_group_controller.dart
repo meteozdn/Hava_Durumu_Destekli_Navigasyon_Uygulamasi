@@ -6,7 +6,7 @@ import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/models/chat_group.dart';
 
 class ChatGroupController extends GetxController {
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final RxList<ChatGroup> chatGroups = <ChatGroup>[].obs;
 
   Future<void> fetchUserChatGroups() async {
@@ -17,7 +17,7 @@ class ChatGroupController extends GetxController {
           Get.find<UserController>().user.value!.chatGroups ?? [];
       // Get ChatGroups from firestore.
       for (String id in ids) {
-        DocumentSnapshot snapshot = await firestore
+        DocumentSnapshot snapshot = await _firestore
             .collection(FirestoreCollections.chatGroups)
             .doc(id)
             .get();
@@ -63,14 +63,15 @@ class ChatGroupController extends GetxController {
         }
       }
       // Create auto Id.
-      final id = firestore.collection(FirestoreCollections.chatGroups).doc().id;
+      final id =
+          _firestore.collection(FirestoreCollections.chatGroups).doc().id;
       // Create ChatGroup model.
       ChatGroup chatGroup = ChatGroup(
           id: id, name: name, image: image, members: members, sharedRoutes: []);
       // Save ChatGroup to local.
       Get.find<UserController>().user.value!.chatGroups?.add(id);
       // Save ChatGroup to fireStore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.chatGroups)
           .doc(id)
           .set(chatGroup.toJson());
@@ -89,7 +90,7 @@ class ChatGroupController extends GetxController {
       bool isAdding = true}) async {
     try {
       // Save to firestore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.users)
           .doc(userId)
           .update({
@@ -105,7 +106,7 @@ class ChatGroupController extends GetxController {
   Future<void> updateChatGroupPhoto(
       {required String image, required String chatGroupId}) async {
     try {
-      firestore
+      _firestore
           .collection(FirestoreCollections.chatGroups)
           .doc(chatGroupId)
           .update(({"image": image}));

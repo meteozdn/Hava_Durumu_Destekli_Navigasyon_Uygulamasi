@@ -1,16 +1,18 @@
-import 'package:flutter/foundation.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
-import 'package:navigationapp/controllers/navigation_controller.dart';
+import 'package:navigationapp/controllers/location_controller.dart';
+import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 
 class NavigationScreen extends StatelessWidget {
   NavigationScreen({super.key});
 
-  final NavigationController controller = Get.find<NavigationController>();
+  final LocationController locationController = Get.find();
+  final MapController mapController = Get.find();
 
   @override
   Widget build(BuildContext context) {
@@ -19,103 +21,125 @@ class NavigationScreen extends StatelessWidget {
         alignment: Alignment.bottomRight,
         children: [
           Obx(() => GoogleMap(
-                myLocationButtonEnabled: false,
-                initialCameraPosition: const CameraPosition(
-                  target: LatLng(41.28667, 36.33),
-                  zoom: 10,
-                ),
-                onMapCreated: (mapController) {
-                  controller.mapController = mapController;
-                },
-                polylines: controller.polylines.toSet(),
-                zoomControlsEnabled: false,
-              )),
+              myLocationButtonEnabled: false,
+              initialCameraPosition:
+                  locationController.currentLocation.value != null
+                      ? CameraPosition(
+                          target: locationController.currentLocation.value!,
+                          zoom: 18,
+                        )
+                      : const CameraPosition(
+                          target: LatLng(41.28667, 36.33),
+                          zoom: 18,
+                        ),
+              onMapCreated: (controller) {
+                if (!mapController.googleMapsController.isCompleted) {
+                  mapController.googleMapsController.complete(controller);
+                } else {
+                  mapController.googleMapsController = Completer();
+                  mapController.googleMapsController.complete(controller);
+                }
+              },
+              polylines: mapController.polylines.toSet(),
+              zoomControlsEnabled: false,
+              markers: mapController.markers.values.toSet())),
           Padding(
             padding: const EdgeInsets.only(bottom: 50.0, right: 10.0, left: 10),
             child: Obx(() {
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //   mainAxisSize: MainAxisSize.min,
                 children: [
-                  controller.isRotateCreated.value
-                      ? GestureDetector(
-                          onTap: () {
-                            //rota silinecek
-                            controller.polylines.clear();
-                            controller.isRotateCreatedController();
-                          },
-                          child: Material(
-                            borderRadius: BorderRadius.circular(10),
-                            elevation: 20,
-                            child: Container(
-                              height: 50,
-                              width: 50,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstants.pictionBlueColor,
-                              ),
-                              child: const Icon(
-                                Icons.close,
-                                color: ColorConstants.whiteColor,
-                              ),
-                            ),
-                          ),
-                        )
-                      : const SizedBox(
-                          width: 50,
-                        ),
-                  GestureDetector(
-                    onTap: () {
-                      controller.isRotateCreatedController();
-                      controller.saveRoute();
-                      controller.polylines.clear();
-                    },
-                    child: Material(
-                      borderRadius: BorderRadius.circular(10),
-                      elevation: 20,
-                      child: controller.isRotateCreated.value
-                          ? Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: ColorConstants.pictionBlueColor,
-                              ),
-                              height: 50,
-                              width: 200,
-                              child: const Center(
-                                child: Text(
-                                  "Yolculuğa Başla",
-                                  style: TextStyle(
-                                      color: ColorConstants.whiteColor,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            )
-                          : const SizedBox(
-                              width: 200,
-                            ),
-                    ),
-                  ),
-                  GestureDetector(
-                    child: SizedBox(
-                      width: 60.w,
-                      child: CircleAvatar(
-                        backgroundColor: ColorConstants.pictionBlueColor,
-                        radius: 30.0,
-                        child: IconButton(
-                            color: ColorConstants.whiteColor,
-                            onPressed: () async {
-                              await controller.getCurrentLocation();
-                            },
-                            icon:
-                                const Icon(Icons.location_searching_outlined)),
-                      ),
-                    ),
-                  )
+                  mapController.isRouteCreated.value
+                      ? clearRouteButton()
+                      : const SizedBox(width: 50),
+                  mapController.isRouteCreated.value
+                      ? routeActionButton()
+                      : const SizedBox(width: 200),
+                  currentLocationButton(),
                 ],
               );
             }),
           )
         ],
+      ),
+    );
+  }
+
+  Widget clearRouteButton() {
+    return GestureDetector(
+      onTap: () {
+        mapController.clearRoute();
+      },
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        elevation: 20,
+        child: Container(
+          height: 50,
+          width: 50,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: ColorConstants.pictionBlueColor,
+          ),
+          child: const Icon(
+            Icons.close,
+            color: ColorConstants.whiteColor,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget routeActionButton() {
+    return GestureDetector(
+      onTap: () async {
+        if (mapController.isPlanned) {
+          Get.snackbar("Success", "The route has been saved.");
+          //await mapController.saveRoute();
+          mapController.clearRoute();
+        } else {
+          Get.snackbar("Navigation", "The navigation has been preparing.");
+          //await mapController.saveRoute();
+          await mapController.startRoute();
+        }
+      },
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        elevation: 20,
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(10),
+            color: ColorConstants.pictionBlueColor,
+          ),
+          height: 50,
+          width: 200,
+          child: Center(
+            child: Text(
+              mapController.isPlanned
+                  ? "Yolculuğu Kayıt Et"
+                  : "Yolculuğa Başla",
+              style: const TextStyle(
+                color: ColorConstants.whiteColor,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget currentLocationButton() {
+    return GestureDetector(
+      child: CircleAvatar(
+        backgroundColor: ColorConstants.pictionBlueColor,
+        radius: 30.0,
+        child: IconButton(
+          color: ColorConstants.whiteColor,
+          onPressed: () async {
+            await locationController.getCurrentLocation();
+          },
+          icon: const Icon(Icons.location_searching_outlined),
+        ),
       ),
     );
   }

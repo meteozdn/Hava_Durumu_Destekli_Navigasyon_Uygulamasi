@@ -7,7 +7,8 @@ import 'package:navigationapp/models/friend_request.dart';
 import 'package:navigationapp/models/user.dart';
 
 class FriendRequestController extends GetxController {
-  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final UserController _userController = Get.find<UserController>();
   final RxList<FriendRequest> friendRequestsIn = <FriendRequest>[].obs;
   final RxList<FriendRequest> friendRequestsOut = <FriendRequest>[].obs;
   final RxList<User> friends = <User>[].obs;
@@ -22,24 +23,13 @@ class FriendRequestController extends GetxController {
     try {
       friendRequestsIn.clear();
       friendRequestsOut.clear();
-      friends.clear();
-      // Store user data to local.
-      String currentUserId = Get.find<UserController>().user.value!.id;
-      await Get.find<UserController>()
-          .setAuthenticatedUser(userId: currentUserId);
-      // Store friends in local.
-      List<String> friendIds =
-          Get.find<UserController>().user.value!.friends ?? [];
-      for (String id in friendIds) {
-        User friend = await Get.find<UserController>().fetchUser(userId: id);
-        friends.add(friend);
-      }
+      String currentUserId = _userController.user.value!.id;
       // Fetch both incoming and outgoing friend requests.
-      QuerySnapshot incomingRequestsSnapshot = await firestore
+      QuerySnapshot incomingRequestsSnapshot = await _firestore
           .collection(FirestoreCollections.friendRequests)
           .where("recipientId", isEqualTo: currentUserId)
           .get();
-      QuerySnapshot outgoingRequestsSnapshot = await firestore
+      QuerySnapshot outgoingRequestsSnapshot = await _firestore
           .collection(FirestoreCollections.friendRequests)
           .where("senderId", isEqualTo: currentUserId)
           .get();
@@ -52,6 +42,15 @@ class FriendRequestController extends GetxController {
       }
     } catch (error) {
       throw Exception(error.toString());
+    }
+  }
+
+  Future<void> fetchUserFriends() async {
+    friends.clear();
+    List<String> friendIds = _userController.user.value!.friends ?? [];
+    for (String id in friendIds) {
+      User friend = await Get.find<UserController>().fetchUser(userId: id);
+      friends.add(friend);
     }
   }
 
@@ -69,7 +68,7 @@ class FriendRequestController extends GetxController {
           recipientId: recipientId,
           recipientUsername: recipientUsername);
       // Save friendRequest to Firestore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.friendRequests)
           .doc(friendRequest.id)
           .set(friendRequest.toJson());
@@ -103,7 +102,7 @@ class FriendRequestController extends GetxController {
   }) async {
     try {
       // Remove friendRequest from Firestore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.friendRequests)
           .doc(senderId + recipientId)
           .delete();
@@ -150,7 +149,7 @@ class FriendRequestController extends GetxController {
       bool isAdding = true}) async {
     try {
       // Save to firestore.
-      await firestore
+      await _firestore
           .collection(FirestoreCollections.users)
           .doc(userId)
           .update({
