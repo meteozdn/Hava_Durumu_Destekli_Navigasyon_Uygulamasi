@@ -83,18 +83,6 @@ class UserController extends GetxController {
     }
   }
 
-  // Method to create a new user.
-  Future<void> createUser({required User user}) async {
-    try {
-      await _firestore
-          .collection(FirestoreCollections.users)
-          .doc(user.id)
-          .set(user.toJson());
-    } catch (error) {
-      throw Exception(error.toString());
-    }
-  }
-
   // Method to search for users by username.
   Future<List<User>> searchUsersByUsername({required String search}) async {
     try {

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:navigationapp/controllers/chat_controller.dart';
@@ -8,10 +9,12 @@ import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
+import 'package:navigationapp/core/constants/firestore_collections.dart';
 import 'package:navigationapp/models/user.dart' as model;
 
 class AuthController extends GetxController {
   Rx<User?> user = Rx<User?>(null);
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void onInit() {
@@ -51,8 +54,19 @@ class AuthController extends GetxController {
           surname: surname,
           registerAt: DateTime.now(),
           image: "");
-      // Access the UserController instance.;
-      Get.find<UserController>().createUser(user: user);
+      await createUser(user: user);
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
+  // Method to create a new user.
+  Future<void> createUser({required model.User user}) async {
+    try {
+      await _firestore
+          .collection(FirestoreCollections.users)
+          .doc(user.id)
+          .set(user.toJson());
     } catch (error) {
       throw Exception(error.toString());
     }
