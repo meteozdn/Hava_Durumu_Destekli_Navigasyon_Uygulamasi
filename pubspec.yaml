@@ -21,9 +21,9 @@ dependencies:
   get: ^4.6.6
   google_maps_flutter: ^2.6.1
   # http: ^1.0.0
-  http: ^0.13.1
+  http: ^1.0.0
   intl: ^0.19.0
-  lottie: ^3.0.0
+  lottie: ^3.1.0
   file_picker: ^8.0.3
   image_picker: ^1.1.1
   firebase_storage: ^11.7.7
@@ -48,3 +48,6 @@ flutter:
     - lib/assets/images/
     - lib/assets/animations/
     - lib/assets/map_theme/silver_theme.json
+
+dependency_overrides:
+  http: ^1.0.0

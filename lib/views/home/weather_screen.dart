@@ -124,7 +124,7 @@ class WeatherScreenAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final JourneyController controller = Get.find();
+    final JourneyController controller = Get.put(JourneyController());
 
     _showAlertDialog() {
       final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
@@ -142,15 +142,15 @@ class WeatherScreenAppBar extends StatelessWidget {
                     padding: const EdgeInsets.only(top: 20.0),
                     child: Column(
                       children: [
-                        //   Image.asset(
-                        //    ImageConst.disaster,
-                        //   width: 100.w,
-                        //  ),
+                        Image.asset(
+                          ImageConst.disaster,
+                          width: 100.w,
+                        ),
                         Text(
-                          //   "Çevrenizde Kritik\nDurum Yok",
+                          "Çevrenizde Kritik\nDurum Yok",
 
-                          "${controller.weatherData["data"][0]} \n ${formatterHour.format(DateTime.now().add(const Duration(minutes: 15)))} "
-                              .toString(),
+                          //  "${controller.weatherData["data"][0]} \n ${formatterHour.format(DateTime.now().add(const Duration(minutes: 15)))} "
+                          //  .toString(),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                               fontSize: 15.sp, fontWeight: FontWeight.bold),
@@ -181,7 +181,9 @@ class WeatherScreenAppBar extends StatelessWidget {
             onPressed: () {
               Get.back();
             },
-            icon: const Icon(Icons.arrow_back_ios_new)),
+            icon: const Icon(
+              Icons.arrow_back_ios_new,
+            )),
         BluredContainer(
             width: 200.w,
             height: 30.h,

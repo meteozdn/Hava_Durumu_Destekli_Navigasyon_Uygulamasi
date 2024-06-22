@@ -531,7 +531,7 @@ class TempViewerWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // WeatherMarker(),
+              //WeatherMarker(),
               BluredContainer(
                 width: 50.w,
                 height: 160.h,

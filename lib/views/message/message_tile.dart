@@ -37,7 +37,7 @@ class MessageTile extends StatelessWidget {
               ? null
               : const TextStyle(
                   fontWeight: FontWeight.bold,
-                  color: ColorConstants.pictionBlueColor)),
+                  color: ColorConstants.blackColor)),
       title: Text(
         chatGroup.name,
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.sp),
@@ -47,7 +47,7 @@ class MessageTile extends StatelessWidget {
         backgroundImage: chatGroup.image.isNotEmpty
             ? CachedNetworkImageProvider(chatGroup.image)
             : null,
-        backgroundColor: ColorConstants.pictionBlueColor,
+        backgroundColor: ColorConstants.blackColor,
         radius: 30.r,
       ),
       trailing: const Icon(Icons.navigate_next),

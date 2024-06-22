@@ -150,11 +150,11 @@ class ElevatedWidgetButton extends StatelessWidget {
     super.key,
     required this.width,
     required this.height,
-    required this.text,
+    required this.temp,
     required this.image,
   });
   final int width;
-  final String text;
+  final double temp;
   final String image;
   final int height;
   @override
@@ -179,8 +179,8 @@ class ElevatedWidgetButton extends StatelessWidget {
                     height: 20.h,
                   )),
               Text(
-                "$text°",
-                style: AppTextStyle.midBlack,
+                "${temp.toInt()}°",
+                // style: AppTextStyle.midBlack,
               )
             ],
           ),

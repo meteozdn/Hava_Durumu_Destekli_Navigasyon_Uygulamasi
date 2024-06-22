@@ -18,7 +18,7 @@ class MapWeatherController extends GetxController {
   final LocationController _locationController = Get.find();
   final PageController pageController = PageController();
   RxBool isLoad = false.obs;
-  final LatLng center = const LatLng(41.32859, 36.2846729);
+  final LatLng center = const LatLng(41.34143753, 36.26658554);
   RxSet<Marker> markers = <Marker>{}.obs;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
@@ -44,32 +44,39 @@ class MapWeatherController extends GetxController {
   changePage() {
     if (pageViewIndex == 0) {
       print("sıfır");
-      _setTiles(WeatherMapTypes.ta2);
+      //   _setTiles(WeatherMapTypes.ta2);
     } else if (pageViewIndex == 3) {
-      _setTiles(WeatherMapTypes.wnd);
+      //  _setTiles(WeatherMapTypes.wnd);
     }
   }
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    //  _setTiles(WeatherMapTypes.ta2);
-    await getCurrentLocation();
-    // getCurrentWeather();
+    await _setTiles(WeatherMapTypes.ta2);
+    // await getCurrentLocation();
+    getCurrentWeather();
+
     currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
         center.longitude, center.latitude);
-
+    // await getCurrentLocationMarker();
+    determinePosition();
     load();
   }
 
-  getCurrentLocation() async {
+  getCurrentLocationMarker() async {
     markers.add(Marker(
-        icon: await const WeatherMarker().toBitmapDescriptor(
-            logicalSize: const Size(150, 150), imageSize: const Size(150, 150)),
+        icon: await WeatherMarker(
+          isNight: !(DateTime.now().hour < 19 && DateTime.now().hour > 6),
+          weatherIcon: getIcon(),
+          weatherTemp: currentWeatherModel.value.main!.temp!,
+        ).toBitmapDescriptor(
+            logicalSize: const Size(20, 20), imageSize: const Size(200, 200)),
         markerId: const MarkerId("CurrentId"),
-        position: _locationController.currentLocation.value != null
-            ? _locationController.currentLocation.value!
-            : center));
+        // position: _locationController.currentLocation.value != null
+        //     ? _locationController.currentLocation.value!
+        //     : center
+        position: center));
     load();
   }
 

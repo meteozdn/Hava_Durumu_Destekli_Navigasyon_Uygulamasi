@@ -2,7 +2,9 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
+import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/models/route.dart';
@@ -43,7 +45,7 @@ class JourneyWidget extends StatelessWidget {
           border: Border.all(
               color: isMY
                   ? ColorConstants.pastelMagentaColor
-                  : ColorConstants.pictionBlueColor),
+                  : ColorConstants.blackColor),
           color: Colors.white,
           borderRadius: BorderRadius.circular(20.r)),
       height: 160.h,
@@ -69,14 +71,14 @@ class JourneyWidget extends StatelessWidget {
                         child: CircleAvatar(
                           backgroundColor: isMY
                               ? ColorConstants.pastelMagentaColor
-                              : ColorConstants.pictionBlueColor,
+                              : ColorConstants.blackColor,
                           radius: 19.h,
                           child: CircleAvatar(
                             radius: 17.h,
 
                             backgroundImage:
                                 CachedNetworkImageProvider(userImage!),
-                            backgroundColor: ColorConstants.pictionBlueColor,
+                            backgroundColor: ColorConstants.blackColor,
                             // radius: 50.h,
                             child: userImage == null
                                 ? Icon(
@@ -164,9 +166,19 @@ class JourneyWidget extends StatelessWidget {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: isMY
                                       ? ColorConstants.pastelMagentaColor
-                                      : ColorConstants.pictionBlueColor,
+                                      : ColorConstants.blackColor,
                                 ),
-                                onPressed: () {
+                                onPressed: () async {
+                                  final MapController navMapController =
+                                      Get.find();
+
+                                  await navMapController.setPolylinePoints(
+                                      start: LatLng(
+                                          route.startingLocation.latitude,
+                                          route.startingLocation.longitude),
+                                      destination: LatLng(
+                                          route.destinationLocation.latitude,
+                                          route.destinationLocation.longitude));
                                   Get.to(() => JourneyDetail(route: route));
                                 },
                                 child: const Icon(

@@ -2,41 +2,55 @@ import 'package:flutter/material.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class WeatherMarker extends StatelessWidget {
-  const WeatherMarker({
+  final String weatherIcon;
+  final double weatherTemp;
+  final bool isNight;
+
+  WeatherMarker({
     super.key,
+    required this.weatherIcon,
+    required this.weatherTemp,
+    required this.isNight,
   });
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 220,
-      width: 250,
+      height: 300,
+      width: 500,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           CircleAvatar(
-            radius: 80,
-            backgroundColor: ColorConstants.pictionBlueColor,
+            radius: 60,
+            backgroundColor:
+                isNight ? ColorConstants.blackColor : ColorConstants.lightGrey,
             child: CircleAvatar(
-              backgroundColor: ColorConstants.whiteColor,
-              radius: 70,
+              backgroundColor: isNight
+                  ? ColorConstants.lightGrey
+                  : ColorConstants.pictionBlueColor,
+              radius: 55,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  const Text("25",
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                  Text("${weatherTemp.toInt().toString()}°C",
+                      style: const TextStyle(
+                          fontSize: 30,
+                          color: ColorConstants.blackColor,
+                          fontWeight: FontWeight.bold)),
                   Image.asset(
-                    IconsConst.sunnyIcon,
-                    height: 80,
+                    weatherIcon,
+                    height: 50,
                   )
                 ],
               ),
             ),
           ),
           CustomPaint(
-            painter: _Triangle(),
-            size: Size(60, 60),
+            painter: _Triangle(
+              isNight ? ColorConstants.blackColor : ColorConstants.greyColor,
+            ),
+            size: const Size(40, 40),
           ),
         ],
       ),
@@ -45,9 +59,14 @@ class WeatherMarker extends StatelessWidget {
 }
 
 class _Triangle extends CustomPainter {
+  final Color color;
+
+  _Triangle(
+    this.color,
+  );
   void paint(Canvas canvas, Size size) {
     Paint paint = Paint()
-      // ..color = Colors.blue
+      ..color = color
       ..style = PaintingStyle.fill;
 
     Path path = Path();
