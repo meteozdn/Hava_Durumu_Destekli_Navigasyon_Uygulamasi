@@ -72,7 +72,7 @@ class MainScreen extends StatelessWidget {
       onWarning: (p0) {
         print(p0);
       },
-      Animations.ld2,
+      Animations.ld1,
     ));
   }
 }
