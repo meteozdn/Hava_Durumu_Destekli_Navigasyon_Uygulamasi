@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/create_route_controller.dart';
@@ -10,6 +11,8 @@ import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/views/auth/auth_screen.dart';
 import 'package:navigationapp/views/home/home_screen.dart';
+
+import '../../core/constants/app_constants.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({super.key});
@@ -63,8 +66,13 @@ class MainScreen extends StatelessWidget {
   }
 
   Widget _buildLoadingScreen() {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return Center(
+        child: Lottie.asset(
+      // options: LottieOptions(enableMergePaths: true),
+      onWarning: (p0) {
+        print(p0);
+      },
+      Animations.ld2,
+    ));
   }
 }

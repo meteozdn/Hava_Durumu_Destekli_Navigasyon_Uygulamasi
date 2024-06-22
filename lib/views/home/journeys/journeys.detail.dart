@@ -8,7 +8,9 @@ import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/journey_detail._controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/models/route.dart';
+import 'package:navigationapp/views/components/blured_container.dart';
 
 class JourneyDetail extends StatelessWidget {
   JourneyDetail({super.key, required this.route});
@@ -50,39 +52,80 @@ class JourneyDetail extends StatelessWidget {
                     ),
                     Stack(
                       children: [
-                        SizedBox(
-                          height: 200,
-                          width: 300,
-                          child: Padding(
-                            padding: const EdgeInsets.all(15.0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                border: Border.all(),
-                              ),
-                              child: GoogleMap(
-                                //  scrollGesturesEnabled: false,
-                                myLocationButtonEnabled: false,
-                                initialCameraPosition: const CameraPosition(
-                                  target: LatLng(41.28667, 36.33),
-                                  zoom: 10,
+                        Stack(
+                          alignment: Alignment.bottomRight,
+                          children: [
+                            SizedBox(
+                              height: 200,
+                              width: 300,
+                              child: Padding(
+                                padding: const EdgeInsets.all(15.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    border: Border.all(),
+                                  ),
+                                  child: Stack(
+                                    children: [
+                                      GoogleMap(
+                                        zoomGesturesEnabled: false,
+                                        scrollGesturesEnabled: false,
+                                        //  scrollGesturesEnabled: false,
+                                        myLocationButtonEnabled: false,
+                                        initialCameraPosition:
+                                            const CameraPosition(
+                                          target: LatLng(41.28667, 36.33),
+                                          zoom: 10,
+                                        ),
+                                        onMapCreated: (mapController) {
+                                          //  controller.mapController = mapController;
+                                        },
+                                        // polylines: controller.polylines.toSet(),
+                                        zoomControlsEnabled: false,
+                                      ),
+                                      false
+                                          // ignore: dead_code
+                                          ? const BluredContainer(
+                                              height: 200,
+                                              width: 300,
+                                              child: Center(
+                                                  child: Text(
+                                                "Yolculuk Tamamlandı.",
+                                                style: TextStyle(
+                                                    fontSize: 20,
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              )),
+                                            )
+                                          : SizedBox.shrink()
+                                    ],
+                                  ),
                                 ),
-                                onMapCreated: (mapController) {
-                                  //  controller.mapController = mapController;
-                                },
-                                // polylines: controller.polylines.toSet(),
-                                zoomControlsEnabled: false,
                               ),
                             ),
-                          ),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Get.toNamed(
+                                    NavigationConstants.liveJourney,
+                                    arguments: {
+                                      "route": route,
+                                    },
+                                  );
+                                },
+                                child: const Icon(Icons.broadcast_on_home))
+                          ],
                         ),
-                        CircleAvatar(
-                          backgroundColor: ColorConstants.pictionBlueColor,
-                          radius: 27,
-                          child: CircleAvatar(
-                            foregroundImage: NetworkImage(route.userImage!),
-                            radius: 25,
-                            backgroundColor: ColorConstants.blackColor,
-                          ),
+                        Column(
+                          children: [
+                            CircleAvatar(
+                              backgroundColor: ColorConstants.blackColor,
+                              radius: 27,
+                              child: CircleAvatar(
+                                foregroundImage: NetworkImage(route.userImage!),
+                                radius: 25,
+                                backgroundColor: ColorConstants.blackColor,
+                              ),
+                            ),
+                          ],
                         )
                       ],
                     ),
@@ -179,7 +222,7 @@ class JourneyDetail extends StatelessWidget {
                                       children: [
                                         CircleAvatar(
                                           backgroundColor:
-                                              ColorConstants.pictionBlueColor,
+                                              ColorConstants.blackColor,
                                           radius: 26,
                                           child: CircleAvatar(
                                             foregroundImage: NetworkImage(
@@ -216,7 +259,7 @@ class JourneyDetail extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: ColorConstants.pictionBlueColor,
+                    color: ColorConstants.blackColor,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   //color: Colors.red,

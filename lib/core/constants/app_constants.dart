@@ -51,14 +51,16 @@ class ColorConstants {
   static const Color cardinalColor = Color(0xFFBD1742);
   static const Color lightBlue = Color(0xFFE0EEFD);
   static const Color pastelMagentaColor = Color(0xFFBD1742);
-  static const Color blackColor = Color(0xFF2C3333);
+  static const Color pictionBlueColor = Color.fromARGB(255, 137, 197, 232);
+  //static const Color blackColor = Color(0xFF2C3333);
   //static const Color pictionBlueColor = Color(0xFF61B9ED);
-  static const Color pictionBlueColor = Color(0xFF2C3333);
+  static const Color blackColor = Color(0xFF2C3333);
   static const Color orangeColor = Color(0xFFFF9255);
   static const Color purpleColor = Color(0xFF7C5DA4);
   static const Color blackPurpleColor = Color(0xFF3D2E6B);
   static const Color leftPlateColor = Color(0xFFF8BA43);
   static const Color lightGrey = Color(0xFFECECEC);
+  static const Color transparent = Colors.transparent;
 
   static const Color greenColor = Color(0xFF8EC148);
   static const Color yellow = Color(0xFFFFFF00);
@@ -82,12 +84,19 @@ class Animations {
   static const safeCar = "lib/assets/animations/safeCar.json";
   static const journeyCar = "lib/assets/animations/journeyCar.json";
   static const a = "lib/assets/animations/a.json";
+  static const notFound = "lib/assets/animations/lottie_data_not_found.json";
+  static const load = "lib/assets/animations/ld1.json";
+  static const ld1 = "lib/assets/animations/us.json";
+  static const ld2 = "lib/assets/animations/loadcar.json";
+
   // static const safeCar = "lib/assets/animations/safeCar.json";
 }
 
 class IconsConst {
   static const root = "lib/assets/icons/";
   static const friends = "lib/assets/icons/friends.png";
+  static const sunnyIcon = "lib/assets/icons/01d.png";
+  static const thunderIcon = "lib/assets/icons/11n.png";
 
   static const blackNavigateIcon = "lib/assets/icons/navigate.png";
   static const windIcon = "lib/assets/icons/wind.png";

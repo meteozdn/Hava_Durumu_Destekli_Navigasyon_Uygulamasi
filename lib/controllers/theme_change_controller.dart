@@ -18,13 +18,13 @@ class ThemeChanger {
       scaffoldBackgroundColor: ColorConstants.lightGrey, // Arka plan rengi
       primaryColor: ColorConstants.whiteColor, // Birincil renk
 
-      hintColor: ColorConstants.pictionBlueColor, // Vurgu rengi
+      hintColor: ColorConstants.blackColor, // Vurgu rengi
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: ColorConstants.pictionBlueColor),
+          backgroundColor: ColorConstants.blackColor),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
-              backgroundColor: MaterialStateProperty.all<Color>(
-                  ColorConstants.pictionBlueColor)))
+              backgroundColor:
+                  MaterialStateProperty.all<Color>(ColorConstants.blackColor)))
 
       // Diğer tema özellikleri buraya eklenebilir
       );
@@ -45,12 +45,13 @@ class ThemeChanger {
 
   ThemeData defaultTheme() {
     return ThemeData(
+        iconTheme: IconThemeData(color: ColorConstants.pictionBlueColor),
         appBarTheme:
             const AppBarTheme(color: ColorConstants.lightGrey), // AppBar rengi
         scaffoldBackgroundColor: ColorConstants.lightGrey, // Arka plan rengi
         primaryColor: ColorConstants.whiteColor, // Birincil renk
 
-        hintColor: ColorConstants.pictionBlueColor, // Vurgu rengi
+        hintColor: ColorConstants.blackColor, // Vurgu rengi
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
             backgroundColor: ColorConstants.pictionBlueColor),
         elevatedButtonTheme: ElevatedButtonThemeData(

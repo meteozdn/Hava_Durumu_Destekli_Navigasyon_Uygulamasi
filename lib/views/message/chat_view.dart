@@ -24,7 +24,7 @@ class ChatView extends StatelessWidget {
             backgroundImage: chatGroup.image.isNotEmpty
                 ? NetworkImage(chatGroup.image)
                 : null,
-            backgroundColor: ColorConstants.pictionBlueColor,
+            backgroundColor: ColorConstants.blackColor,
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
@@ -87,7 +87,7 @@ class ChatView extends StatelessWidget {
           width: 30,
           decoration: BoxDecoration(
               color: ColorConstants.lightBlue,
-              border: Border.all(color: ColorConstants.pictionBlueColor),
+              border: Border.all(color: ColorConstants.blackColor),
               borderRadius: isMy ? myBorder : senderBorder),
           alignment: alignment,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
@@ -118,14 +118,13 @@ class ChatView extends StatelessWidget {
                               BorderRadius.all(Radius.circular(15.r))),
                       focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                              color: ColorConstants.pictionBlueColor),
+                              color: ColorConstants.blackColor),
                           borderRadius:
                               BorderRadius.all(Radius.circular(15.r))))),
             ),
             IconButton(
               onPressed: chatController.sendMessage,
-              icon: const Icon(Icons.send,
-                  color: ColorConstants.pictionBlueColor),
+              icon: const Icon(Icons.send, color: ColorConstants.blackColor),
             ),
           ],
         ),
@@ -173,7 +172,7 @@ class _ChatBubble extends StatelessWidget {
                 borderRadius: isMine ? myBorder : senderBorder,
                 border: Border.all(
                     color: isMine
-                        ? ColorConstants.pictionBlueColor
+                        ? ColorConstants.blackColor
                         : ColorConstants.blackColor)),
             child: Padding(
               padding: isMine
