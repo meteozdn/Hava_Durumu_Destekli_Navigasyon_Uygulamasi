@@ -71,7 +71,7 @@ class JourneyController extends GetxController {
   }
 
   // Function to fetch weather data.
-  Future<void> fetchWeatherData(double lat, double lon) async {
+  Future<void> fetchWeatherData(double lat, double lon, DateTime datetime) async {
     String origin =
         "${_locationController.currentLocation.value!.latitude},${_locationController.currentLocation.value!.longitude}";
     String dest = "$lat,$lon";
