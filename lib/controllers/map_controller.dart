@@ -17,6 +17,7 @@ class MapController extends GetxController {
   bool isPlanned = false;
   RxBool isRouteStarted = false.obs;
   RxBool isRouteCreated = false.obs;
+  RxBool isCameraLocked = true.obs;
   var markers = <MarkerId, Marker>{}.obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
@@ -71,8 +72,21 @@ class MapController extends GetxController {
     }
   }
 
+  void updatePolyline() {
+    polylines.clear();
+    PolylineId id = const PolylineId("route");
+    Polyline polyline = Polyline(
+      polylineId: id,
+      color: Colors.blue,
+      points: polylineCoordinates,
+      width: 4,
+    );
+    polylines.add(polyline);
+  }
+
   Future<void> moveCameraToLocation(
       {required LatLng location, double bearing = 0}) async {
+    if (!isCameraLocked.value) return;
     CameraPosition newCameraPosition = CameraPosition(
       target: location,
       zoom: 18,
@@ -89,7 +103,7 @@ class MapController extends GetxController {
     googleMaps.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
   }
 
-  bool isOffRoute({required LatLng location, double threshold = 50}) {
+  bool isOffRoute({required LatLng location, double threshold = 200}) {
     for (LatLng point in polylineCoordinates) {
       double distance = LocationUtils.calculateDistance(location, point);
       if (distance < threshold) {
@@ -126,24 +140,12 @@ class MapController extends GetxController {
     }
   }
 
-  void setCurrentLocationMarker({required LatLng location}) {
-    markers.clear();
-    const markerId = MarkerId("current");
-    final marker = Marker(markerId: markerId, position: location);
-    markers[markerId] = marker;
-  }
-
-  void updatePolyline() {
-    polylines.clear();
-    PolylineId id = const PolylineId("route");
-    Polyline polyline = Polyline(
-      polylineId: id,
-      color: Colors.blue,
-      points: polylineCoordinates,
-      width: 4,
-    );
-    polylines.add(polyline);
-  }
+  // void setCurrentLocationMarker({required LatLng location}) async {
+  //   markers.clear();
+  //   const markerId = MarkerId("current");
+  //   final marker = Marker(markerId: markerId, position: location);
+  //   markers[markerId] = marker;
+  // }
 
   void clearRoute() {
     polylines.clear();
@@ -151,6 +153,9 @@ class MapController extends GetxController {
     markers.clear();
     isRouteCreated.value = false;
     isRouteStarted.value = false;
+    if (Get.isRegistered<JourneyController>()) {
+      Get.delete<JourneyController>();
+    }
   }
 
   void setRouteModel({required RouteModel route, required bool isPlanned}) {

@@ -22,6 +22,7 @@ class NavigationScreen extends StatelessWidget {
         children: [
           Obx(() => GoogleMap(
               myLocationButtonEnabled: false,
+              myLocationEnabled: true,
               initialCameraPosition:
                   locationController.currentLocation.value != null
                       ? CameraPosition(
@@ -43,23 +44,26 @@ class NavigationScreen extends StatelessWidget {
               polylines: mapController.polylines.toSet(),
               zoomControlsEnabled: false,
               markers: mapController.markers.values.toSet())),
-          Padding(
-            padding: const EdgeInsets.only(bottom: 50.0, right: 10.0, left: 10),
+          Positioned(
+            bottom: 50,
+            right: 10,
+            left: 10,
             child: Obx(() {
+              final isRouteCreated = mapController.isRouteCreated.value;
+              final isRouteStarted = mapController.isRouteStarted.value;
               return Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  mapController.isRouteCreated.value
+                  isRouteCreated
                       ? clearRouteButton()
-                      : const SizedBox(width: 50),
-                  mapController.isRouteCreated.value
-                      ? routeActionButton()
-                      : const SizedBox(width: 200),
+                      : const SizedBox(height: 10),
+                  if (isRouteCreated && !isRouteStarted) routeActionButton(),
+                  if (isRouteStarted) journeyInformation(),
                   currentLocationButton(),
                 ],
               );
             }),
-          )
+          ),
         ],
       ),
     );
@@ -136,10 +140,58 @@ class NavigationScreen extends StatelessWidget {
         child: IconButton(
           color: ColorConstants.whiteColor,
           onPressed: () async {
-            await locationController.getCurrentLocation();
+            if (!mapController.isRouteStarted.value) {
+              await locationController.getCurrentLocation();
+            } else {
+              mapController.isCameraLocked.value =
+                  !mapController.isCameraLocked.value;
+              mapController.moveCameraToLocation(
+                  location: locationController.currentLocation.value!);
+              // Get.find<JourneyController>().fetchWeatherData(
+              //     locationController.destination.value!.latitude,
+              //     locationController.destination.value!.longitude);
+            }
           },
           icon: const Icon(Icons.location_searching_outlined),
         ),
+      ),
+    );
+  }
+
+  Widget journeyInformation() {
+    return GestureDetector(
+      child: Material(
+        borderRadius: BorderRadius.circular(10),
+        elevation: 20,
+        child: Container(
+            height: 100,
+            width: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorConstants.whiteColor,
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  locationController.distanceLeft.value,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Text(
+                  locationController.timeLeft.value,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                // Text(
+                //   locationController.speed.value,
+                //   style: const TextStyle(
+                //       fontSize: 16, fontWeight: FontWeight.bold),
+                // ),
+              ],
+            )),
       ),
     );
   }

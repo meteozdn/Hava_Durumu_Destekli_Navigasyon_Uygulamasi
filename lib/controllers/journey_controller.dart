@@ -9,8 +9,6 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 class JourneyController extends GetxController {
   Map<String, dynamic> weatherData = {};
   RxBool isRouteCompleted = false.obs;
-  RxString distanceLeft = RxString("");
-  RxString timeLeft = RxString("");
 
   late StreamSubscription<Position> positionStream;
   final LocationController _locationController = Get.find();
@@ -31,8 +29,8 @@ class JourneyController extends GetxController {
     // Subscribe to location changes.
     positionStream = Geolocator.getPositionStream(
         locationSettings: const LocationSettings(
-      accuracy: LocationAccuracy.high,
-      distanceFilter: 1,
+      accuracy: LocationAccuracy.best,
+      distanceFilter: 0,
     )).listen((Position position) {
       _locationController.setCurrentLocation(position: position);
       getTotalDistanceAndTime();
@@ -62,9 +60,10 @@ class JourneyController extends GetxController {
           isRouteCompleted.value = true;
           Get.snackbar("Completed", "You have arrived to your destination.");
         }
-        distanceLeft.value = "${(distance / 1000).toStringAsFixed(2)} km";
-        timeLeft.value = "${(duration / 60).toStringAsFixed(2)} dk";
-        Get.snackbar("Remain", "${distanceLeft.value}\n${timeLeft.value}");
+        _locationController.distanceLeft.value =
+            "Kalan: ${(distance / 1000).toStringAsFixed(2)} km";
+        _locationController.timeLeft.value =
+            "Tahmini Süre: ${(duration / 60).round()} dk";
       }
     } catch (error) {
       Get.snackbar("Error", error.toString());
@@ -72,16 +71,33 @@ class JourneyController extends GetxController {
   }
 
   // Function to fetch weather data.
-  Future<void> fetchWeatherData(
-      double lat, double lon, DateTime dateTime) async {
-    int dt = dateTime.millisecondsSinceEpoch ~/ 1000;
+  Future<void> fetchWeatherData(double lat, double lon, DateTime datetime) async {
+    String origin =
+        "${_locationController.currentLocation.value!.latitude},${_locationController.currentLocation.value!.longitude}";
+    String dest = "$lat,$lon";
     final String request =
-        "https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=$lat&lon=$lon&dt=$dt&units=metric&lang=tr&appid=${AppConstants.weatherAPIKey}";
-    final response = await http.get(Uri.parse(request));
-    if (response.statusCode == 200) {
-      weatherData = json.decode(response.body);
-    } else {
-      Get.snackbar("Error", "Failed to fetch weather data");
+        "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=$origin&destinations=$dest&key=${AppConstants.googleMapsApiKey}";
+    final response1 = await http.get(Uri.parse(request));
+    if (response1.statusCode == 200) {
+      final jsonResponse = json.decode(response1.body);
+      var data = jsonResponse;
+      double duration = 0.0;
+      List<dynamic> elements = data["rows"][0]["elements"];
+      for (var i = 0; i < elements.length; i++) {
+        duration = duration + elements[i]["duration"]["value"];
+      }
+      DateTime newDateTime =
+          DateTime.now().add(Duration(minutes: (duration / 60).round()));
+      int dt = newDateTime.millisecondsSinceEpoch ~/ 1000;
+      final String request =
+          "https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=$lat&lon=$lon&dt=$dt&units=metric&lang=tr&appid=${AppConstants.weatherAPIKey}";
+      final response = await http.get(Uri.parse(request));
+      if (response.statusCode == 200) {
+        weatherData = json.decode(response.body);
+        Get.defaultDialog(middleText: weatherData.toString());
+      } else {
+        Get.snackbar("Error", "Failed to fetch weather data");
+      }
     }
   }
 

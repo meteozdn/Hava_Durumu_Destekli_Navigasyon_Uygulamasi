@@ -86,7 +86,7 @@ class Animations {
   static const a = "lib/assets/animations/a.json";
   static const notFound = "lib/assets/animations/lottie_data_not_found.json";
   static const load = "lib/assets/animations/ld1.json";
-  static const ld1 = "lib/assets/animations/us.json";
+  static const ld1 = "lib/assets/animations/f.json";
   static const ld2 = "lib/assets/animations/loadcar.json";
 
   // static const safeCar = "lib/assets/animations/safeCar.json";
