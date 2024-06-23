@@ -7,6 +7,7 @@ class NavigationConstants {
   static const search = "/search";
   static const weather = "/weather";
   static const journeyDetail = "/journeyDetail";
+  static const liveJourney = "/journeyLive";
 
   //static const changeLanguage = "/changeLanguage";
 }

@@ -30,8 +30,8 @@ class SearchView extends StatelessWidget {
                 ),
                 border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
-                    borderSide: const BorderSide(
-                        color: ColorConstants.pictionBlueColor)),
+                    borderSide:
+                        const BorderSide(color: ColorConstants.blackColor)),
                 labelText: "Ara",
                 suffixIcon: IconButton(
                   icon: const Icon(Icons.search),
@@ -59,7 +59,7 @@ class SearchView extends StatelessWidget {
                         backgroundImage: controller.users[index].image != null
                             ? NetworkImage(controller.users[index].image!)
                             : null,
-                        backgroundColor: ColorConstants.pictionBlueColor,
+                        backgroundColor: ColorConstants.blackColor,
                         radius: 20.h,
                         child: controller.users[index].image == null
                             ? Icon(

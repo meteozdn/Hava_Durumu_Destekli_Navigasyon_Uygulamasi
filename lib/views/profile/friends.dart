@@ -36,7 +36,7 @@ class FriendsView extends StatelessWidget {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: const BorderSide(
-                              color: ColorConstants.pictionBlueColor)),
+                              color: ColorConstants.blackColor)),
                       labelText: "Ara",
                       suffixIcon: IconButton(
                         icon: const Icon(Icons.search),
@@ -82,7 +82,7 @@ class FriendCard extends StatelessWidget {
                     child: Row(
                       children: [
                         const CircleAvatar(
-                          backgroundColor: ColorConstants.pictionBlueColor,
+                          backgroundColor: ColorConstants.blackColor,
                         ),
                         Padding(
                           padding: EdgeInsets.only(left: 15.0.w),
@@ -94,14 +94,13 @@ class FriendCard extends StatelessWidget {
                   Container(
                       decoration: BoxDecoration(
                           border: Border.all(
-                              color: ColorConstants.pictionBlueColor,
-                              width: 2.w),
+                              color: ColorConstants.blackColor, width: 2.w),
                           borderRadius: BorderRadius.circular(20.r)),
                       child: Padding(
                         padding: EdgeInsets.all(2.0.w),
                         child: const Icon(
                           Icons.delete,
-                          color: ColorConstants.pictionBlueColor,
+                          color: ColorConstants.blackColor,
                         ),
                       ))
                 ],

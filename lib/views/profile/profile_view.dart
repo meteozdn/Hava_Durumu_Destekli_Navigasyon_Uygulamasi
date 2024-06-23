@@ -41,7 +41,7 @@ class ProfileView extends StatelessWidget {
                 padding: EdgeInsets.only(left: 1.0),
                 child: Icon(
                   Icons.person_add_alt_1,
-                  color: ColorConstants.pictionBlueColor,
+                  color: ColorConstants.blackColor,
                 ),
               ),
             ),
@@ -60,16 +60,15 @@ class ProfileView extends StatelessWidget {
                     alignment: Alignment.bottomRight,
                     children: [
                       CircleAvatar(
-                        backgroundColor: ColorConstants.pictionBlueColor,
+                        backgroundColor: ColorConstants.blackColor,
                         radius: 52.h,
                         child: CircleAvatar(
-                          backgroundImage: userController.user.value!.image !=
-                                  null
-                              ? NetworkImage(userController.user.value!.image!)
-                              : null,
-                          backgroundColor: ColorConstants.pictionBlueColor,
+                          backgroundImage: userController.user.value == null
+                              ? null
+                              : NetworkImage(userController.user.value!.image),
+                          backgroundColor: ColorConstants.blackColor,
                           radius: 50.h,
-                          child: userController.user.value!.image == null
+                          child: userController.user.value == null
                               ? Icon(
                                   Icons.person,
                                   size: 50.w,
@@ -124,7 +123,7 @@ class ProfileView extends StatelessWidget {
                           );
                         },
                         child: const CircleAvatar(
-                          backgroundColor: ColorConstants.pictionBlueColor,
+                          backgroundColor: ColorConstants.blackColor,
                           child: Icon(
                             Icons.camera_alt_sharp,
                             color: ColorConstants.whiteColor,
@@ -138,7 +137,9 @@ class ProfileView extends StatelessWidget {
                   padding: EdgeInsets.only(
                       top: 10.h, right: 10.h, left: 10.h, bottom: 60),
                   child: Text(
-                    userController.user.value!.name,
+                    userController.user.value == null
+                        ? "Kullanıcı"
+                        : userController.user.value!.name,
                     style: TextStyle(
                         color: ColorConstants.blackColor, fontSize: 30.sp),
                   ),
@@ -313,7 +314,7 @@ class ProfileButtons extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 18.sp,
                           //  fontWeight: FontWeight.bold,
-                          color: ColorConstants.pictionBlueColor),
+                          color: ColorConstants.blackColor),
                     ),
                   ),
                 ],

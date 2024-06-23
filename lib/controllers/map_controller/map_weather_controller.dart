@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
@@ -9,12 +10,15 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/weather/current_weather.dart';
 import 'package:navigationapp/services/weather_service/weather_map_service.dart';
 import 'package:navigationapp/services/weather_service/weathers_service.dart';
+import 'package:navigationapp/views/components/weather_map_widgets/weather_map_marker.dart';
+import 'package:navigationapp/views/home/weather_screen.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class MapWeatherController extends GetxController {
   final LocationController _locationController = Get.find();
   final PageController pageController = PageController();
   RxBool isLoad = false.obs;
-  final LatLng center = const LatLng(41.32859, 36.2846729);
+  final LatLng center = const LatLng(41.34143753, 36.26658554);
   RxSet<Marker> markers = <Marker>{}.obs;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
@@ -32,7 +36,7 @@ class MapWeatherController extends GetxController {
 
   String getIcon() {
     String icon =
-        "${IconsConst.root}${currentWeatherModel.value.weather!.first.icon!}_t@4x.png";
+        "${IconsConst.root}${currentWeatherModel.value.weather!.first.icon!}.png";
 
     return icon;
   }
@@ -40,30 +44,39 @@ class MapWeatherController extends GetxController {
   changePage() {
     if (pageViewIndex == 0) {
       print("sıfır");
-      _setTiles(WeatherMapTypes.ta2);
+      //   _setTiles(WeatherMapTypes.ta2);
     } else if (pageViewIndex == 3) {
-      _setTiles(WeatherMapTypes.wnd);
+      //  _setTiles(WeatherMapTypes.wnd);
     }
   }
 
   @override
   Future<void> onInit() async {
     super.onInit();
-    _setTiles(WeatherMapTypes.ta2);
-    getCurrentLocation();
-    // getCurrentWeather();
+    await _setTiles(WeatherMapTypes.ta2);
+    // await getCurrentLocation();
+    getCurrentWeather();
+
     currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
         center.longitude, center.latitude);
+    // await getCurrentLocationMarker();
+    determinePosition();
     load();
   }
 
-  getCurrentLocation() {
+  getCurrentLocationMarker() async {
     markers.add(Marker(
-        icon: BitmapDescriptor.defaultMarkerWithHue(30),
+        icon: await WeatherMarker(
+          isNight: !(DateTime.now().hour < 19 && DateTime.now().hour > 6),
+          weatherIcon: getIcon(),
+          weatherTemp: currentWeatherModel.value.main!.temp!,
+        ).toBitmapDescriptor(
+            logicalSize: const Size(20, 20), imageSize: const Size(200, 200)),
         markerId: const MarkerId("CurrentId"),
-        position: _locationController.currentLocation.value != null
-            ? _locationController.currentLocation.value!
-            : center));
+        // position: _locationController.currentLocation.value != null
+        //     ? _locationController.currentLocation.value!
+        //     : center
+        position: center));
     load();
   }
 
@@ -106,6 +119,30 @@ class MapWeatherController extends GetxController {
 
   load() {
     isLoad(isLoad.value);
+  }
+
+  Future determinePosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error("LocationServices disabled ");
+    }
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error("LocationPermission Denied");
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error("LocationPermission Denied");
+    }
+  }
+
+  LatLng? getPosition(double latitude, double longitude) {
+    return LatLng(latitude, longitude);
   }
 }
 

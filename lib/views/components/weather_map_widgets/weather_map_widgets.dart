@@ -10,6 +10,7 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/services/weather_service/weathers_service.dart';
 import 'package:navigationapp/views/components/blured_container.dart';
 import 'package:navigationapp/views/components/indicator.dart';
+import 'package:navigationapp/views/components/weather_map_widgets/weather_map_marker.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class Wind extends StatelessWidget {
@@ -209,26 +210,23 @@ class WeeklyTemp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //List<String>
-    return Container(
-      //color: Colors.green,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          ...List.generate(5, (index) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Text("Çarş"),
-                Image.asset(
-                  WeatherIcons.partlyCloudy,
-                  height: 40,
-                ),
-                Text("25C")
-              ],
-            );
-          })
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: [
+        ...List.generate(5, (index) {
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Text("Çarş"),
+              Image.asset(
+                WeatherIcons.partlyCloudy,
+                height: 40,
+              ),
+              Text("25C")
+            ],
+          );
+        })
+      ],
     );
   }
 }
@@ -533,6 +531,7 @@ class TempViewerWidget extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              //WeatherMarker(),
               BluredContainer(
                 width: 50.w,
                 height: 160.h,
@@ -633,15 +632,15 @@ class NowTemp extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          "${_mapWeatherController.currentWeatherModel.value.main!.temp!}°",
+                          "${_mapWeatherController.currentWeatherModel.value.main!.temp!.toInt()}°",
                           style: TextStyle(
                             color: ColorConstants.blackColor,
-                            fontSize: 50.sp,
+                            fontSize: 60.sp,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         Text(
-                            "Y:${_mapWeatherController.currentWeatherModel.value.main!.tempMax! + 2.11}°  D:${_mapWeatherController.currentWeatherModel.value.main!.tempMin! - 3.27}°")
+                            "Y:${(_mapWeatherController.currentWeatherModel.value.main!.tempMax! + 2.1).toInt()}°  D:${(_mapWeatherController.currentWeatherModel.value.main!.tempMin! - 3.27).toInt()}°")
                       ],
                     )
                   ],

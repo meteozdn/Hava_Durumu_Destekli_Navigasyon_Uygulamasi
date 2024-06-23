@@ -4,6 +4,7 @@ import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_webservice/places.dart';
+import 'package:navigationapp/controllers/map_controller/map_weather_controller.dart';
 import 'package:navigationapp/controllers/navigation_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
@@ -14,9 +15,12 @@ import 'package:navigationapp/views/home/navigation/navigation_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
+  // ignore: prefer_final_fields
   RxInt _index = 0.obs;
   final List<String> titles = ["Hava Durumu", "Navigasyon", "Yolcluk"];
   final UserController userController = Get.find();
+  final MapWeatherController weatherScreenController =
+      Get.put(MapWeatherController());
 
   void indexController(int num) {
     _index(num);
@@ -186,11 +190,20 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   _index.value == 1
                       ? const SizedBox.shrink()
-                      : const ElevatedWidgetButton(
-                          image: WeatherIcons.sunny,
+                      : ElevatedWidgetButton(
+                          image: weatherScreenController
+                                      .currentWeatherModel.value.main ==
+                                  null
+                              ? WeatherIcons.partlyCloudy
+                              : weatherScreenController.getIcon(),
                           height: 30,
                           width: 70,
-                          text: '20',
+                          temp: weatherScreenController
+                                      .currentWeatherModel.value.main ==
+                                  null
+                              ? 0
+                              : weatherScreenController
+                                  .currentWeatherModel.value.main!.temp!,
                         ),
                   GestureDetector(
                     onTap: () {
@@ -198,18 +211,19 @@ class HomeScreen extends StatelessWidget {
                     },
                     child: CircleAvatar(
                       radius: 20.h,
-                      backgroundColor: ColorConstants.pictionBlueColor,
+                      backgroundColor: ColorConstants.blackColor,
                       child: CircleAvatar(
                         radius: 18.h,
 
-                        backgroundImage: CachedNetworkImageProvider(
-                            userController.user.value!.image),
-                        backgroundColor: ColorConstants.pictionBlueColor,
+                        backgroundImage: userController.user.value == null
+                            ? null
+                            : NetworkImage(userController.user.value!.image),
+                        backgroundColor: ColorConstants.blackColor,
                         // radius: 50.h,
-                        child: userController.user.value!.image == null
+                        child: userController.user.value == null
                             ? Icon(
                                 Icons.person,
-                                size: 50.w,
+                                size: 30.w,
                               )
                             : null,
                       ),
@@ -240,7 +254,6 @@ class HomeScreen extends StatelessWidget {
         NavigationDestination(
           selectedIcon: Icon(
             Icons.assistant_navigation,
-            size: 30.r, color: ColorConstants.pictionBlueColor,
             //  color: ProjectColors.white,
           ),
           icon: Icon(
@@ -254,7 +267,7 @@ class HomeScreen extends StatelessWidget {
           selectedIcon: const Badge(
             label: Text('3'),
             child: Icon(
-              size: 30, color: ColorConstants.pictionBlueColor,
+              size: 30, color: ColorConstants.blackColor,
               Icons.time_to_leave,
               //  color: ProjectColors.white,
             ),
@@ -339,7 +352,7 @@ class NavigationSheet extends StatelessWidget {
                 height: 40.h,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: ColorConstants.pictionBlueColor,
+                    backgroundColor: ColorConstants.blackColor,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15.r), // <-- Radius
                     ),
@@ -381,7 +394,7 @@ class SelectedButtonWidget extends StatelessWidget {
             height: 20.h,
             decoration: BoxDecoration(
                 color: selected.value
-                    ? ColorConstants.pictionBlueColor
+                    ? ColorConstants.blackColor
                     : ColorConstants.whiteColor,
                 border: Border.all(
                   color: selected.value
@@ -506,8 +519,7 @@ class ElevatedInputWidget extends StatelessWidget {
                 borderSide: const BorderSide(color: ColorConstants.redColor),
                 borderRadius: BorderRadius.all(Radius.circular(15.r))),
             focusedBorder: OutlineInputBorder(
-                borderSide:
-                    const BorderSide(color: ColorConstants.pictionBlueColor),
+                borderSide: const BorderSide(color: ColorConstants.blackColor),
                 borderRadius: BorderRadius.all(Radius.circular(15.r)))),
       ),
     );
