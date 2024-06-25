@@ -169,17 +169,10 @@ class JourneyWidget extends StatelessWidget {
                                       : ColorConstants.blackColor,
                                 ),
                                 onPressed: () async {
-                                  final MapController navMapController =
-                                      Get.find();
-
-                                  await navMapController.setPolylinePoints(
-                                      start: LatLng(
-                                          route.startingLocation.latitude,
-                                          route.startingLocation.longitude),
-                                      destination: LatLng(
-                                          route.destinationLocation.latitude,
-                                          route.destinationLocation.longitude));
-                                  Get.to(() => JourneyDetail(route: route));
+                                  Get.to(() => JourneyDetail(
+                                        route: route,
+                                        isOwner: isMY,
+                                      ));
                                 },
                                 child: const Icon(
                                   Icons.navigate_next,
