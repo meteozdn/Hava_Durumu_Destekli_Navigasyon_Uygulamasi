@@ -9,6 +9,8 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 class JourneyController extends GetxController {
   Map<String, dynamic> weatherData = {};
   RxBool isRouteCompleted = false.obs;
+  // double distance = 0.0;
+  // double duration = 0.0;
 
   late StreamSubscription<Position> positionStream;
   final LocationController _locationController = Get.find();
@@ -49,21 +51,23 @@ class JourneyController extends GetxController {
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         var data = jsonResponse;
-        double distance = 0.0;
-        double duration = 0.0;
         List<dynamic> elements = data["rows"][0]["elements"];
-        for (var i = 0; i < elements.length; i++) {
-          distance = distance + elements[i]["distance"]["value"];
-          duration = duration + elements[i]["duration"]["value"];
-        }
-        if (distance < 20) {
-          isRouteCompleted.value = true;
-          Get.snackbar("Completed", "You have arrived to your destination.");
-        }
-        _locationController.distanceLeft.value =
-            "Kalan: ${(distance / 1000).toStringAsFixed(2)} km";
-        _locationController.timeLeft.value =
-            "Tahmini Süre: ${(duration / 60).round()} dk";
+        var distanceText = elements[0]["distance"]["text"];
+        var durationText = elements[0]["duration"]["text"];
+        // for (var i = 0; i < elements.length; i++) {
+        //   distance = distance + elements[i]["distance"]["value"];
+        //   duration = duration + elements[i]["duration"]["value"];
+        // }
+        // if (distance < 20) {
+        //   isRouteCompleted.value = true;
+        //   Get.snackbar("Completed", "You have arrived to your destination.");
+        // }
+        // _locationController.distanceLeft.value =
+        //     "Kalan: ${(distance / 1000).toStringAsFixed(2)} km";
+        // _locationController.timeLeft.value =
+        //     "Tahmini Süre: ${(duration / 60).round()} dk";
+        _locationController.distanceLeft.value = "Kalan: $distanceText";
+        _locationController.timeLeft.value = "Tahmini Süre: $durationText";
       }
     } catch (error) {
       Get.snackbar("Error", error.toString());
@@ -71,7 +75,8 @@ class JourneyController extends GetxController {
   }
 
   // Function to fetch weather data.
-  Future<void> fetchWeatherData(double lat, double lon, DateTime datetime) async {
+  Future<void> fetchWeatherData(
+      double lat, double lon, DateTime datetime) async {
     String origin =
         "${_locationController.currentLocation.value!.latitude},${_locationController.currentLocation.value!.longitude}";
     String dest = "$lat,$lon";
