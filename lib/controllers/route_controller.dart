@@ -9,8 +9,7 @@ import 'package:navigationapp/models/route.dart';
 class RouteController extends GetxController {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final UserController _userController = Get.find<UserController>();
-  final ChatGroupController _chatGroupController =
-      Get.find<ChatGroupController>();
+  final ChatGroupController _chatGroupController = Get.find();
   final RxList<RouteModel> userRoutes = <RouteModel>[].obs;
   final RxList<RouteModel> sharedRoutes = <RouteModel>[].obs;
 
@@ -31,10 +30,11 @@ class RouteController extends GetxController {
         userRoutes.add(route);
       }
       // Get shared routesIds from chatGroupController.
-      List<String> sharedIds = [];
+      Set<String> sharedIdsSet = {};
       for (ChatGroup chatGroup in _chatGroupController.chatGroups) {
-        sharedIds.addAll(chatGroup.sharedRoutes);
+        sharedIdsSet.addAll(chatGroup.sharedRoutes);
       }
+      List<String> sharedIds = sharedIdsSet.toList();
       // Get shared routes from firestore.
       for (String id in sharedIds) {
         DocumentSnapshot snapshot = await _firestore
@@ -118,6 +118,65 @@ class RouteController extends GetxController {
         await updateChatGroupsRouteList(chatGroupId: chatGroupId, routeId: id);
       }
       await updateUserRouteList(routeId: route.id);
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
+  // Method to update route for user's friends who see the route.
+  Future<void> updateRoute({required RouteModel route}) async {
+    try {
+      // Update the route in Firestore.
+      await _firestore
+          .collection(FirestoreCollections.routes)
+          .doc(route.id)
+          .update(route.toJson());
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
+  // Method to delete route.
+  Future<void> deleteRoute({required String routeId}) async {
+    try {
+      // Get the route document from Firestore.
+      DocumentSnapshot routeSnapshot = await _firestore
+          .collection(FirestoreCollections.routes)
+          .doc(routeId)
+          .get();
+      RouteModel route = RouteModel.fromFirestore(routeSnapshot);
+      // Delete the route from Firestore.
+      await _firestore
+          .collection(FirestoreCollections.routes)
+          .doc(routeId)
+          .delete();
+      // Remove the route from each shared chat group.
+      for (var chatGroupId in route.sharedChatGroups) {
+        await updateChatGroupsRouteList(
+            chatGroupId: chatGroupId, routeId: routeId, isAdding: false);
+      }
+      // Remove the route from the user's route list.
+      await updateUserRouteList(routeId: routeId, isAdding: false);
+    } catch (error) {
+      throw Exception(error.toString());
+    }
+  }
+
+  Future<void> updateRouteSharedChatGroupList({
+    required String routeId,
+    required String chatGroupId,
+    required bool isAdding,
+  }) async {
+    try {
+      // Update the sharedChatGroups list
+      await _firestore
+          .collection(FirestoreCollections.routes)
+          .doc(routeId)
+          .update({
+        "sharedChatGroups": isAdding
+            ? FieldValue.arrayUnion([chatGroupId])
+            : FieldValue.arrayRemove([chatGroupId])
+      });
     } catch (error) {
       throw Exception(error.toString());
     }
