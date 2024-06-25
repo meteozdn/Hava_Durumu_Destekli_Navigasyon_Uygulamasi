@@ -48,19 +48,17 @@ class LocationController extends GetxController {
     try {
       LatLng newLocation = LatLng(position.latitude, position.longitude);
       double bearing = 0;
-      if (currentLocation.value != null) {
-        bearing =
-            LocationUtils.calculateBearing(currentLocation.value!, newLocation);
-        // _mapController.updatePolylineCoordinates(
-        //     location: currentLocation.value!);
-        // Check if the driver is off the route.
-        if (_mapController.isOffRoute(location: currentLocation.value!)) {
-          Get.snackbar("Navigation", "The navigation has been preparing.");
-          _mapController.recalculateRoute(
-              start: currentLocation.value!, destination: destination.value!);
-        }
-      }
       currentLocation.value = newLocation;
+      bearing =
+          LocationUtils.calculateBearing(currentLocation.value!, newLocation);
+      // _mapController.updatePolylineCoordinates(
+      //     location: currentLocation.value!);
+      // Check if the driver is off the route.
+      if (_mapController.isOffRoute(location: currentLocation.value!)) {
+        Get.snackbar("Navigation", "The navigation has been preparing.");
+        _mapController.recalculateRoute(
+            start: currentLocation.value!, destination: destination.value!);
+      }
       //_mapController.setCurrentLocationMarker(location: newLocation);
       _mapController.moveCameraToLocation(
           location: newLocation, bearing: bearing);
