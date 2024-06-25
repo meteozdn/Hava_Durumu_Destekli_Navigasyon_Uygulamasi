@@ -6,6 +6,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_stack/image_stack.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
+import 'package:navigationapp/controllers/map_controller.dart';
+import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/journey_detail._controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
@@ -13,10 +15,12 @@ import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/views/components/blured_container.dart';
 
 class JourneyDetail extends StatelessWidget {
-  JourneyDetail({super.key, required this.route});
+  JourneyDetail({super.key, required this.route, required this.isOwner});
+  final bool isOwner;
   final RouteModel route;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
+  final RouteController routeController = Get.find();
   final JourneyDetailController journeyDetailController =
       Get.put(JourneyDetailController());
 
@@ -24,7 +28,18 @@ class JourneyDetail extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Yolculuk Detayları"),
+          title: const Text("Yolculuk Detayları"),
+          actions: [
+            isOwner
+                ? IconButton(
+                    icon: const Icon(Icons.delete),
+                    color: Colors.redAccent,
+                    onPressed: () {
+                      _showDeleteConfirmationDialog(context);
+                    },
+                  )
+                : const SizedBox()
+          ],
         ),
         body: Center(
             child: Column(
@@ -252,30 +267,96 @@ class JourneyDetail extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 50),
-              child: Material(
-                elevation: 20,
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: ColorConstants.blackColor,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  //color: Colors.red,
-                  width: 500,
-                  height: 50,
-                  child: Center(
-                    child: Text(
-                      "Yolculuğu sil",
-                      style: AppTextStyle.smallWhite
-                          .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ),
-              ),
-            )
+            if (isOwner) startRouteButton(context)
           ],
         )));
+  }
+
+  Widget startRouteButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        _showStartRouteDialog(context);
+      },
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+        child: Material(
+          borderRadius: BorderRadius.circular(10),
+          elevation: 20,
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              color: ColorConstants.pictionBlueColor,
+            ),
+            height: 50,
+            width: 300,
+            child: Center(
+              child: Text(
+                "Yolculuğu Başlat",
+                style: AppTextStyle.smallWhite
+                    .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showDeleteConfirmationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Planlı Yolculuğu Kaldır"),
+          content: const Text(
+              "Planlanmış yolculuğu silmek istediğinizden emin misiniz?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("İptal"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                await routeController.deleteRoute(routeId: route.id);
+              },
+              child: const Text("Sil"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showStartRouteDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text("Planlı Yolculuğu Başlat"),
+          content: Text(
+              "${route.plannedAt.toString().substring(0, 16)}\nTarihine planlanmış yolculuğu başlatmak istediğinizden emin misiniz?"),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("İptal"),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+                await Get.find<MapController>().setPlannedRoute(route: route);
+              },
+              child: const Text("Başlat"),
+            ),
+          ],
+        );
+      },
+    );
   }
 }
