@@ -74,6 +74,7 @@ class CreateRouteView extends StatelessWidget {
               friendsShareWidget(),
               ElevatedButton(
                 onPressed: () async {
+                  Navigator.pop(context);
                   if (originController.text.isNotEmpty &&
                       destinationController.text.isNotEmpty) {
                     if (isPlanned && dateController.text.isEmpty) {
@@ -91,7 +92,6 @@ class CreateRouteView extends StatelessWidget {
                   } else {
                     Get.snackbar("Error", "Locations should not be empty.");
                   }
-                  Navigator.pop(context);
                 },
                 child: const Text(
                   "Rotayı Görüntüle",
