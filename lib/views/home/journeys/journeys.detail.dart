@@ -17,6 +17,7 @@ class JourneyDetail extends StatelessWidget {
   final RouteModel route;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
+
   final JourneyDetailController journeyDetailController =
       Get.put(JourneyDetailController());
 

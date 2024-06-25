@@ -16,7 +16,7 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 class WeatherScreen extends StatelessWidget {
   WeatherScreen({super.key});
-  RxString mapTheme = "".obs;
+  // RxString mapTheme = "".obs;
 
   final MapWeatherController weatherScreenController =
       Get.put(MapWeatherController());
@@ -50,7 +50,7 @@ class WeatherScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const WeatherScreenAppBar(),
-                  const TempViewerWidget(),
+                  TempViewerWidget(),
                   //  WeatherMarker(),
                   WeatherScreenBottomWidgets(
                       mapWeatherController: mapWeatherController)

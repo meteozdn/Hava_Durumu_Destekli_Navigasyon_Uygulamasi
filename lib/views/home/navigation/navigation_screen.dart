@@ -21,6 +21,8 @@ class NavigationScreen extends StatelessWidget {
         alignment: Alignment.bottomRight,
         children: [
           Obx(() => GoogleMap(
+              style: mapController.mapStyle.value,
+              //style: ,
               myLocationButtonEnabled: false,
               myLocationEnabled: true,
               initialCameraPosition:
@@ -33,13 +35,14 @@ class NavigationScreen extends StatelessWidget {
                           target: LatLng(41.28667, 36.33),
                           zoom: 18,
                         ),
-              onMapCreated: (controller) {
+              onMapCreated: (controller) async {
                 if (!mapController.googleMapsController.isCompleted) {
                   mapController.googleMapsController.complete(controller);
                 } else {
                   mapController.googleMapsController = Completer();
                   mapController.googleMapsController.complete(controller);
                 }
+                //  controller.setMapStyle(style);
               },
               polylines: mapController.polylines.toSet(),
               zoomControlsEnabled: false,
@@ -135,7 +138,7 @@ class NavigationScreen extends StatelessWidget {
   Widget currentLocationButton() {
     return GestureDetector(
       child: CircleAvatar(
-        backgroundColor: ColorConstants.pictionBlueColor,
+        //backgroundColor: ColorConstants.pictionBlueColor,
         radius: 30.0,
         child: IconButton(
           color: ColorConstants.whiteColor,
@@ -160,36 +163,81 @@ class NavigationScreen extends StatelessWidget {
 
   Widget journeyInformation() {
     return GestureDetector(
+      onTap: () {
+        locationController.estimatedTimeCalculate();
+      },
       child: Material(
         borderRadius: BorderRadius.circular(10),
         elevation: 20,
         child: Container(
             height: 100,
-            width: 200,
+            width: 250,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: ColorConstants.whiteColor,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text(
-                  locationController.distanceLeft.value,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.estimatedTime.value,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const Text("varış")
+                  ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  locationController.timeLeft.value,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.timeLeft.value,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Obx(() {
+                      return Text(
+                          locationController.isMinute.value ? "dk" : "sa");
+                    }),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                // Text(
-                //   locationController.speed.value,
-                //   style: const TextStyle(
-                //       fontSize: 16, fontWeight: FontWeight.bold),
-                // ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.distanceLeft.value,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const Text("km"),
+                  ],
+                ),
+
+                /*Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.distanceLeft.value,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      locationController.timeLeft.value,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    // Text(
+                    //   locationController.speed.value,
+                    //   style: const TextStyle(
+                    //       fontSize: 16, fontWeight: FontWeight.bold),
+                    // ),
+                  ],
+                ),*/
               ],
             )),
       ),

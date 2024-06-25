@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
+import 'package:navigationapp/core/constants/app_constants.dart';
 
 class LoginScreen extends GetView<AuthController> {
   final VoidCallback showRegisterPage;
@@ -13,20 +14,31 @@ class LoginScreen extends GetView<AuthController> {
     final passwordController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: Colors.blue[200],
+      //backgroundColor: C,
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 150),
+              padding: const EdgeInsets.symmetric(vertical: 100) +
+                  const EdgeInsets.only(bottom: 100),
               child: Column(
                 children: [
+                  Padding(
+                    padding: const EdgeInsets.all(28.0),
+                    child: Image.asset(
+                      IconsConst.logo3,
+                      width: 160,
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        // color: ColorConstants.pictionBlueColor,
+                        border: Border.all(
+                          width: 5,
+                          color: ColorConstants.pictionBlueColor,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -34,7 +46,7 @@ class LoginScreen extends GetView<AuthController> {
                         child: TextField(
                           controller: emailController,
                           decoration: const InputDecoration(
-                            hintText: "Email",
+                            hintText: "e-posta",
                             border: InputBorder.none,
                           ),
                         ),
@@ -46,8 +58,10 @@ class LoginScreen extends GetView<AuthController> {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        border: Border.all(
+                          width: 5,
+                          color: ColorConstants.pictionBlueColor,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -56,7 +70,7 @@ class LoginScreen extends GetView<AuthController> {
                           controller: passwordController,
                           obscureText: true,
                           decoration: const InputDecoration(
-                            hintText: "Password",
+                            hintText: "Şifre",
                             border: InputBorder.none,
                           ),
                         ),
@@ -64,26 +78,6 @@ class LoginScreen extends GetView<AuthController> {
                     ),
                   ),
                   const SizedBox(height: 10),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 25),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            //Get.to(() => const ForgotPasswordPage());
-                          },
-                          child: const Text(
-                            "Forgot password?",
-                            style: TextStyle(
-                              color: Colors.blue,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
                   const SizedBox(height: 10),
                   GestureDetector(
                     onTap: () {
@@ -97,12 +91,12 @@ class LoginScreen extends GetView<AuthController> {
                       child: Container(
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
-                          color: Colors.deepPurple,
+                          color: ColorConstants.pictionBlueColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Center(
                           child: Text(
-                            "Login",
+                            "Giriş Yap",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -117,7 +111,7 @@ class LoginScreen extends GetView<AuthController> {
                   GestureDetector(
                     onTap: showRegisterPage,
                     child: const Text(
-                      "Register now",
+                      "Kayıt Ol",
                       style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,

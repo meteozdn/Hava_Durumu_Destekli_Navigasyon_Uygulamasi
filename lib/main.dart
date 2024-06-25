@@ -21,6 +21,7 @@ Future<void> main() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final ThemeChanger themeChanger = Get.put(ThemeChanger());
 
 //Theme Yönetimi
   runApp(MainApp());

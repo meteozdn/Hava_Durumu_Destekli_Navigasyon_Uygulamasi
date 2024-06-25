@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
 import 'package:navigationapp/controllers/picker_controller/picker_controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
@@ -14,6 +15,7 @@ import 'package:navigationapp/views/profile/settings.dart';
 import 'package:navigationapp/views/search/search_view.dart';
 
 class ProfileView extends StatelessWidget {
+  final ThemeChanger themeChanger = Get.find();
   ProfileView({super.key});
   final AuthController authController = Get.find();
   final UserController userController = Get.find();
@@ -41,7 +43,6 @@ class ProfileView extends StatelessWidget {
                 padding: EdgeInsets.only(left: 1.0),
                 child: Icon(
                   Icons.person_add_alt_1,
-                  color: ColorConstants.blackColor,
                 ),
               ),
             ),
@@ -140,30 +141,32 @@ class ProfileView extends StatelessWidget {
                     userController.user.value == null
                         ? "Kullanıcı"
                         : userController.user.value!.name,
-                    style: TextStyle(
-                        color: ColorConstants.blackColor, fontSize: 30.sp),
+                    style: TextStyle(fontSize: 30.sp),
                   ),
                 ),
-                const ProfileWidgets(),
+                ProfileWidgets(),
                 Padding(
                   padding: EdgeInsets.only(top: 60.0.h),
-                  child: Container(
-                    //height: 50.h,
-                    decoration: BoxDecoration(
-                      //border:
-                      //   Border.all(color: ColorConstants.pictionBlueColor),
-                      borderRadius: BorderRadius.circular(12.r),
-                      color: ColorConstants.whiteColor,
-                    ),
-                    child: ProfileButtons(
-                      text: "Çıkış Yap",
-                      icon: Icons.logout_sharp,
-                      onPressed: () {
-                        authController.logout();
-                      },
-                      //     func: authController.logout(),
-                    ),
-                  ),
+                  child: Obx(() {
+                    return Container(
+                      //height: 50.h,
+                      decoration: BoxDecoration(
+                          //border:
+                          //   Border.all(color: ColorConstants.pictionBlueColor),
+                          borderRadius: BorderRadius.circular(12.r),
+                          color: themeChanger.isLight.value
+                              ? ColorConstants.whiteColor
+                              : ColorConstants.darkGrey),
+                      child: ProfileButtons(
+                        text: "Çıkış Yap",
+                        icon: Icons.logout_sharp,
+                        onPressed: () {
+                          authController.logout();
+                        },
+                        //     func: authController.logout(),
+                      ),
+                    );
+                  }),
                 ),
               ],
             ),
@@ -175,90 +178,95 @@ class ProfileView extends StatelessWidget {
 }
 
 class ProfileWidgets extends StatelessWidget {
-  const ProfileWidgets({
+  final ThemeChanger themeChanger = Get.find();
+
+  ProfileWidgets({
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // height: 50.h,
-      decoration: BoxDecoration(
-        //  border: Border.all(color: ColorConstants.pictionBlueColor),
-        borderRadius: BorderRadius.circular(12.r),
-        color: ColorConstants.whiteColor,
-      ),
-      child: Column(
-        children: [
-          ProfileButtons(
-            icon: Icons.location_on,
-            text: "Kayıtlı Yerler",
-            onPressed: () {
-              Get.to(
-                () => const SavedLocationsView(
-                    //  title: 'Kullanıcı Ara',
-                    ),
-              );
-            },
-            //    func: null,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0.w),
-            child: Divider(
-              height: 1.h,
+    return Obx(() {
+      return Container(
+        // height: 50.h,
+        decoration: BoxDecoration(
+            //  border: Border.all(color: ColorConstants.pictionBlueColor),
+            borderRadius: BorderRadius.circular(12.r),
+            color: themeChanger.isLight.value
+                ? ColorConstants.whiteColor
+                : ColorConstants.darkGrey),
+        child: Column(
+          children: [
+            ProfileButtons(
+              icon: Icons.location_on,
+              text: "Kayıtlı Yerler",
+              onPressed: () {
+                Get.to(
+                  () => const SavedLocationsView(
+                      //  title: 'Kullanıcı Ara',
+                      ),
+                );
+              },
+              //    func: null,
             ),
-          ),
-          ProfileButtons(
-            icon: Icons.route_rounded,
-            text: "Kayıtlı Rotalar",
-            onPressed: () {
-              Get.to(
-                () => const SavedRotatesView(
-                    //  title: 'Kullanıcı Ara',
-                    ),
-              );
-            },
-            //    func: null,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0.w),
-            child: Divider(
-              height: 1.h,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+              child: Divider(
+                height: 1.h,
+              ),
             ),
-          ),
-          ProfileButtons(
-            icon: Icons.person,
-            text: "Arkadaşlar",
-            onPressed: () {
-              Get.to(
-                () => FriendsView(
-                    //  title: 'Kullanıcı Ara',
-                    ),
-              );
-            },
-            //func: null,
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15.0.w),
-            child: Divider(
-              height: 1.h,
+            ProfileButtons(
+              icon: Icons.route_rounded,
+              text: "Kayıtlı Rotalar",
+              onPressed: () {
+                Get.to(
+                  () => const SavedRotatesView(
+                      //  title: 'Kullanıcı Ara',
+                      ),
+                );
+              },
+              //    func: null,
             ),
-          ),
-          ProfileButtons(
-            onPressed: () {
-              Get.to(
-                () => const SettingsView(
-                    //  title: 'Kullanıcı Ara',
-                    ),
-              );
-            },
-            icon: Icons.settings,
-            text: "Ayarlar",
-            //func: null,
-          ),
-        ],
-      ),
-    );
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+              child: Divider(
+                height: 1.h,
+              ),
+            ),
+            ProfileButtons(
+              icon: Icons.person,
+              text: "Arkadaşlar",
+              onPressed: () {
+                Get.to(
+                  () => FriendsView(
+                      //  title: 'Kullanıcı Ara',
+                      ),
+                );
+              },
+              //func: null,
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.0.w),
+              child: Divider(
+                height: 1.h,
+              ),
+            ),
+            ProfileButtons(
+              onPressed: () {
+                Get.to(
+                  () => SettingsView(
+                      //  title: 'Kullanıcı Ara',
+                      ),
+                );
+              },
+              icon: Icons.settings,
+              text: "Ayarlar",
+              //func: null,
+            ),
+          ],
+        ),
+      );
+    });
   }
 }
 
@@ -312,9 +320,9 @@ class ProfileButtons extends StatelessWidget {
                     child: Text(
                       text,
                       style: TextStyle(
-                          fontSize: 18.sp,
-                          //  fontWeight: FontWeight.bold,
-                          color: ColorConstants.blackColor),
+                        fontSize: 18.sp,
+                        //  fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],

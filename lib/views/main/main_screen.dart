@@ -8,6 +8,7 @@ import 'package:navigationapp/controllers/friend_request_controller.dart';
 import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/views/auth/auth_screen.dart';
 import 'package:navigationapp/views/home/home_screen.dart';

@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:navigationapp/controllers/journey_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/utils/location_utils.dart';
@@ -21,6 +22,14 @@ class MapController extends GetxController {
   var markers = <MarkerId, Marker>{}.obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
+  RxString mapStyle = "".obs;
+
+  @override
+  void onInit() async {
+    super.onInit();
+    await setMapStyle();
+    // Listen to authentication changes.
+  }
 
   Future<void> startRoute() async {
     try {
@@ -171,5 +180,14 @@ class MapController extends GetxController {
         destinationCity: route.destinationCity,
         dateTime: route.plannedAt,
         sharedChatGroups: route.sharedChatGroups);
+  }
+
+  setMapStyle() async {
+    ThemeChanger themeChanger = Get.find();
+    String style = await DefaultAssetBundle.of(Get.context!)
+        .loadString('lib/assets/map_theme/night_theme.json');
+    themeChanger.isLight.value ? mapStyle("") : mapStyle(style);
+    print(mapStyle.value);
+    print(themeChanger.isLight.value);
   }
 }

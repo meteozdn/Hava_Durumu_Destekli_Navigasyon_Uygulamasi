@@ -61,9 +61,10 @@ class JourneyController extends GetxController {
           Get.snackbar("Completed", "You have arrived to your destination.");
         }
         _locationController.distanceLeft.value =
-            "Kalan: ${(distance / 1000).toStringAsFixed(2)} km";
-        _locationController.timeLeft.value =
-            "Tahmini Süre: ${(duration / 60).round()} dk";
+            "${(distance / 1000).toStringAsFixed(1)}";
+        _locationController.timeLeft.value = "${(duration / 60).round()}";
+        _locationController.timeLeftIsMinute();
+        _locationController.estimatedTimeCalculate();
       }
     } catch (error) {
       Get.snackbar("Error", error.toString());
@@ -71,7 +72,8 @@ class JourneyController extends GetxController {
   }
 
   // Function to fetch weather data.
-  Future<void> fetchWeatherData(double lat, double lon, DateTime datetime) async {
+  Future<void> fetchWeatherData(
+      double lat, double lon, DateTime datetime) async {
     String origin =
         "${_locationController.currentLocation.value!.latitude},${_locationController.currentLocation.value!.longitude}";
     String dest = "$lat,$lon";

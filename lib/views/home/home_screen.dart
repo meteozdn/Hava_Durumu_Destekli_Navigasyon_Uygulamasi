@@ -252,7 +252,7 @@ class HomeScreen extends StatelessWidget {
       selectedIndex: _index.value,
       destinations: <Widget>[
         NavigationDestination(
-          selectedIcon: Icon(
+          selectedIcon: const Icon(
             Icons.assistant_navigation,
             //  color: ProjectColors.white,
           ),
