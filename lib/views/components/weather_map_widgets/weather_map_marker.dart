@@ -16,7 +16,7 @@ class WeatherMarker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 300,
+      height: 200,
       width: 500,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -40,7 +40,7 @@ class WeatherMarker extends StatelessWidget {
                           fontWeight: FontWeight.bold)),
                   Image.asset(
                     weatherIcon,
-                    height: 50,
+                    width: 50,
                   )
                 ],
               ),

@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/views/profile/profile_view.dart';
 
 class SettingsView extends StatelessWidget {
-  const SettingsView({Key? key}) : super(key: key);
+  final MapController mapController = Get.find();
+  final ThemeChanger themeChanger = Get.find();
+
+  SettingsView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +27,9 @@ class SettingsView extends StatelessWidget {
             //border:
             //   Border.all(color: ColorConstants.pictionBlueColor),
             borderRadius: BorderRadius.circular(12.r),
-            color: ColorConstants.whiteColor,
+            color: themeChanger.isLight.value
+                ? ColorConstants.whiteColor
+                : ColorConstants.darkGrey,
           ),
           child: Column(
             children: <Widget>[
@@ -130,7 +138,10 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
                 title: const Text("Açık Tema"),
-                onTap: () {
+                onTap: () async {
+                  themeChanger.isLight(true);
+
+                  await mapController.setMapStyle();
                   ThemeChanger.instance
                       .setTheme(ThemeChanger.instance.initTheme);
                   Navigator.pop(context);
@@ -150,8 +161,13 @@ class SettingsView extends StatelessWidget {
                   ),
                 ),
                 title: const Text("Koyu Tema"),
-                onTap: () {
-                  ThemeChanger.instance.setTheme(ThemeData.dark());
+                onTap: () async {
+                  themeChanger.isLight(false);
+
+                  await mapController.setMapStyle();
+
+                  ThemeChanger.instance
+                      .setTheme(ThemeChanger.instance.darkTheme());
                   Navigator.pop(context);
                 },
               ), /*

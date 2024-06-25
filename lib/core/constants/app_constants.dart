@@ -61,6 +61,7 @@ class ColorConstants {
   static const Color leftPlateColor = Color(0xFFF8BA43);
   static const Color lightGrey = Color(0xFFECECEC);
   static const Color transparent = Colors.transparent;
+  static const Color darkGrey = Color(0xFF232323);
 
   static const Color greenColor = Color(0xFF8EC148);
   static const Color yellow = Color(0xFFFFFF00);
@@ -97,6 +98,9 @@ class IconsConst {
   static const friends = "lib/assets/icons/friends.png";
   static const sunnyIcon = "lib/assets/icons/01d.png";
   static const thunderIcon = "lib/assets/icons/11n.png";
+  static const logo1 = "lib/assets/icons/logo1.png";
+  static const logo2 = "lib/assets/icons/logo2.png";
+  static const logo3 = "lib/assets/icons/logo3.png";
 
   static const blackNavigateIcon = "lib/assets/icons/navigate.png";
   static const windIcon = "lib/assets/icons/wind.png";

@@ -37,7 +37,6 @@ class MapWeatherController extends GetxController {
   String getIcon() {
     String icon =
         "${IconsConst.root}${currentWeatherModel.value.weather!.first.icon!}.png";
-
     return icon;
   }
 
@@ -56,10 +55,10 @@ class MapWeatherController extends GetxController {
     await _setTiles(WeatherMapTypes.ta2);
     // await getCurrentLocation();
     getCurrentWeather();
-
+    getAllerts();
     currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
         center.longitude, center.latitude);
-    // await getCurrentLocationMarker();
+    await getCurrentLocationMarker();
     determinePosition();
     load();
   }
@@ -71,7 +70,7 @@ class MapWeatherController extends GetxController {
           weatherIcon: getIcon(),
           weatherTemp: currentWeatherModel.value.main!.temp!,
         ).toBitmapDescriptor(
-            logicalSize: const Size(20, 20), imageSize: const Size(200, 200)),
+            logicalSize: const Size(200, 200), imageSize: const Size(200, 200)),
         markerId: const MarkerId("CurrentId"),
         // position: _locationController.currentLocation.value != null
         //     ? _locationController.currentLocation.value!

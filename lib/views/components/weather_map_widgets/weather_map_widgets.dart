@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:navigationapp/controllers/map_controller/map_weather_controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/services/weather_service/weathers_service.dart';
 import 'package:navigationapp/views/components/blured_container.dart';
@@ -518,7 +519,8 @@ class WeatherScreenIndicator extends StatelessWidget {
 }
 
 class TempViewerWidget extends StatelessWidget {
-  const TempViewerWidget({
+  final ThemeChanger theme = Get.find();
+  TempViewerWidget({
     super.key,
   });
 
@@ -632,7 +634,7 @@ class NowTemp extends StatelessWidget {
                     Column(
                       children: [
                         Text(
-                          "${_mapWeatherController.currentWeatherModel.value.main!.temp!.toInt()}°",
+                          "${_mapWeatherController.currentWeatherModel.value.main!.temp!.toInt()}°C",
                           style: TextStyle(
                             color: ColorConstants.blackColor,
                             fontSize: 60.sp,

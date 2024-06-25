@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/utils/location_utils.dart';
 
@@ -11,6 +12,8 @@ class LocationController extends GetxController {
   RxString currentCity = RxString("");
   RxString distanceLeft = RxString("");
   RxString timeLeft = RxString("");
+  RxString estimatedTime = RxString("");
+  RxBool isMinute = true.obs;
 
   Future<String> getCurrentCity() async {
     try {
@@ -42,6 +45,35 @@ class LocationController extends GetxController {
           "Error", "Failed to get current location.\n currentLocation = (0,0)");
       return const LatLng(0, 0);
     }
+  }
+
+  timeLeftIsMinute() {
+    try {
+      if (double.parse(timeLeft.value) < 60) {
+        isMinute(true);
+      } else {
+        timeLeft((double.parse(timeLeft.value) / 60).toStringAsFixed(1));
+        isMinute(false);
+      }
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  estimatedTimeCalculate() {
+    final dateFormat = DateFormat('HH:mm', "tr_TR");
+    try {
+      if (isMinute.value) {
+        estimatedTime(dateFormat.format(DateTime.now()
+            .add(Duration(minutes: double.parse(timeLeft.value).round()))));
+      } else {
+        estimatedTime(dateFormat.format(DateTime.now()
+            .add(Duration(hours: double.parse(timeLeft.value).round()))));
+      }
+    } catch (e) {
+      print(e);
+    }
+    // print();
   }
 
   void setCurrentLocation({required Position position}) {

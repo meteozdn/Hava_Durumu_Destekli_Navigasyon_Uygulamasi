@@ -5,12 +5,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 
 class NavigationScreen extends StatelessWidget {
   NavigationScreen({super.key});
-
+  final ThemeChanger themeChanger = Get.find();
   final LocationController locationController = Get.find();
   final MapController mapController = Get.find();
 
@@ -21,6 +22,8 @@ class NavigationScreen extends StatelessWidget {
         alignment: Alignment.bottomRight,
         children: [
           Obx(() => GoogleMap(
+              style: mapController.mapStyle.value,
+              //style: ,
               myLocationButtonEnabled: false,
               myLocationEnabled: true,
               initialCameraPosition:
@@ -33,13 +36,14 @@ class NavigationScreen extends StatelessWidget {
                           target: LatLng(41.28667, 36.33),
                           zoom: 18,
                         ),
-              onMapCreated: (controller) {
+              onMapCreated: (controller) async {
                 if (!mapController.googleMapsController.isCompleted) {
                   mapController.googleMapsController.complete(controller);
                 } else {
                   mapController.googleMapsController = Completer();
                   mapController.googleMapsController.complete(controller);
                 }
+                //  controller.setMapStyle(style);
               },
               polylines: mapController.polylines.toSet(),
               zoomControlsEnabled: false,
@@ -134,59 +138,111 @@ class NavigationScreen extends StatelessWidget {
 
   Widget currentLocationButton() {
     return GestureDetector(
-      child: CircleAvatar(
-        backgroundColor: ColorConstants.pictionBlueColor,
-        radius: 30.0,
-        child: IconButton(
-          color: ColorConstants.whiteColor,
-          onPressed: () async {
-            if (!mapController.isRouteStarted.value) {
-              await locationController.getCurrentLocation();
-            } else {
-              mapController.isCameraLocked.value =
-                  !mapController.isCameraLocked.value;
-              mapController.moveCameraToLocation(
-                  location: locationController.currentLocation.value!);
-            }
-          },
-          icon: const Icon(Icons.location_searching_outlined),
-        ),
-      ),
+      child: Obx(() {
+        return CircleAvatar(
+          backgroundColor: themeChanger.isLight.value
+              ? ColorConstants.pictionBlueColor
+              : ColorConstants.darkGrey,
+          radius: 30.0,
+          child: IconButton(
+            color: ColorConstants.whiteColor,
+            onPressed: () async {
+              if (!mapController.isRouteStarted.value) {
+                await locationController.getCurrentLocation();
+              } else {
+                mapController.isCameraLocked.value =
+                    !mapController.isCameraLocked.value;
+                mapController.moveCameraToLocation(
+                    location: locationController.currentLocation.value!);
+                // Get.find<JourneyController>().fetchWeatherData(
+                //     locationController.destination.value!.latitude,
+                //     locationController.destination.value!.longitude);
+              }
+            },
+            icon: const Icon(Icons.location_searching_outlined),
+          ),
+        );
+      }),
     );
   }
 
   Widget journeyInformation() {
     return GestureDetector(
+      onTap: () {
+        locationController.estimatedTimeCalculate();
+      },
       child: Material(
         borderRadius: BorderRadius.circular(10),
         elevation: 20,
         child: Container(
             height: 100,
-            width: 200,
+            width: 250,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: ColorConstants.whiteColor,
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text(
-                  locationController.distanceLeft.value,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.estimatedTime.value,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const Text("varış")
+                  ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  locationController.timeLeft.value,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.timeLeft.value,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Obx(() {
+                      return Text(
+                          locationController.isMinute.value ? "dk" : "sa");
+                    }),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                // Text(
-                //   locationController.speed.value,
-                //   style: const TextStyle(
-                //       fontSize: 16, fontWeight: FontWeight.bold),
-                // ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.distanceLeft.value,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    const Text("km"),
+                  ],
+                ),
+
+                /*Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      locationController.distanceLeft.value,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      locationController.timeLeft.value,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 10),
+                    // Text(
+                    //   locationController.speed.value,
+                    //   style: const TextStyle(
+                    //       fontSize: 16, fontWeight: FontWeight.bold),
+                    // ),
+                  ],
+                ),*/
               ],
             )),
       ),

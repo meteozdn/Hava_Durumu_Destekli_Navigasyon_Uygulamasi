@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
-class ThemeChanger {
+class ThemeChanger extends GetxController {
   static final ThemeChanger _instance = ThemeChanger._internal();
-
+  RxBool isLight = true.obs;
   factory ThemeChanger() {
     return _instance;
   }
@@ -20,7 +21,7 @@ class ThemeChanger {
 
       hintColor: ColorConstants.blackColor, // Vurgu rengi
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: ColorConstants.blackColor),
+          backgroundColor: ColorConstants.pictionBlueColor),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor:
@@ -44,6 +45,8 @@ class ThemeChanger {
   // Tema tanımlayıcı metodlar
 
   ThemeData defaultTheme() {
+    isLight(true);
+
     return ThemeData(
         iconTheme: IconThemeData(color: ColorConstants.pictionBlueColor),
         appBarTheme:
@@ -93,14 +96,10 @@ class ThemeChanger {
     );
   }
 
-  ThemeData buildPinkTheme() {
-    return ThemeData(
-      appBarTheme: const AppBarTheme(color: Colors.pink), // AppBar rengi
-      scaffoldBackgroundColor: Colors.pink, // Arka plan rengi
-      primaryColor: Colors.pink, // Birincil renk
-      hintColor: Colors.pinkAccent,
-
-      // Diğer tema özellikleri buraya eklenebilir
-    );
+  ThemeData darkTheme() {
+    isLight(false);
+    return ThemeData.dark().copyWith(
+        floatingActionButtonTheme: const FloatingActionButtonThemeData(
+            backgroundColor: ColorConstants.darkGrey));
   }
 }

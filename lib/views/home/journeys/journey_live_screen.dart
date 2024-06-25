@@ -10,6 +10,7 @@ import 'package:lottie/lottie.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/map_controller/map_weather_controller.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/journey_detail._controller.dart';
+import 'package:navigationapp/controllers/screen_cotrollers/journey_live_detail_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/models/route.dart';
@@ -19,9 +20,10 @@ class JourneyLiveScreen extends StatelessWidget {
   JourneyLiveScreen({
     super.key,
   });
-  final MapController navMapController = Get.find();
-  final MapWeatherController mapWeatherController = Get.find();
-
+  // final MapController navMapController = Get.find();
+  // final MapWeatherController mapWeatherController = Get.find();
+  final JourneyLiveDetailController controller =
+      Get.put(JourneyLiveDetailController());
   final RouteModel route = Get.arguments["route"];
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
@@ -34,21 +36,28 @@ class JourneyLiveScreen extends StatelessWidget {
           SizedBox(
             height: Get.height,
             width: Get.width,
-            child: GoogleMap(
-              markers: mapWeatherController.markers,
-              compassEnabled: false,
-              polylines: navMapController.polylines
-                  .toSet(), //  scrollGesturesEnabled: false,
-              myLocationButtonEnabled: false,
-              initialCameraPosition: const CameraPosition(
-                target: LatLng(41.28667, 36.33),
-                zoom: 10,
-              ),
-              onMapCreated: (mapController) {
-                //  controller.mapController = mapController;
-              },
-              zoomControlsEnabled: false,
-            ),
+            child: Obx(() {
+              return GoogleMap(
+                //  markers: mapWeatherController.markers,
+                compassEnabled: false,
+                polylines: controller.polylines
+                    .toSet(), //  scrollGesturesEnabled: false,
+                myLocationButtonEnabled: false,
+                initialCameraPosition: const CameraPosition(
+                  target: LatLng(41.28667, 36.33),
+                  zoom: 6,
+                ),
+                onMapCreated: (mapController) async {
+                  await controller.setPolylinePoints(
+                      start: LatLng(route.startingLocation.latitude,
+                          route.startingLocation.longitude),
+                      destination: LatLng(route.destinationLocation.latitude,
+                          route.destinationLocation.longitude));
+                  //  controller.mapController = mapController;
+                },
+                zoomControlsEnabled: false,
+              );
+            }),
           ),
           Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,

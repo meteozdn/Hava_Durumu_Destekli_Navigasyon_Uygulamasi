@@ -9,6 +9,7 @@ import 'package:lottie/lottie.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/journey_detail._controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/models/route.dart';
@@ -21,6 +22,12 @@ class JourneyDetail extends StatelessWidget {
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
   final RouteController routeController = Get.find();
+  final ThemeChanger themeChanger = Get.find();
+  // JourneyDetail({super.key, required this.route});
+  // final RouteModel route;
+  // final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
+  // final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
+
   final JourneyDetailController journeyDetailController =
       Get.put(JourneyDetailController());
 
@@ -50,7 +57,9 @@ class JourneyDetail extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(),
-
+                  color: themeChanger.isLight.value
+                      ? ColorConstants.lightGrey
+                      : ColorConstants.darkGrey,
                   borderRadius: BorderRadius.circular(15),
                   //    color: ColorConstants.redColor,
                 ),
@@ -59,7 +68,7 @@ class JourneyDetail extends StatelessWidget {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
                         textAlign: TextAlign.center,
                         "${formatterDate.format(route.plannedAt)},\n${formatterHour.format(route.plannedAt)}",
@@ -267,7 +276,33 @@ class JourneyDetail extends StatelessWidget {
                 ),
               ),
             ),
-            if (isOwner) startRouteButton(context)
+            Padding(
+              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 50),
+              child: Material(
+                elevation: 20,
+                borderRadius: BorderRadius.circular(20),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: themeChanger.isLight.value
+                        ? ColorConstants.pictionBlueColor
+                        : ColorConstants.darkGrey,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  //color: Colors.red,
+                  width: 500,
+                  height: 50,
+                  child: const Center(
+                    child: Text(
+                      "Yolculuğu sil",
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: ColorConstants.whiteColor),
+                    ),
+                  ),
+                ),
+              ),
+            )
           ],
         )));
   }

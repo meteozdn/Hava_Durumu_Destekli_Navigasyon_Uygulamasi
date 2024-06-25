@@ -11,8 +11,8 @@ class ProjectIndicator extends StatelessWidget {
   ProjectIndicator({
     super.key,
     required this.isActive,
-    this.firstColor = ColorConstants.blackColor,
-    this.secondColor = ColorConstants.redColor,
+    this.firstColor = ColorConstants.pictionBlueColor,
+    this.secondColor = ColorConstants.darkGrey,
     this.isTwo = false,
     this.index,
   });

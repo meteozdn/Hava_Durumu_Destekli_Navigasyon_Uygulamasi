@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/auth_controller.dart';
+import 'package:navigationapp/core/constants/app_constants.dart';
 
 class RegisterScreen extends GetView<AuthController> {
   final VoidCallback showLoginPage;
@@ -17,20 +18,28 @@ class RegisterScreen extends GetView<AuthController> {
     final surnameController = TextEditingController();
 
     return Scaffold(
-      backgroundColor: Colors.blue[200],
+      //  backgroundColor: Colors.blue[200],
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 150),
+              padding: const EdgeInsets.symmetric(vertical: 150) +
+                  const EdgeInsets.only(bottom: 150),
               child: Column(
                 children: [
+                  Image.asset(
+                    IconsConst.logo3,
+                    width: 150,
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        // color: Colors.blue[100],
+                        border: Border.all(
+                          width: 5,
+                          color: ColorConstants.pictionBlueColor,
+                        ),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -38,7 +47,7 @@ class RegisterScreen extends GetView<AuthController> {
                         child: TextField(
                           controller: emailController,
                           decoration: const InputDecoration(
-                            hintText: "Email",
+                            hintText: "e-posta",
                             border: InputBorder.none,
                           ),
                         ),
@@ -50,8 +59,8 @@ class RegisterScreen extends GetView<AuthController> {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        border: Border.all(
+                            width: 5, color: ColorConstants.pictionBlueColor),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -60,7 +69,7 @@ class RegisterScreen extends GetView<AuthController> {
                           controller: passwordController,
                           obscureText: true,
                           decoration: const InputDecoration(
-                            hintText: "Password",
+                            hintText: "Şifre",
                             border: InputBorder.none,
                           ),
                         ),
@@ -72,8 +81,8 @@ class RegisterScreen extends GetView<AuthController> {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        border: Border.all(
+                            width: 5, color: ColorConstants.pictionBlueColor),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -82,7 +91,7 @@ class RegisterScreen extends GetView<AuthController> {
                           controller: confirmPasswordController,
                           obscureText: true,
                           decoration: const InputDecoration(
-                            hintText: "Confirm Password",
+                            hintText: "Şifreyi Onayla",
                             border: InputBorder.none,
                           ),
                         ),
@@ -94,8 +103,8 @@ class RegisterScreen extends GetView<AuthController> {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        border: Border.all(
+                            width: 5, color: ColorConstants.pictionBlueColor),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -103,7 +112,7 @@ class RegisterScreen extends GetView<AuthController> {
                         child: TextField(
                           controller: usernameController,
                           decoration: const InputDecoration(
-                            hintText: "Username",
+                            hintText: "Kullanıcı Adı",
                             border: InputBorder.none,
                           ),
                         ),
@@ -115,8 +124,8 @@ class RegisterScreen extends GetView<AuthController> {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        border: Border.all(
+                            width: 5, color: ColorConstants.pictionBlueColor),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -124,7 +133,7 @@ class RegisterScreen extends GetView<AuthController> {
                         child: TextField(
                           controller: nameController,
                           decoration: const InputDecoration(
-                            hintText: "Name",
+                            hintText: "İsim",
                             border: InputBorder.none,
                           ),
                         ),
@@ -136,8 +145,8 @@ class RegisterScreen extends GetView<AuthController> {
                     padding: const EdgeInsets.symmetric(horizontal: 25),
                     child: Container(
                       decoration: BoxDecoration(
-                        color: Colors.blue[100],
-                        border: Border.all(color: Colors.red),
+                        border: Border.all(
+                            width: 5, color: ColorConstants.pictionBlueColor),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
@@ -145,7 +154,7 @@ class RegisterScreen extends GetView<AuthController> {
                         child: TextField(
                           controller: surnameController,
                           decoration: const InputDecoration(
-                            hintText: "Surname",
+                            hintText: "Soyisim",
                             border: InputBorder.none,
                           ),
                         ),
@@ -176,12 +185,12 @@ class RegisterScreen extends GetView<AuthController> {
                       child: Container(
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
-                          color: Colors.deepPurple,
+                          color: ColorConstants.pictionBlueColor,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: const Center(
                           child: Text(
-                            "Sign in",
+                            "Kayıt Ol",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -196,7 +205,7 @@ class RegisterScreen extends GetView<AuthController> {
                   GestureDetector(
                     onTap: showLoginPage,
                     child: const Text(
-                      "Login now",
+                      "Giriş Yap",
                       style: TextStyle(
                         color: Colors.blue,
                         fontWeight: FontWeight.bold,

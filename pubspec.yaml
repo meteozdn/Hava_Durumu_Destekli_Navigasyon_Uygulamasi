@@ -48,6 +48,7 @@ flutter:
     - lib/assets/images/
     - lib/assets/animations/
     - lib/assets/map_theme/silver_theme.json
+    - lib/assets/map_theme/night_theme.json
 
 dependency_overrides:
   http: ^1.0.0
