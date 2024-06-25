@@ -103,6 +103,12 @@ class ChatGroupController extends GetxController {
     }
   }
 
+  Future<void> updateChatGroup({required ChatGroup newChatGroup}) async {
+    int index =
+        chatGroups.indexWhere((chatGroup) => chatGroup.id == newChatGroup.id);
+    chatGroups[index] = newChatGroup;
+  }
+
   Future<void> updateChatGroupPhoto(
       {required String image, required String chatGroupId}) async {
     try {
