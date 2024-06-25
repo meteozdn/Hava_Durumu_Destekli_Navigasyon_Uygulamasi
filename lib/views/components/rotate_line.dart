@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/instance_manager.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class RotateLine extends StatelessWidget {
-  const RotateLine({
+  final ThemeChanger themeChanger = Get.find();
+
+  RotateLine({
     super.key,
   });
 
@@ -13,10 +17,14 @@ class RotateLine extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         CircleAvatar(
-          backgroundColor: ColorConstants.blackColor,
+          backgroundColor: themeChanger.isLight.value
+              ? ColorConstants.darkGrey
+              : ColorConstants.blackColor,
           radius: 10.r,
           child: CircleAvatar(
-            backgroundColor: ColorConstants.whiteColor,
+            backgroundColor: themeChanger.isLight.value
+                ? ColorConstants.lightGrey
+                : ColorConstants.darkGrey,
             radius: 5.r,
           ),
         ),
@@ -24,14 +32,20 @@ class RotateLine extends StatelessWidget {
           height: 30.h,
           child: VerticalDivider(
             thickness: 5.w,
-            color: ColorConstants.blackColor,
+            color: themeChanger.isLight.value
+                ? ColorConstants.blackColor
+                : ColorConstants.blackColor,
           ),
         ),
         CircleAvatar(
-          backgroundColor: ColorConstants.blackColor,
+          backgroundColor: themeChanger.isLight.value
+              ? ColorConstants.darkGrey
+              : ColorConstants.blackColor,
           radius: 10.r,
           child: CircleAvatar(
-            backgroundColor: ColorConstants.whiteColor,
+            backgroundColor: themeChanger.isLight.value
+                ? ColorConstants.lightGrey
+                : ColorConstants.darkGrey,
             radius: 5.r,
           ),
         ),

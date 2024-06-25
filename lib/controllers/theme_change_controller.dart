@@ -21,7 +21,7 @@ class ThemeChanger extends GetxController {
 
       hintColor: ColorConstants.blackColor, // Vurgu rengi
       floatingActionButtonTheme: const FloatingActionButtonThemeData(
-          backgroundColor: ColorConstants.blackColor),
+          backgroundColor: ColorConstants.pictionBlueColor),
       elevatedButtonTheme: ElevatedButtonThemeData(
           style: ButtonStyle(
               backgroundColor:
@@ -100,6 +100,6 @@ class ThemeChanger extends GetxController {
     isLight(false);
     return ThemeData.dark().copyWith(
         floatingActionButtonTheme: const FloatingActionButtonThemeData(
-            backgroundColor: ColorConstants.blackPurpleColor));
+            backgroundColor: ColorConstants.darkGrey));
   }
 }

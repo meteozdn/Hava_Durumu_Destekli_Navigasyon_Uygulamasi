@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:google_maps_webservice/places.dart';
 import 'package:navigationapp/controllers/map_controller/map_weather_controller.dart';
 import 'package:navigationapp/controllers/navigation_controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
@@ -14,6 +15,8 @@ import 'package:navigationapp/views/home/navigation/create_route_view.dart';
 import 'package:navigationapp/views/home/navigation/navigation_screen.dart';
 
 class HomeScreen extends StatelessWidget {
+  final ThemeChanger themeChanger = Get.find();
+
   HomeScreen({super.key});
   // ignore: prefer_final_fields
   RxInt _index = 0.obs;
@@ -241,6 +244,12 @@ class HomeScreen extends StatelessWidget {
 
   NavigationBar bottomNav() {
     return NavigationBar(
+      indicatorColor: themeChanger.isLight.value
+          ? ColorConstants.pictionBlueColor
+          : ColorConstants.blackColor,
+      backgroundColor: themeChanger.isLight.value
+          ? ColorConstants.lightBlue
+          : ColorConstants.darkGrey,
       shadowColor: Colors.transparent,
       elevation: 0,
       height: 55.h,
@@ -252,11 +261,17 @@ class HomeScreen extends StatelessWidget {
       selectedIndex: _index.value,
       destinations: <Widget>[
         NavigationDestination(
-          selectedIcon: const Icon(
+          selectedIcon: Icon(
+            color: themeChanger.isLight.value
+                ? ColorConstants.whiteColor
+                : ColorConstants.whiteColor,
             Icons.assistant_navigation,
             //  color: ProjectColors.white,
           ),
           icon: Icon(
+            color: themeChanger.isLight.value
+                ? ColorConstants.pictionBlueColor
+                : ColorConstants.whiteColor,
             Icons.assistant_navigation,
             size: 30.r,
             //  color: ProjectColors.navyBlue,
@@ -264,10 +279,13 @@ class HomeScreen extends StatelessWidget {
           label: titles[1],
         ),
         NavigationDestination(
-          selectedIcon: const Badge(
+          selectedIcon: Badge(
             label: Text('3'),
             child: Icon(
-              size: 30, color: ColorConstants.blackColor,
+              color: themeChanger.isLight.value
+                  ? ColorConstants.whiteColor
+                  : ColorConstants.whiteColor,
+              //  size: 30, color: ColorConstants.blackColor,
               Icons.time_to_leave,
               //  color: ProjectColors.white,
             ),
@@ -275,6 +293,9 @@ class HomeScreen extends StatelessWidget {
           icon: Badge(
             label: const Text('2'),
             child: Icon(
+              color: themeChanger.isLight.value
+                  ? ColorConstants.pictionBlueColor
+                  : ColorConstants.whiteColor,
               Icons.time_to_leave,
               size: 30.r,
               //   color: ProjectColors.navyBlue,

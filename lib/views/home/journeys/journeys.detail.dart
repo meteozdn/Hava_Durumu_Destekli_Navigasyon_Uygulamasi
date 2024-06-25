@@ -7,12 +7,14 @@ import 'package:image_stack/image_stack.dart';
 import 'package:intl/intl.dart';
 import 'package:lottie/lottie.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/journey_detail._controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/views/components/blured_container.dart';
 
 class JourneyDetail extends StatelessWidget {
+  final ThemeChanger themeChanger = Get.find();
   JourneyDetail({super.key, required this.route});
   final RouteModel route;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
@@ -36,7 +38,9 @@ class JourneyDetail extends StatelessWidget {
               child: Container(
                 decoration: BoxDecoration(
                   border: Border.all(),
-
+                  color: themeChanger.isLight.value
+                      ? ColorConstants.lightGrey
+                      : ColorConstants.darkGrey,
                   borderRadius: BorderRadius.circular(15),
                   //    color: ColorConstants.redColor,
                 ),
@@ -45,7 +49,7 @@ class JourneyDetail extends StatelessWidget {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
                         textAlign: TextAlign.center,
                         "${formatterDate.format(route.plannedAt)},\n${formatterHour.format(route.plannedAt)}",
@@ -260,17 +264,21 @@ class JourneyDetail extends StatelessWidget {
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
                   decoration: BoxDecoration(
-                    color: ColorConstants.blackColor,
+                    color: themeChanger.isLight.value
+                        ? ColorConstants.pictionBlueColor
+                        : ColorConstants.darkGrey,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   //color: Colors.red,
                   width: 500,
                   height: 50,
-                  child: Center(
+                  child: const Center(
                     child: Text(
                       "Yolculuğu sil",
-                      style: AppTextStyle.smallWhite
-                          .copyWith(fontSize: 25, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                          color: ColorConstants.whiteColor),
                     ),
                   ),
                 ),

@@ -5,12 +5,13 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
+import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 
 class NavigationScreen extends StatelessWidget {
   NavigationScreen({super.key});
-
+  final ThemeChanger themeChanger = Get.find();
   final LocationController locationController = Get.find();
   final MapController mapController = Get.find();
 
@@ -137,27 +138,31 @@ class NavigationScreen extends StatelessWidget {
 
   Widget currentLocationButton() {
     return GestureDetector(
-      child: CircleAvatar(
-        //backgroundColor: ColorConstants.pictionBlueColor,
-        radius: 30.0,
-        child: IconButton(
-          color: ColorConstants.whiteColor,
-          onPressed: () async {
-            if (!mapController.isRouteStarted.value) {
-              await locationController.getCurrentLocation();
-            } else {
-              mapController.isCameraLocked.value =
-                  !mapController.isCameraLocked.value;
-              mapController.moveCameraToLocation(
-                  location: locationController.currentLocation.value!);
-              // Get.find<JourneyController>().fetchWeatherData(
-              //     locationController.destination.value!.latitude,
-              //     locationController.destination.value!.longitude);
-            }
-          },
-          icon: const Icon(Icons.location_searching_outlined),
-        ),
-      ),
+      child: Obx(() {
+        return CircleAvatar(
+          backgroundColor: themeChanger.isLight.value
+              ? ColorConstants.pictionBlueColor
+              : ColorConstants.darkGrey,
+          radius: 30.0,
+          child: IconButton(
+            color: ColorConstants.whiteColor,
+            onPressed: () async {
+              if (!mapController.isRouteStarted.value) {
+                await locationController.getCurrentLocation();
+              } else {
+                mapController.isCameraLocked.value =
+                    !mapController.isCameraLocked.value;
+                mapController.moveCameraToLocation(
+                    location: locationController.currentLocation.value!);
+                // Get.find<JourneyController>().fetchWeatherData(
+                //     locationController.destination.value!.latitude,
+                //     locationController.destination.value!.longitude);
+              }
+            },
+            icon: const Icon(Icons.location_searching_outlined),
+          ),
+        );
+      }),
     );
   }
 
