@@ -98,7 +98,7 @@ class NavigationScreen extends StatelessWidget {
       onTap: () async {
         if (mapController.isPlanned) {
           Get.snackbar("Success", "The route has been saved.");
-          //await mapController.saveRoute();
+          await mapController.saveRoute();
           mapController.clearRoute();
         } else {
           Get.snackbar("Navigation", "The navigation has been preparing.");
@@ -147,9 +147,6 @@ class NavigationScreen extends StatelessWidget {
                   !mapController.isCameraLocked.value;
               mapController.moveCameraToLocation(
                   location: locationController.currentLocation.value!);
-              // Get.find<JourneyController>().fetchWeatherData(
-              //     locationController.destination.value!.latitude,
-              //     locationController.destination.value!.longitude);
             }
           },
           icon: const Icon(Icons.location_searching_outlined),
