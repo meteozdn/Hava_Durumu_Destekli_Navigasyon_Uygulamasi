@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:navigationapp/controllers/journey_controller.dart';
+import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/route.dart';
@@ -25,7 +27,27 @@ class MapController extends GetxController {
   Future<void> startRoute() async {
     try {
       isRouteStarted.value = true;
+      route.isActive = true;
+      route.startedAt = DateTime.now();
       await Get.putAsync<JourneyController>(() async => JourneyController());
+    } catch (error) {
+      Get.snackbar("Error", "Failed to create JourneyController.");
+    }
+  }
+
+  Future<void> setPlannedRoute({required RouteModel route}) async {
+    try {
+      setRouteModel(route: route, isPlanned: false);
+      var start = LatLng(this.route.startingLocation.latitude,
+          this.route.startingLocation.longitude);
+      var destination = LatLng(this.route.destinationLocation.latitude,
+          this.route.destinationLocation.longitude);
+
+      await setPolylinePoints(start: start, destination: destination);
+      isRouteCreated.value = true;
+      await moveCameraToAllRoute();
+      var locationController = Get.find<LocationController>();
+      locationController.destination.value = destination;
     } catch (error) {
       Get.snackbar("Error", "Failed to create JourneyController.");
     }
@@ -161,6 +183,14 @@ class MapController extends GetxController {
   void setRouteModel({required RouteModel route, required bool isPlanned}) {
     this.route = route;
     this.isPlanned = isPlanned;
+  }
+
+  // Update the active route every x minutes.
+  void updateRouteLocation({required LatLng current, required int timeLeft}) {
+    route.location = GeoPoint(current.latitude, current.longitude);
+    route.estimatedFinishTime = DateTime.now().add(Duration(minutes: timeLeft));
+    route.locationLastUpdate = DateTime.now();
+    Get.find<RouteController>().updateRoute(route: route);
   }
 
   Future<void> saveRoute() async {
