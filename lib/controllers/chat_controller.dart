@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:navigationapp/controllers/chat_group_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/user_controller.dart';
 import 'package:navigationapp/core/constants/firestore_collections.dart';
@@ -15,7 +16,7 @@ class ChatController extends GetxController {
   final String chatGroupId;
   final ChatService _chatService = ChatService();
   Rx<ChatGroup?> chatGroup = Rx<ChatGroup?>(null);
-
+  final ChatGroupController _chatGroupController = Get.find();
   final TextEditingController messageController = TextEditingController();
   final RxList<Message> messages = <Message>[].obs;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -40,7 +41,8 @@ class ChatController extends GetxController {
   }
 
   void listenToChatGroupUpdates() {
-    chatGroupSubscription = chatGroupDocRef?.snapshots().listen((snapshot) {
+    chatGroupSubscription =
+        chatGroupDocRef?.snapshots().listen((snapshot) async {
       if (snapshot.exists) {
         ChatGroup newChatGroupData = ChatGroup.fromFirestore(snapshot);
         ChatGroup? oldChatGroupData = chatGroup.value;
@@ -49,11 +51,28 @@ class ChatController extends GetxController {
           return;
         }
         // Check for updates to "sharedRoutes" field.
-        if (oldChatGroupData.sharedRoutes != newChatGroupData.sharedRoutes) {
-          Get.find<RouteController>().fetchUserRoutes();
+        if (!areListsEqual(
+            oldChatGroupData.sharedRoutes, chatGroup.value!.sharedRoutes)) {
+          await _chatGroupController.updateChatGroup(
+              newChatGroup: chatGroup.value!);
+          //await Get.find<RouteController>().fetchUserRoutes();
         }
       }
     });
+  }
+
+  bool areListsEqual(List<String> list1, List<String> list2) {
+    if (list1.length != list2.length) {
+      return false;
+    }
+    List<String> sortedList1 = List.from(list1)..sort();
+    List<String> sortedList2 = List.from(list2)..sort();
+    for (int i = 0; i < sortedList1.length; i++) {
+      if (sortedList1[i] != sortedList2[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   void loadMessages() {

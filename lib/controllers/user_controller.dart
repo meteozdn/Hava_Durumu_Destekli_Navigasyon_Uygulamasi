@@ -32,7 +32,7 @@ class UserController extends GetxController {
   }
 
   void listenToUserUpdates() {
-    userSubscription = userDocRef?.snapshots().listen((snapshot) {
+    userSubscription = userDocRef?.snapshots().listen((snapshot) async {
       if (snapshot.exists) {
         User newUserData = User.fromFirestore(snapshot);
         User? oldUserData = user.value;
@@ -41,19 +41,33 @@ class UserController extends GetxController {
           return;
         }
         // Check for updates to "chatGroups" field.
-        if (oldUserData.chatGroups != newUserData.chatGroups) {
-          Get.find<ChatGroupController>().fetchUserChatGroups();
+        if (!areListsEqual(oldUserData.chatGroups!, user.value!.chatGroups!)) {
+          await Get.find<ChatGroupController>().fetchUserChatGroups();
         }
         // Check for updates to "routes" field.
-        if (oldUserData.routes != newUserData.routes) {
-          Get.find<RouteController>().fetchUserRoutes();
+        if (!areListsEqual(oldUserData.routes!, user.value!.routes!)) {
+          await Get.find<RouteController>().fetchUserRoutes();
         }
         // Check for updates to "friends" field.
-        if (oldUserData.friends != newUserData.friends) {
-          Get.find<FriendRequestController>().fetchUserFriends();
+        if (!areListsEqual(oldUserData.friends!, user.value!.friends!)) {
+          await Get.find<FriendRequestController>().fetchUserFriends();
         }
       }
     });
+  }
+
+  bool areListsEqual(List<String> list1, List<String> list2) {
+    if (list1.length != list2.length) {
+      return false;
+    }
+    List<String> sortedList1 = List.from(list1)..sort();
+    List<String> sortedList2 = List.from(list2)..sort();
+    for (int i = 0; i < sortedList1.length; i++) {
+      if (sortedList1[i] != sortedList2[i]) {
+        return false;
+      }
+    }
+    return true;
   }
 
   // Method to set user data.
