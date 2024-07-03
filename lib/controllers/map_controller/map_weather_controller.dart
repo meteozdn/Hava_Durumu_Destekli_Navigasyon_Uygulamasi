@@ -10,6 +10,7 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/weather/current_weather.dart';
 import 'package:navigationapp/services/weather_service/weather_map_service.dart';
 import 'package:navigationapp/services/weather_service/weathers_service.dart';
+import 'package:navigationapp/views/components/navigation_marker.dart';
 import 'package:navigationapp/views/components/weather_map_widgets/weather_map_marker.dart';
 import 'package:navigationapp/views/home/weather_screen.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';

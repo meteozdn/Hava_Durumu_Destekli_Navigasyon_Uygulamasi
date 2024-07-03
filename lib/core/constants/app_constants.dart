@@ -101,6 +101,7 @@ class IconsConst {
   static const logo1 = "lib/assets/icons/logo1.png";
   static const logo2 = "lib/assets/icons/logo2.png";
   static const logo3 = "lib/assets/icons/logo3.png";
+  static const flag = "lib/assets/icons/flag.png";
 
   static const blackNavigateIcon = "lib/assets/icons/navigate.png";
   static const windIcon = "lib/assets/icons/wind.png";

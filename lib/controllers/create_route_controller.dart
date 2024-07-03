@@ -21,7 +21,7 @@ class CreateRouteController extends GetxController {
   RxList<ChatGroup> allChatGroups = <ChatGroup>[].obs;
   RxSet<int> selectedChatGroups = <int>{}.obs;
   RxBool isShared = false.obs;
-
+  RxBool isLoad = false.obs;
   @override
   void onInit() async {
     super.onInit();
@@ -31,6 +31,10 @@ class CreateRouteController extends GetxController {
 
   void changeShareState() {
     isShared(!isShared.value);
+  }
+
+  void load() {
+    isLoad(!isLoad.value);
   }
 
   void clearSelections() {

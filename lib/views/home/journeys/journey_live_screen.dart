@@ -23,7 +23,7 @@ class JourneyLiveScreen extends StatelessWidget {
   // final MapController navMapController = Get.find();
   // final MapWeatherController mapWeatherController = Get.find();
   final JourneyLiveDetailController controller =
-      Get.put(JourneyLiveDetailController());
+      Get.put(JourneyLiveDetailController(route: Get.arguments["route"]));
   final RouteModel route = Get.arguments["route"];
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
@@ -38,7 +38,7 @@ class JourneyLiveScreen extends StatelessWidget {
             width: Get.width,
             child: Obx(() {
               return GoogleMap(
-                //  markers: mapWeatherController.markers,
+                markers: controller.markers,
                 compassEnabled: false,
                 polylines: controller.polylines
                     .toSet(), //  scrollGesturesEnabled: false,

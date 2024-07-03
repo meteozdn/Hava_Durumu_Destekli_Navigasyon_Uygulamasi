@@ -199,7 +199,7 @@ class ProfileWidgets extends StatelessWidget {
           children: [
             ProfileButtons(
               icon: Icons.location_on,
-              text: "Kayıtlı Yerler",
+              text: "Geçmiş Yolculuklarım",
               onPressed: () {
                 Get.to(
                   () => const SavedLocationsView(
@@ -220,7 +220,7 @@ class ProfileWidgets extends StatelessWidget {
               text: "Kayıtlı Rotalar",
               onPressed: () {
                 Get.to(
-                  () => const SavedRotatesView(
+                  () => SavedRotatesView(
                       //  title: 'Kullanıcı Ara',
                       ),
                 );

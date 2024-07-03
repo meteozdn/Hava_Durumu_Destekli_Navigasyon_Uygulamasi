@@ -66,8 +66,12 @@ class JourneyController extends GetxController {
         //     "Kalan: ${(distance / 1000).toStringAsFixed(2)} km";
         // _locationController.timeLeft.value =
         //     "Tahmini Süre: ${(duration / 60).round()} dk";
-        _locationController.distanceLeft.value = "Kalan: $distanceText";
-        _locationController.timeLeft.value = "Tahmini Süre: $durationText";
+        _locationController.timeLeft.value =
+            _locationController.convertTimeString("$durationText");
+        _locationController.distanceLeft.value =
+            _locationController.convertMilesToKilometers("$distanceText");
+        _locationController
+            .addTimeToCurrentTime(_locationController.timeLeft.value);
       }
     } catch (error) {
       Get.snackbar("Error", error.toString());

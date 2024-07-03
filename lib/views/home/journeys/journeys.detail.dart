@@ -126,16 +126,18 @@ class JourneyDetail extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Get.toNamed(
-                                    NavigationConstants.liveJourney,
-                                    arguments: {
-                                      "route": route,
+                            !isOwner
+                                ? ElevatedButton(
+                                    onPressed: () {
+                                      Get.toNamed(
+                                        NavigationConstants.liveJourney,
+                                        arguments: {
+                                          "route": route,
+                                        },
+                                      );
                                     },
-                                  );
-                                },
-                                child: const Icon(Icons.broadcast_on_home))
+                                    child: const Icon(Icons.broadcast_on_home))
+                                : const SizedBox()
                           ],
                         ),
                         Column(

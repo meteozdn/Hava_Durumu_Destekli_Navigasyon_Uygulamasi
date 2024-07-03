@@ -6,17 +6,31 @@ import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:navigationapp/controllers/journey_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/utils/location_utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:navigationapp/views/components/navigation_marker.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class JourneyLiveDetailController extends GetxController {
   //late Completer<GoogleMapController> googleMapsController = Completer();
   // late RouteModel route;
 //  RxBool isRouteCreated = false.obs;
 //  RxBool isCameraLocked = true.obs;
-  var markers = <MarkerId, Marker>{}.obs;
+  final RouteModel route;
+  JourneyLiveDetailController({
+    //super.key,
+    required this.route,
+  });
+  RxSet<Marker> markers = <Marker>{}.obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
+  @override
+  void onInit() async {
+    super.onInit();
+    await getMarkers(route);
+    // Listen to authentication changes.
+  }
 
   Future<void> setPolylinePoints(
       {required LatLng start, required LatLng destination}) async {
@@ -41,6 +55,29 @@ class JourneyLiveDetailController extends GetxController {
     } catch (error) {
       Get.snackbar("Error", "PolylinePoints could not be set.");
     }
+  }
+
+  getMarkers(RouteModel route) async {
+    markers.add(Marker(
+        markerId: const MarkerId("start"),
+        // position: _locationController.currentLocation.value != null
+        //     ? _locationController.currentLocation.value!
+        //     : center
+        position: LatLng(route.startingLocation.latitude,
+            route.startingLocation.longitude)));
+    markers.add(Marker(
+        icon: await NavigationMarker(
+          isNight: !(DateTime.now().hour < 19 && DateTime.now().hour > 6),
+          icon: IconsConst.flag,
+        ).toBitmapDescriptor(
+            logicalSize: const Size(200, 200), imageSize: const Size(200, 200)),
+        markerId: const MarkerId("end"),
+        // position: _locationController.currentLocation.value != null
+        //     ? _locationController.currentLocation.value!
+        //     : center
+        position: LatLng(route.destinationLocation.latitude,
+            route.destinationLocation.longitude)));
+    //load();
   }
 
   @override

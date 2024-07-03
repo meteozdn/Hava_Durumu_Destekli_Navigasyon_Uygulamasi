@@ -3,11 +3,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/create_route_controller.dart';
 import 'package:navigationapp/controllers/location_controller.dart';
+import 'package:navigationapp/controllers/saved_routes.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/core/constants/navigation_constants.dart';
+import 'package:navigationapp/views/profile/saved_rotates.dart';
 
 class CreateRouteView extends StatelessWidget {
   CreateRouteView({super.key, required this.isPlanned});
-
+  final SavedRoutesController savedRoutes = Get.find();
   final CreateRouteController controller = Get.find();
   final LocationController locationController = Get.find();
   final FocusNode startFocusNode = FocusNode();
@@ -37,6 +40,20 @@ class CreateRouteView extends StatelessWidget {
     });
     return Scaffold(
       appBar: AppBar(
+        actions: [
+          GestureDetector(
+              onTap: () {
+                Get.to(
+                  () => SavedRotatesView(
+                      //  title: 'Kullanıcı Ara',
+                      ),
+                );
+              },
+              child: const Padding(
+                padding: EdgeInsets.only(right: 20.0),
+                child: Icon(Icons.bookmark),
+              ))
+        ],
         leading: GestureDetector(
           onTap: () {
             controller.clearSelections();
@@ -50,29 +67,37 @@ class CreateRouteView extends StatelessWidget {
         ),
         title: Text(!isPlanned ? "Yolculuk Oluştur" : "Yolculuk Planla"),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(10.0.w),
-          child: Column(
-            children: [
-              routeTextField(
-                controller: originController,
-                focusNode: startFocusNode,
-                hintText: "Başlangıç",
-                suggestions: controller.originSuggestions,
-                enabled: isPlanned,
+      body: Padding(
+        padding: EdgeInsets.all(10.0.w),
+        child: Column(
+          // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            Expanded(
+              child: Column(
+                children: [
+                  routeTextField(
+                    controller: originController,
+                    focusNode: startFocusNode,
+                    hintText: "Başlangıç",
+                    suggestions: controller.originSuggestions,
+                    enabled: isPlanned,
+                  ),
+                  routeTextField(
+                    controller: destinationController,
+                    focusNode: destinationFocusNode,
+                    hintText: "Varılacak Yer",
+                    suggestions: controller.destinationSuggestions,
+                    enabled: true,
+                  ),
+                  if (isPlanned) dateTimePicker(),
+                  shareSwitch(),
+                  friendsShareWidget(),
+                ],
               ),
-              routeTextField(
-                controller: destinationController,
-                focusNode: destinationFocusNode,
-                hintText: "Varılacak Yer",
-                suggestions: controller.destinationSuggestions,
-                enabled: true,
-              ),
-              if (isPlanned) dateTimePicker(),
-              shareSwitch(),
-              friendsShareWidget(),
-              ElevatedButton(
+            ),
+            Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: ElevatedButton(
                 onPressed: () async {
                   Navigator.pop(context);
                   if (originController.text.isNotEmpty &&
@@ -98,8 +123,8 @@ class CreateRouteView extends StatelessWidget {
                   style: TextStyle(color: ColorConstants.whiteColor),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -213,8 +238,10 @@ class CreateRouteView extends StatelessWidget {
   Widget shareSwitch() {
     return Container(
       decoration: BoxDecoration(
-          border: Border.all(), borderRadius: BorderRadius.circular(5)),
-      height: 40,
+        border: Border.all(),
+        borderRadius: BorderRadius.circular(5),
+      ),
+      height: 55,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -226,6 +253,7 @@ class CreateRouteView extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Obx(() {
               return Switch(
+                  activeColor: ColorConstants.pictionBlueColor,
                   value: controller.isShared.value,
                   onChanged: (bool value) {
                     controller.changeShareState();
@@ -266,32 +294,40 @@ class CreateRouteView extends StatelessWidget {
                         itemCount: controller.allChatGroups.length,
                         itemBuilder: (BuildContext context, int index) {
                           final chatGroup = controller.allChatGroups[index];
-                          final isSelected =
-                              controller.selectedChatGroups.contains(index);
+                          // RxBool isSelected =
+                          //    controller.selectedChatGroups.contains(index).obs;
                           return Padding(
                             padding: EdgeInsets.all(5.0.w),
                             child: GestureDetector(
                               onTap: () {
-                                if (isSelected) {
+                                if (controller.selectedChatGroups
+                                    .contains(index)) {
                                   controller.selectedChatGroups.remove(index);
                                 } else {
                                   controller.selectedChatGroups.add(index);
                                 }
+
                                 print(controller.selectedChatGroups);
+                                controller.load();
+                                //   print(isSelected.value);
                               },
                               child: Column(
                                 children: [
-                                  CircleAvatar(
-                                    radius: 35.r,
-                                    backgroundColor: isSelected
-                                        ? ColorConstants.greenColor
-                                        : ColorConstants.pictionBlueColor,
-                                    child: CircleAvatar(
-                                      radius: 32.r,
-                                      foregroundImage:
-                                          NetworkImage(chatGroup.image),
-                                    ),
-                                  ),
+                                  Obx(() {
+                                    return CircleAvatar(
+                                      radius: 35.r,
+                                      backgroundColor: controller
+                                              .selectedChatGroups
+                                              .contains(index)
+                                          ? ColorConstants.greenColor
+                                          : ColorConstants.blackColor,
+                                      child: CircleAvatar(
+                                        radius: 32.r,
+                                        foregroundImage:
+                                            NetworkImage(chatGroup.image),
+                                      ),
+                                    );
+                                  }),
                                   SizedBox(
                                     width: 60.w,
                                     child: Center(

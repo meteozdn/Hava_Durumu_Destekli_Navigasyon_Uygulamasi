@@ -5,6 +5,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:get/get.dart';
 import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
+import 'package:navigationapp/controllers/saved_routes.dart';
 import 'package:navigationapp/controllers/theme_change_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
@@ -14,6 +15,7 @@ class NavigationScreen extends StatelessWidget {
   final ThemeChanger themeChanger = Get.find();
   final LocationController locationController = Get.find();
   final MapController mapController = Get.find();
+  SavedRoutesController savedRoutes = Get.put(SavedRoutesController());
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,33 @@ class NavigationScreen extends StatelessWidget {
               polylines: mapController.polylines.toSet(),
               zoomControlsEnabled: false,
               markers: mapController.markers.values.toSet())),
+          Obx(() {
+            final isRouteCreated = mapController.isRouteCreated.value;
+            final isRouteStarted = mapController.isRouteStarted.value;
+            return Visibility(
+              visible: isRouteCreated && !isRouteStarted,
+              child: Positioned(
+                  bottom: 120,
+                  right: 10,
+                  left: 320,
+                  child: GestureDetector(
+                    onTap: () {
+                      savedRoutes.addSaved(mapController.route);
+                      print("object");
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: themeChanger.isLight.value
+                          ? ColorConstants.pictionBlueColor
+                          : ColorConstants.darkGrey,
+                      child: const Icon(
+                        size: 20,
+                        Icons.bookmark,
+                        color: ColorConstants.whiteColor,
+                      ),
+                    ),
+                  )),
+            );
+          }),
           Positioned(
             bottom: 50,
             right: 10,
@@ -169,7 +198,11 @@ class NavigationScreen extends StatelessWidget {
   Widget journeyInformation() {
     return GestureDetector(
       onTap: () {
-        locationController.estimatedTimeCalculate();
+        print(
+          locationController.distanceLeft.value,
+        );
+        //locationController.estimatedTimeCalculate();
+        locationController.addTimeToCurrentTime("10:25");
       },
       child: Material(
         borderRadius: BorderRadius.circular(10),
@@ -203,10 +236,7 @@ class NavigationScreen extends StatelessWidget {
                       style: const TextStyle(
                           fontSize: 20, fontWeight: FontWeight.bold),
                     ),
-                    Obx(() {
-                      return Text(
-                          locationController.isMinute.value ? "dk" : "sa");
-                    }),
+                    const Text("Süre")
                   ],
                 ),
                 Column(

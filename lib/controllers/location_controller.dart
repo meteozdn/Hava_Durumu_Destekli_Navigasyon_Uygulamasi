@@ -47,19 +47,6 @@ class LocationController extends GetxController {
     }
   }
 
-  timeLeftIsMinute() {
-    try {
-      if (double.parse(timeLeft.value) < 60) {
-        isMinute(true);
-      } else {
-        timeLeft((double.parse(timeLeft.value) / 60).toStringAsFixed(1));
-        isMinute(false);
-      }
-    } catch (e) {
-      print(e);
-    }
-  }
-
   estimatedTimeCalculate() {
     final dateFormat = DateFormat('HH:mm', "tr_TR");
     try {
@@ -74,6 +61,56 @@ class LocationController extends GetxController {
       print(e);
     }
     // print();
+  }
+
+  Duration parseTimeString(String timeString) {
+    List<String> parts = timeString.split(':');
+    int hours = int.parse(parts[0]);
+    int minutes = int.parse(parts[1]);
+    return Duration(hours: hours, minutes: minutes);
+  }
+
+// Şu anki zamana verilen süreyi ekleyen fonksiyon
+  addTimeToCurrentTime(String timeString) {
+    final dateFormat = DateFormat('HH:mm', "tr_TR");
+
+    Duration duration = parseTimeString(timeString);
+    DateTime now = DateTime.now();
+    estimatedTime(dateFormat.format(now.add(duration)));
+    //   return now.add(duration);
+  }
+
+  convertMilesToKilometers(String milesString) {
+    // String'ten sadece sayıları al
+    String milesNumber = milesString.replaceAll(RegExp(r'\D'), '');
+
+    // Sayıları int olarak parse et
+    int miles = int.parse(milesNumber);
+
+    // Mil değerini kilometreye dönüştür
+    const double mileToKilometerFactor = 1.60934;
+    double kilometers = miles * mileToKilometerFactor;
+
+    // Kilometre değerini en yakın tam sayıya yuvarla ve geri dön
+    distanceLeft.value = kilometers.round().toString();
+  }
+
+  convertTimeString(String timeString) {
+    // "10 saat 20 dk" gibi bir string'i parçalarına ayır
+    List<String> parts = timeString.split(' ');
+
+    // Saat ve dakikaları ayrı değişkenlere ata
+    String hourPart = parts[0];
+    String minutePart = parts[2];
+
+    // Saat ve dakikalardan sadece sayıları al
+    String hours = hourPart.replaceAll(RegExp(r'\D'), '');
+    String minutes = minutePart.replaceAll(RegExp(r'\D'), '');
+
+    // "HH:MM" formatında string oluştur ve geri dön
+    timeLeft('$hours:$minutes');
+    print(timeLeft.value);
+    // return '$hours:$minutes';
   }
 
   void setCurrentLocation({required Position position}) {
