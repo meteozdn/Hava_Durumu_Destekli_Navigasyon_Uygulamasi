@@ -65,17 +65,50 @@ class MapController extends GetxController {
   Future<void> setPolylinePoints(
       {required LatLng start, required LatLng destination}) async {
     try {
-      String url = "https://maps.googleapis.com/maps/api/directions/json?"
-          "origin=${start.latitude},${start.longitude}&"
-          "destination=${destination.latitude},${destination.longitude}&"
-          "mode=driving&"
-          "key=${AppConstants.googleMapsApiKey}";
-      var response = await http.get(Uri.parse(url));
+      String routesUrl =
+          "https://routes.googleapis.com/directions/v2:computeRoutes";
+      Map<String, dynamic> requestBody = {
+        "origin": {
+          "location": {
+            "latLng": {"latitude": start.latitude, "longitude": start.longitude}
+          }
+        },
+        "destination": {
+          "location": {
+            "latLng": {
+              "latitude": destination.latitude,
+              "longitude": destination.longitude
+            }
+          }
+        },
+        "travelMode": "DRIVE",
+        "computeAlternativeRoutes": false,
+        "routeModifiers": {
+          "avoidTolls": false,
+          "avoidHighways": false,
+          "avoidFerries": false
+        },
+        "languageCode": "en-US"
+      };
+
+      var response = await http.post(
+        Uri.parse(routesUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": AppConstants.googleMapsApiKey,
+          "X-Goog-FieldMask":
+              "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+        },
+        body: json.encode(requestBody),
+      );
+
       var data = json.decode(response.body);
       var routes = data["routes"];
-      if (routes.isNotEmpty) {
+
+      if (routes != null && routes.isNotEmpty) {
         var points = PolylinePoints()
-            .decodePolyline(routes[0]["overview_polyline"]["points"]);
+            .decodePolyline(routes[0]["polyline"]["encodedPolyline"]);
+
         polylineCoordinates.clear();
         polylineCoordinates.addAll(points
             .map((point) => LatLng(point.latitude, point.longitude))
