@@ -54,6 +54,19 @@ class NavigationScreen extends StatelessWidget {
             final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
             return Visibility(
+              // visible: isRouteCreated && !isRouteStarted,
+              child: Positioned(
+                  top: 130,
+                  bottom: 530,
+                  right: 10,
+                  left: 10,
+                  child: DirectionsViewWidget(themeChanger: themeChanger)),
+            );
+          }),
+          Obx(() {
+            final isRouteCreated = mapController.isRouteCreated.value;
+            final isRouteStarted = mapController.isRouteStarted.value;
+            return Visibility(
               visible: isRouteCreated && !isRouteStarted,
               child: Positioned(
                   bottom: 120,
@@ -277,6 +290,91 @@ class NavigationScreen extends StatelessWidget {
             )),
       ),
     );
+  }
+}
+
+class DirectionsViewWidget extends StatelessWidget {
+  const DirectionsViewWidget({
+    super.key,
+    required this.themeChanger,
+  });
+
+  final ThemeChanger themeChanger;
+
+  @override
+  Widget build(BuildContext context) {
+    return Material(
+      borderRadius: BorderRadius.circular(10),
+      elevation: 10,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: themeChanger.isLight.value
+              ? ColorConstants.pictionBlueColor
+              : ColorConstants.darkGrey,
+        ),
+        width: 500,
+        height: 150,
+        child: Center(
+            child: Padding(
+          padding: const EdgeInsets.all(15.0),
+          child: Row(
+            children: [
+              //TODO getIcon()'u serviten gelen veriyi vererek çalıştır <3
+              Icon(
+                getIcon(NavigationConsts.northEast),
+                color: ColorConstants.whiteColor,
+                size: 50,
+              ),
+              const Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        //TODO GELEN VERİ BURAYA GİRİLECEK
+                        "100m sonra sola dönün",
+                        maxLines: 2,
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )
+            ],
+          ),
+        )),
+      ),
+    );
+  }
+
+  IconData getIcon(String instruction) {
+    if (instruction.contains(NavigationConsts.northEast)) {
+      return Icons.north_west;
+    } else if (instruction.contains(NavigationConsts.northEast)) {
+      return Icons.north_east;
+    } else if (instruction.contains(NavigationConsts.southEast)) {
+      return Icons.south_east;
+    } else if (instruction.contains(NavigationConsts.southWest)) {
+      return Icons.south_west;
+    } else if (instruction.contains(NavigationConsts.north) ||
+        instruction.contains(NavigationConsts.straight)) {
+      return Icons.north;
+    } else if (instruction.contains(NavigationConsts.west) ||
+        instruction.contains(NavigationConsts.left)) {
+      return Icons.west;
+    } else if (instruction.contains(NavigationConsts.east) ||
+        instruction.contains(NavigationConsts.right)) {
+      return Icons.east;
+    } else if (instruction.contains(NavigationConsts.south)) {
+      return Icons.south;
+    }
+    return Icons.north;
   }
 }
 
