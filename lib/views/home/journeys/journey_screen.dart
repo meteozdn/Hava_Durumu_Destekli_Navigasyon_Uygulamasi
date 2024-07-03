@@ -6,6 +6,7 @@ import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
+import 'package:navigationapp/controllers/screen_cotrollers/journey_detail._controller.dart';
 import 'package:navigationapp/views/components/indicator.dart';
 import 'package:navigationapp/views/components/journey_card.dart';
 
@@ -13,6 +14,7 @@ class JourneyScreen extends StatelessWidget {
   RxInt _selectedIndex = 0.obs;
   final PageController _pageviewontroller = PageController();
   final MapController mapController = Get.find();
+
   JourneyScreen({super.key});
 
   @override
@@ -61,6 +63,10 @@ class JourneyScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: 20.w, right: 20.w),
                         itemCount: controller.userRoutes.length,
                         itemBuilder: (context, index) {
+                          final JourneyDetailController
+                              journeyDetailController = Get.put(
+                                  JourneyDetailController(
+                                      route: controller.userRoutes[index]));
                           return Padding(
                             padding: EdgeInsets.only(top: 20.0.h),
                             child: Material(
@@ -97,6 +103,10 @@ class JourneyScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: 20.w, right: 20.w),
                         itemCount: controller.sharedRoutes.length,
                         itemBuilder: (context, index) {
+                          final JourneyDetailController
+                              journeyDetailController = Get.put(
+                                  JourneyDetailController(
+                                      route: controller.userRoutes[index]));
                           return Padding(
                             padding: EdgeInsets.only(top: 20.0.h),
                             child: Material(

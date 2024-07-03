@@ -5,7 +5,6 @@ import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_stack/image_stack.dart';
 import 'package:intl/intl.dart';
-import 'package:lottie/lottie.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/controllers/route_controller.dart';
 import 'package:navigationapp/controllers/screen_cotrollers/journey_detail._controller.dart';
@@ -28,13 +27,18 @@ class JourneyDetail extends StatelessWidget {
   // final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   // final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
 
-  final JourneyDetailController journeyDetailController =
-      Get.put(JourneyDetailController());
+  final JourneyDetailController journeyDetailController = Get.find();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+          leading: GestureDetector(
+              onTap: () {
+                journeyDetailController.clearRoute();
+                Get.back();
+              },
+              child: Icon(Icons.arrow_back_ios_new_outlined)),
           title: const Text("Yolculuk Detayları"),
           actions: [
             isOwner
@@ -83,29 +87,59 @@ class JourneyDetail extends StatelessWidget {
                               height: 200,
                               width: 300,
                               child: Padding(
-                                padding: const EdgeInsets.all(15.0),
+                                padding: EdgeInsets.all(15.0),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     border: Border.all(),
                                   ),
                                   child: Stack(
                                     children: [
-                                      GoogleMap(
-                                        zoomGesturesEnabled: false,
-                                        scrollGesturesEnabled: false,
-                                        //  scrollGesturesEnabled: false,
-                                        myLocationButtonEnabled: false,
-                                        initialCameraPosition:
-                                            const CameraPosition(
-                                          target: LatLng(41.28667, 36.33),
-                                          zoom: 10,
-                                        ),
-                                        onMapCreated: (mapController) {
-                                          //  controller.mapController = mapController;
-                                        },
-                                        // polylines: controller.polylines.toSet(),
-                                        zoomControlsEnabled: false,
-                                      ),
+                                      Obx(() {
+                                        return GoogleMap(
+                                          zoomGesturesEnabled: false,
+                                          scrollGesturesEnabled: false,
+                                          //  scrollGesturesEnabled: false,
+                                          myLocationButtonEnabled: false,
+                                          initialCameraPosition: CameraPosition(
+                                            target: LatLng(
+                                              route.startingLocation.latitude,
+                                              route.startingLocation.longitude,
+                                            ),
+                                            zoom: 6,
+                                          ),
+                                          markers: {
+                                            Marker(
+                                                markerId:
+                                                    const MarkerId("start"),
+                                                position: LatLng(
+                                                    route.startingLocation
+                                                        .latitude,
+                                                    route.startingLocation
+                                                        .longitude))
+                                          },
+                                          onMapCreated: (mapController) async {
+                                            await journeyDetailController
+                                                .setPolylinePoints(
+                                                    start: LatLng(
+                                                        route
+                                                            .startingLocation.latitude,
+                                                        route.startingLocation
+                                                            .longitude),
+                                                    destination: LatLng(
+                                                        route
+                                                            .destinationLocation
+                                                            .latitude,
+                                                        route
+                                                            .destinationLocation
+                                                            .longitude));
+                                            //  controller.mapController = mapController;
+                                          },
+                                          polylines: journeyDetailController
+                                              .polylines
+                                              .toSet(),
+                                          zoomControlsEnabled: false,
+                                        );
+                                      }),
                                       false
                                           // ignore: dead_code
                                           ? const BluredContainer(

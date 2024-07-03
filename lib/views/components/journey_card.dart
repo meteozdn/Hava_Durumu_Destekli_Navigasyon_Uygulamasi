@@ -101,7 +101,7 @@ class JourneyWidget extends StatelessWidget {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 50.0.w),
+                        padding: EdgeInsets.only(left: 30.0.w),
                         child: Text(
                           textAlign: TextAlign.center,
                           formatterDateDay.format(startDate),
