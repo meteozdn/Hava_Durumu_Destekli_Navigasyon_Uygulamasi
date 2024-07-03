@@ -66,43 +66,40 @@ class JourneyLiveScreen extends StatelessWidget {
               BluredContainer(
                 width: Get.width,
                 height: 150,
-                child: Padding(
+                child: const Padding(
                   padding: EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Column(
                         children: [
-                          const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Text(
-                                "Son konum: Bolu",
-                                style: TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold),
+                              Column(
+                                children: [
+                                  Text("Konum"),
+                                  Text(
+                                    "Bolu",
+                                    style: TextStyle(
+                                        fontSize: 50,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
                               ),
-                              Text("Saat: 00.50"),
+                              Column(
+                                children: [
+                                  Text("Saat"),
+                                  Text(
+                                    "00.50",
+                                    style: TextStyle(
+                                        fontSize: 50,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ],
+                              ),
                             ],
                           ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10.0, horizontal: 50),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                Image.asset(
-                                  IconsConst.windIcon,
-                                  width: 55,
-                                ),
-                                const Text(
-                                  "14°C",
-                                  style: TextStyle(
-                                      fontSize: 40,
-                                      fontWeight: FontWeight.bold),
-                                )
-                              ],
-                            ),
-                          )
                         ],
                       )
                     ],

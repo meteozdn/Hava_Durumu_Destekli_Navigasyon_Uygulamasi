@@ -80,10 +80,12 @@ class HomeScreen extends StatelessWidget {
                                         size: 50.r,
                                       ),
                                     ),
-                                    Text(
+                                    const Text(
                                       "Güvenli\nSürüş",
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyle.midBlack,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
                                     )
                                   ],
                                 ),
@@ -105,10 +107,12 @@ class HomeScreen extends StatelessWidget {
                                       },
                                       icon: Icon(Icons.watch_later, size: 50.r),
                                     ),
-                                    Text(
+                                    const Text(
                                       "Sürüş\nPlanla",
                                       textAlign: TextAlign.center,
-                                      style: AppTextStyle.midBlack,
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.bold),
                                     )
                                   ],
                                 ),

@@ -23,7 +23,7 @@ class MapWeatherController extends GetxController {
   RxSet<Marker> markers = <Marker>{}.obs;
   final DateFormat formatterDate = DateFormat('dd MMMM EEEE', 'tr_TR');
   final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
-  final WeathersService weatherService = WeathersService();
+  //final WeathersService weatherService = WeathersService();
   final date = DateTime.now();
   final WeathersService weathersService = WeathersService();
   var pageViewIndex = 0.obs;
@@ -57,7 +57,7 @@ class MapWeatherController extends GetxController {
     // await getCurrentLocation();
     getCurrentWeather();
     getAllerts();
-    currentWeatherModel.value = await weatherService.fetchCurrentWeatherData(
+    currentWeatherModel.value = await weathersService.fetchCurrentWeatherData(
         center.longitude, center.latitude);
     await getCurrentLocationMarker();
     determinePosition();
@@ -67,7 +67,7 @@ class MapWeatherController extends GetxController {
   getCurrentLocationMarker() async {
     markers.add(Marker(
         icon: await WeatherMarker(
-          isNight: !(DateTime.now().hour < 19 && DateTime.now().hour > 6),
+          isNight: (DateTime.now().hour < 19 && DateTime.now().hour > 6),
           weatherIcon: getIcon(),
           weatherTemp: currentWeatherModel.value.main!.temp!,
         ).toBitmapDescriptor(
@@ -81,7 +81,7 @@ class MapWeatherController extends GetxController {
   }
 
   getAllerts() {
-    weatherService.fetchAllertWeatherData();
+    weathersService.fetchAllertWeatherData();
   }
 
   late GoogleMapController googlemapController;
@@ -93,7 +93,7 @@ class MapWeatherController extends GetxController {
   }
 
   getCurrentWeather() {
-    weatherService.fetchCurrentWeatherData(41.32859, 36.2846729);
+    weathersService.fetchCurrentWeatherData(41.32859, 36.2846729);
   }
 
   _setTiles(String mapType) {

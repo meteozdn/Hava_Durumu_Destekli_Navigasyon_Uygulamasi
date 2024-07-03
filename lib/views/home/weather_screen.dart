@@ -124,7 +124,7 @@ class WeatherScreenAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final JourneyController controller = Get.put(JourneyController());
+    // final JourneyController controller = Get.put(JourneyController());
 
     _showAlertDialog() {
       final DateFormat formatterHour = DateFormat('jm', 'tr_TR');
@@ -189,7 +189,7 @@ class WeatherScreenAppBar extends StatelessWidget {
             height: 30.h,
             child: Center(
               child: Text(
-                "Samsun-Atakum",
+                "Samsun",
                 style: TextStyle(
                     color: ColorConstants.blackColor,
                     fontSize: 20.sp,
@@ -198,12 +198,12 @@ class WeatherScreenAppBar extends StatelessWidget {
             )),
         IconButton(
             onPressed: () async {
-              await controller.fetchWeatherData(41.28667, 36.33,
-                  DateTime.now().add(const Duration(minutes: 15)));
-              _showAlertDialog();
-              // final MapWeatherController weatherScreenController = Get.find();
-              // weatherScreenController.getAllerts();
+              //    await controller.fetchWeatherData(41.28667, 36.33,
+              //      DateTime.now().add(const Duration(minutes: 15)));
               //  _showAlertDialog();
+              final MapWeatherController weatherScreenController = Get.find();
+              weatherScreenController.getAllerts();
+              _showAlertDialog();
             },
             icon: const Icon(Icons.notification_important))
       ],
