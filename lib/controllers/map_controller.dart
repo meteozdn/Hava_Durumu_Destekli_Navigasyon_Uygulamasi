@@ -13,6 +13,8 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/utils/location_utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:navigationapp/views/components/weather_map_widgets/weather_map_marker.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class MapController extends GetxController {
   late Completer<GoogleMapController> googleMapsController = Completer();
@@ -21,7 +23,7 @@ class MapController extends GetxController {
   RxBool isRouteStarted = false.obs;
   RxBool isRouteCreated = false.obs;
   RxBool isCameraLocked = true.obs;
-  var markers = <MarkerId, Marker>{}.obs;
+  var markers = <Marker>[].obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
   RxString mapStyle = "".obs;
@@ -182,34 +184,37 @@ class MapController extends GetxController {
   Future<void> recalculateRoute(
       {required LatLng start, required LatLng destination}) async {
     try {
-      String url = "https://maps.googleapis.com/maps/api/directions/json?"
-          "origin=${start.latitude},${start.longitude}&"
-          "destination=${destination.latitude},${destination.longitude}&"
-          "mode=driving&"
-          "key=${AppConstants.googleMapsApiKey}";
-      var response = await http.get(Uri.parse(url));
-      var data = json.decode(response.body);
-      var routes = data["routes"];
-      if (routes.isNotEmpty) {
-        var points = PolylinePoints()
-            .decodePolyline(routes[0]["overview_polyline"]["points"]);
-        polylineCoordinates.clear();
-        polylineCoordinates.addAll(points
-            .map((point) => LatLng(point.latitude, point.longitude))
-            .toList());
-        updatePolyline();
-      }
+      await setPolylinePoints(start: start, destination: destination);
+      // Get new future weather data////////////////////////////////
     } catch (error) {
-      Get.snackbar("Error", "PolylinePoints could not be recalculateRouted.");
+      Get.snackbar("Error",
+          "PolylinePoints could not be recalculateRouted.\n${error.toString()}");
     }
   }
 
-  // void setCurrentLocationMarker({required LatLng location}) async {
-  //   markers.clear();
-  //   const markerId = MarkerId("current");
-  //   final marker = Marker(markerId: markerId, position: location);
-  //   markers[markerId] = marker;
-  // }
+  void createCustomMarkerForWeather(
+      {required Map<String, dynamic> weatherData,
+      required int secondsAfter,
+      required LatLng location,
+      required int markerId}) async {
+    // Get hour data after secondsAfter.
+    int hour = DateTime.now().add(Duration(seconds: secondsAfter)).hour;
+    // Get icon path.
+    String weatherIcon =
+        "${IconsConst.root}${weatherData["data"][0]["weather"][0]["icon"]}.png";
+    // Get weather data.
+    double weatherTemp = weatherData["data"][0]["temp"];
+    // Add to markers.
+    markers.add(Marker(
+        icon: await WeatherMarker(
+          isNight: !(hour < 19 && hour > 6),
+          weatherIcon: weatherIcon,
+          weatherTemp: weatherTemp,
+        ).toBitmapDescriptor(
+            logicalSize: const Size(200, 200), imageSize: const Size(200, 200)),
+        markerId: MarkerId(markerId.toString()),
+        position: location));
+  }
 
   void clearRoute() {
     polylines.clear();
