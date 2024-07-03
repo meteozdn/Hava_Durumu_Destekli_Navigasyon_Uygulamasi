@@ -198,9 +198,9 @@ class WeatherScreenAppBar extends StatelessWidget {
             )),
         IconButton(
             onPressed: () async {
-              await controller.fetchWeatherData(41.28667, 36.33,
-                  DateTime.now().add(const Duration(minutes: 15)));
-              _showAlertDialog();
+              // await controller.fetchWeatherData(41.28667, 36.33,
+              //     DateTime.now().add(const Duration(minutes: 15)));
+              // _showAlertDialog();
               // final MapWeatherController weatherScreenController = Get.find();
               // weatherScreenController.getAllerts();
               //  _showAlertDialog();
