@@ -1,24 +1,28 @@
 import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 import 'package:get/get.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:navigationapp/controllers/location_controller.dart';
+import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
 
 class JourneyController extends GetxController {
-  Map<String, dynamic> weatherData = {};
-  RxBool isRouteCompleted = false.obs;
-  // double distance = 0.0;
-  // double duration = 0.0;
-
   late StreamSubscription<Position> positionStream;
   final LocationController _locationController = Get.find();
+  final MapController _mapController = Get.find();
+  var selectedCoordinates = <LatLng>[].obs;
+  Map<String, dynamic> weatherData = {};
+  RxBool isRouteCompleted = false.obs;
+  int distanceInMeters = 0;
+  int durationInSeconds = 0;
 
   @override
-  void onInit() {
+  void onInit() async {
     super.onInit();
     initializeLocationTracking();
+    initializeSelectedLocations();
   }
 
   @override
@@ -39,7 +43,31 @@ class JourneyController extends GetxController {
     });
   }
 
-  void getTotalDistanceAndTime() async {
+  void initializeSelectedLocations() async {
+    await getTotalDistanceAndTime();
+    selectedCoordinates.clear();
+    int totalPoints = _mapController.polylineCoordinates.length;
+    // For each 20 minutes (1200 seconds).
+    int intervalInSeconds = 20 * 60;
+    // Calculate interval in terms of polyline coordinates.
+    int intervalPoints =
+        (totalPoints * (intervalInSeconds / durationInSeconds)).round();
+    // Add to selectedCoordinates.
+    for (int i = intervalPoints; i < totalPoints; i += intervalPoints) {
+      selectedCoordinates.add(_mapController.polylineCoordinates[i]);
+    }
+    // Fetch weather data for each selected coordinates.
+    for (int i = 0; i < selectedCoordinates.length; i++) {
+      var location = selectedCoordinates[i];
+      await fetchWeatherData(
+          lat: location.latitude,
+          lon: location.longitude,
+          secondsAfter: intervalInSeconds * (i + 1),
+          markerId: i);
+    }
+  }
+
+  Future<void> getTotalDistanceAndTime() async {
     try {
       String origin =
           "${_locationController.currentLocation.value!.latitude},${_locationController.currentLocation.value!.longitude}";
@@ -54,18 +82,8 @@ class JourneyController extends GetxController {
         List<dynamic> elements = data["rows"][0]["elements"];
         var distanceText = elements[0]["distance"]["text"];
         var durationText = elements[0]["duration"]["text"];
-        // for (var i = 0; i < elements.length; i++) {
-        //   distance = distance + elements[i]["distance"]["value"];
-        //   duration = duration + elements[i]["duration"]["value"];
-        // }
-        // if (distance < 20) {
-        //   isRouteCompleted.value = true;
-        //   Get.snackbar("Completed", "You have arrived to your destination.");
-        // }
-        // _locationController.distanceLeft.value =
-        //     "Kalan: ${(distance / 1000).toStringAsFixed(2)} km";
-        // _locationController.timeLeft.value =
-        //     "Tahmini Süre: ${(duration / 60).round()} dk";
+        durationInSeconds = elements[0]["duration"]["value"];
+        distanceInMeters = elements[0]["distance"]["value"];
         _locationController.timeLeft.value =
             _locationController.convertTimeString("$durationText");
         _locationController.distanceLeft.value =
@@ -80,33 +98,25 @@ class JourneyController extends GetxController {
 
   // Function to fetch weather data.
   Future<void> fetchWeatherData(
-      double lat, double lon, DateTime datetime) async {
-    String origin =
-        "${_locationController.currentLocation.value!.latitude},${_locationController.currentLocation.value!.longitude}";
-    String dest = "$lat,$lon";
-    final String request =
-        "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=$origin&destinations=$dest&key=${AppConstants.googleMapsApiKey}";
-    final response1 = await http.get(Uri.parse(request));
-    if (response1.statusCode == 200) {
-      final jsonResponse = json.decode(response1.body);
-      var data = jsonResponse;
-      double duration = 0.0;
-      List<dynamic> elements = data["rows"][0]["elements"];
-      for (var i = 0; i < elements.length; i++) {
-        duration = duration + elements[i]["duration"]["value"];
-      }
-      DateTime newDateTime =
-          DateTime.now().add(Duration(minutes: (duration / 60).round()));
-      int dt = newDateTime.millisecondsSinceEpoch ~/ 1000;
+      {required double lat,
+      required double lon,
+      required int secondsAfter,
+      required int markerId}) async {
+    try {
+      DateTime dateTime = DateTime.now().add(Duration(seconds: secondsAfter));
+      int dt = dateTime.millisecondsSinceEpoch ~/ 1000;
       final String request =
           "https://api.openweathermap.org/data/3.0/onecall/timemachine?lat=$lat&lon=$lon&dt=$dt&units=metric&lang=tr&appid=${AppConstants.weatherAPIKey}";
       final response = await http.get(Uri.parse(request));
-      if (response.statusCode == 200) {
-        weatherData = json.decode(response.body);
-        Get.defaultDialog(middleText: weatherData.toString());
-      } else {
-        Get.snackbar("Error", "Failed to fetch weather data");
-      }
+      weatherData = json.decode(response.body);
+      _mapController.createCustomMarkerForWeather(
+          weatherData: weatherData,
+          secondsAfter: secondsAfter,
+          location: LatLng(lat, lon),
+          markerId: markerId);
+      Get.defaultDialog(middleText: weatherData.toString());
+    } catch (error) {
+      Get.snackbar("Error", error.toString());
     }
   }
 
