@@ -61,10 +61,30 @@ class JourneyLiveDetailController extends GetxController {
         // Check for updates to "location" field.
         if (oldRouteData.location != routeModel.value!.location) {
           Get.snackbar("title", "location update");
-          // Update marker
+          updateLocationMarker();
         }
       }
     });
+  }
+
+  void updateLocationMarker() {
+    MarkerId markerId = const MarkerId("location");
+    // Find the marker by its ID.
+    Marker? marker;
+    try {
+      marker = markers.firstWhere((m) => m.markerId == markerId);
+    } catch (error) {
+      marker = null;
+    }
+    if (marker != null) {
+      LatLng newLocation = LatLng(routeModel.value!.location!.latitude,
+          routeModel.value!.location!.longitude);
+      // Create a new marker with the updated position.
+      Marker updatedMarker = marker.copyWith(positionParam: newLocation);
+      // Update the markers set.
+      markers.remove(marker);
+      markers.add(updatedMarker);
+    }
   }
 
   String getCityName() {
