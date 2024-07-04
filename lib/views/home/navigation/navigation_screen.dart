@@ -54,23 +54,27 @@ class NavigationScreen extends StatelessWidget {
             final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
             return Visibility(
-              visible: isRouteCreated && !isRouteStarted,
+              visible: isRouteCreated,
               child: Positioned(
                   bottom: 120,
                   right: 10,
                   left: 320,
                   child: GestureDetector(
-                    onTap: () {
-                      savedRoutes.addSaved(mapController.route);
-                      print("object");
+                    onTap: () async {
+                      if (!isRouteStarted) {
+                        savedRoutes.addSaved(mapController.route);
+                        print("object");
+                      } else {
+                        await mapController.recalculateRoute();
+                      }
                     },
                     child: CircleAvatar(
                       backgroundColor: themeChanger.isLight.value
                           ? ColorConstants.pictionBlueColor
                           : ColorConstants.darkGrey,
-                      child: const Icon(
+                      child: Icon(
                         size: 20,
-                        Icons.bookmark,
+                        isRouteStarted ? Icons.alt_route : Icons.bookmark,
                         color: ColorConstants.whiteColor,
                       ),
                     ),
@@ -130,12 +134,13 @@ class NavigationScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (mapController.isPlanned) {
-          Get.snackbar("Success", "The route has been saved.");
+          Get.snackbar("routeActionButton()", "The route has been saved.");
           //await mapController.saveRoute();
           await mapController.startRoute();
-          mapController.clearRoute();
+          //mapController.clearRoute();
         } else {
-          Get.snackbar("Navigation", "The navigation has been preparing.");
+          Get.snackbar(
+              "routeActionButton()", "The navigation has been preparing.");
           //await mapController.saveRoute();
           await mapController.startRoute();
         }
