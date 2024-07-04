@@ -106,7 +106,7 @@ class JourneyScreen extends StatelessWidget {
                           final JourneyDetailController
                               journeyDetailController = Get.put(
                                   JourneyDetailController(
-                                      route: controller.userRoutes[index]));
+                                      route: controller.sharedRoutes[index]));
                           return Padding(
                             padding: EdgeInsets.only(top: 20.0.h),
                             child: Material(

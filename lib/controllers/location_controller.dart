@@ -36,13 +36,10 @@ class LocationController extends GetxController {
       currentLocation.value = LatLng(position.latitude, position.longitude);
       if (currentLocation.value != null && isCameraMove) {
         _mapController.moveCameraToLocation(location: currentLocation.value!);
-        // _mapController.setCurrentLocationMarker(
-        //     location: currentLocation.value!);
       }
       return currentLocation.value!;
     } catch (error) {
-      Get.snackbar(
-          "Error", "Failed to get current location.\n currentLocation = (0,0)");
+      Get.snackbar("Error = getCurrentLocation()", error.toString());
       return const LatLng(0, 0);
     }
   }
@@ -113,26 +110,18 @@ class LocationController extends GetxController {
     // return '$hours:$minutes';
   }
 
-  void setCurrentLocation({required Position position}) {
+  Future<void> setCurrentLocation({required LatLng location}) async {
     try {
-      LatLng newLocation = LatLng(position.latitude, position.longitude);
       double bearing = 0;
-      currentLocation.value = newLocation;
-      bearing =
-          LocationUtils.calculateBearing(currentLocation.value!, newLocation);
-      // _mapController.updatePolylineCoordinates(
-      //     location: currentLocation.value!);
-      // Check if the driver is off the route.
-      if (_mapController.isOffRoute(location: currentLocation.value!)) {
-        Get.snackbar("Navigation", "The navigation has been preparing.");
-        _mapController.recalculateRoute(
-            start: currentLocation.value!, destination: destination.value!);
+      if (currentLocation.value != null) {
+        bearing =
+            LocationUtils.calculateBearing(currentLocation.value!, location);
+        _mapController.moveCameraToLocation(
+            location: location, bearing: bearing);
       }
-      //_mapController.setCurrentLocationMarker(location: newLocation);
-      _mapController.moveCameraToLocation(
-          location: newLocation, bearing: bearing);
+      currentLocation.value = location;
     } catch (error) {
-      Get.snackbar("Error", "Failed to set current location.");
+      Get.snackbar("Error = setCurrentLocation()", error.toString());
     }
   }
 }

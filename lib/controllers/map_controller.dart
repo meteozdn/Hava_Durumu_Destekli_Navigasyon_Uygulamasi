@@ -13,6 +13,8 @@ import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/utils/location_utils.dart';
 import 'package:http/http.dart' as http;
+import 'package:navigationapp/views/components/weather_map_widgets/weather_map_marker.dart';
+import 'package:widget_to_marker/widget_to_marker.dart';
 
 class MapController extends GetxController {
   late Completer<GoogleMapController> googleMapsController = Completer();
@@ -21,16 +23,16 @@ class MapController extends GetxController {
   RxBool isRouteStarted = false.obs;
   RxBool isRouteCreated = false.obs;
   RxBool isCameraLocked = true.obs;
-  var markers = <MarkerId, Marker>{}.obs;
+  var markers = <Marker>[].obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
+  var directions = [].obs;
   RxString mapStyle = "".obs;
 
   @override
   void onInit() async {
     super.onInit();
     await setMapStyle();
-    // Listen to authentication changes.
   }
 
   Future<void> startRoute() async {
@@ -40,7 +42,7 @@ class MapController extends GetxController {
       route.startedAt = DateTime.now();
       await Get.putAsync<JourneyController>(() async => JourneyController());
     } catch (error) {
-      Get.snackbar("Error", "Failed to create JourneyController.");
+      Get.snackbar("Error = startRoute()", error.toString());
     }
   }
 
@@ -58,7 +60,7 @@ class MapController extends GetxController {
       var locationController = Get.find<LocationController>();
       locationController.destination.value = destination;
     } catch (error) {
-      Get.snackbar("Error", "Failed to create JourneyController.");
+      Get.snackbar("Error = setPlannedRoute()", error.toString());
     }
   }
 
@@ -88,50 +90,54 @@ class MapController extends GetxController {
           "avoidHighways": false,
           "avoidFerries": false
         },
-        "languageCode": "en-US"
+        "languageCode": "tr"
       };
-
       var response = await http.post(
         Uri.parse(routesUrl),
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": AppConstants.googleMapsApiKey,
           "X-Goog-FieldMask":
-              "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+              "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.steps",
         },
         body: json.encode(requestBody),
       );
-
       var data = json.decode(response.body);
       var routes = data["routes"];
-
       if (routes != null && routes.isNotEmpty) {
         var points = PolylinePoints()
             .decodePolyline(routes[0]["polyline"]["encodedPolyline"]);
-
         polylineCoordinates.clear();
         polylineCoordinates.addAll(points
             .map((point) => LatLng(point.latitude, point.longitude))
             .toList());
         updatePolyline();
+        if (true) {
+          //!isPlanned
+          final dir = routes[0]["legs"][0]["steps"]
+              .map((h) => {
+                    "instructions": h["html_instructions"],
+                    "distance": h["start_location"]
+                  })
+              .toList();
+          directions.value = [...dir];
+        }
       }
     } catch (error) {
-      Get.snackbar("Error", "PolylinePoints could not be set.");
+      Get.snackbar("Error = setPolylinePoints()", error.toString());
     }
   }
 
   void updatePolylineCoordinates({required LatLng location}) {
-    if (polylineCoordinates.isNotEmpty) {
-      for (int i = 0; i < polylineCoordinates.length - 1; i++) {
-        LatLng nextPoint = polylineCoordinates[i];
-        // Check if the driver has passed the next point.
-        double distance = LocationUtils.calculateDistance(location, nextPoint);
-        if (distance < 20) {
-          // Remove the passed point.
-          polylineCoordinates.removeAt(i);
-          updatePolyline();
-          break;
-        }
+    for (int i = 0; i < polylineCoordinates.length - 1; i++) {
+      LatLng nextPoint = polylineCoordinates[i];
+      // Check if the driver has passed the next point.
+      double distance = LocationUtils.calculateDistance(location, nextPoint);
+      if (distance < 20) {
+        // Remove the passed point.
+        polylineCoordinates.removeAt(i);
+        updatePolyline();
+        break;
       }
     }
   }
@@ -167,49 +173,43 @@ class MapController extends GetxController {
     googleMaps.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
   }
 
-  bool isOffRoute({required LatLng location, double threshold = 200}) {
-    for (LatLng point in polylineCoordinates) {
-      double distance = LocationUtils.calculateDistance(location, point);
-      if (distance < threshold) {
-        // Driver is still on the route.
-        return false;
-      }
-    }
-    // Driver is off the route.
-    return true;
-  }
-
-  Future<void> recalculateRoute(
-      {required LatLng start, required LatLng destination}) async {
+  Future<void> recalculateRoute() async {
     try {
-      String url = "https://maps.googleapis.com/maps/api/directions/json?"
-          "origin=${start.latitude},${start.longitude}&"
-          "destination=${destination.latitude},${destination.longitude}&"
-          "mode=driving&"
-          "key=${AppConstants.googleMapsApiKey}";
-      var response = await http.get(Uri.parse(url));
-      var data = json.decode(response.body);
-      var routes = data["routes"];
-      if (routes.isNotEmpty) {
-        var points = PolylinePoints()
-            .decodePolyline(routes[0]["overview_polyline"]["points"]);
-        polylineCoordinates.clear();
-        polylineCoordinates.addAll(points
-            .map((point) => LatLng(point.latitude, point.longitude))
-            .toList());
-        updatePolyline();
-      }
+      var locationController = Get.find<LocationController>();
+      var start = locationController.currentLocation.value!;
+      var destination = locationController.destination.value!;
+      await setPolylinePoints(start: start, destination: destination);
+      // Get new future weather data.
+      markers.clear();
+      Get.find<JourneyController>().initializeSelectedLocations();
     } catch (error) {
-      Get.snackbar("Error", "PolylinePoints could not be recalculateRouted.");
+      Get.snackbar("Error = recalculateRoute()", error.toString());
     }
   }
 
-  // void setCurrentLocationMarker({required LatLng location}) async {
-  //   markers.clear();
-  //   const markerId = MarkerId("current");
-  //   final marker = Marker(markerId: markerId, position: location);
-  //   markers[markerId] = marker;
-  // }
+  void createCustomMarkerForWeather(
+      {required Map<String, dynamic> weatherData,
+      required int secondsAfter,
+      required LatLng location,
+      required int markerId}) async {
+    // Get hour data after secondsAfter.
+    int hour = DateTime.now().add(Duration(seconds: secondsAfter)).hour;
+    // Get icon path.
+    String weatherIcon =
+        "${IconsConst.root}${weatherData["data"][0]["weather"][0]["icon"]}.png";
+    // Get weather data.
+    double weatherTemp = weatherData["data"][0]["temp"];
+    // Add to markers.
+    markers.add(Marker(
+        icon: await WeatherMarker(
+          isNight: !(hour < 19 && hour > 6),
+          weatherIcon: weatherIcon,
+          weatherTemp: weatherTemp,
+        ).toBitmapDescriptor(
+            logicalSize: const Size(200, 200), imageSize: const Size(200, 200)),
+        markerId: MarkerId(markerId.toString()),
+        position: location));
+  }
 
   void clearRoute() {
     polylines.clear();
@@ -228,9 +228,11 @@ class MapController extends GetxController {
   }
 
   // Update the active route every x minutes.
-  void updateRouteLocation({required LatLng current, required int timeLeft}) {
+  void updateRouteLocation(
+      {required LatLng current, required int secondsLeft}) {
     route.location = GeoPoint(current.latitude, current.longitude);
-    route.estimatedFinishTime = DateTime.now().add(Duration(minutes: timeLeft));
+    route.estimatedFinishTime =
+        DateTime.now().add(Duration(seconds: secondsLeft));
     route.locationLastUpdate = DateTime.now();
     Get.find<RouteController>().updateRoute(route: route);
   }
@@ -253,4 +255,18 @@ class MapController extends GetxController {
     print(mapStyle.value);
     print(themeChanger.isLight.value);
   }
+
+  // bool isOffRoute(
+  //     {required LatLng location, double threshold = 250, int step = 10}) {
+  //   for (int i = 0; i < polylineCoordinates.length; i += step) {
+  //     double distance =
+  //         LocationUtils.calculateDistance(location, polylineCoordinates[i]);
+  //     if (distance < threshold) {
+  //       // Driver is still on the route.
+  //       return false;
+  //     }
+  //   }
+  //   // Driver is off the route.
+  //   return true;
+  // }
 }

@@ -49,7 +49,7 @@ class NavigationScreen extends StatelessWidget {
               },
               polylines: mapController.polylines.toSet(),
               zoomControlsEnabled: false,
-              markers: mapController.markers.values.toSet())),
+              markers: mapController.markers.toSet())),
           Obx(() {
             final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
@@ -68,23 +68,27 @@ class NavigationScreen extends StatelessWidget {
             final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
             return Visibility(
-              visible: isRouteCreated && !isRouteStarted,
+              visible: isRouteCreated,
               child: Positioned(
                   bottom: 120,
                   right: 10,
                   left: 320,
                   child: GestureDetector(
-                    onTap: () {
-                      savedRoutes.addSaved(mapController.route);
-                      print("object");
+                    onTap: () async {
+                      if (!isRouteStarted) {
+                        savedRoutes.addSaved(mapController.route);
+                        print("object");
+                      } else {
+                        await mapController.recalculateRoute();
+                      }
                     },
                     child: CircleAvatar(
                       backgroundColor: themeChanger.isLight.value
                           ? ColorConstants.pictionBlueColor
                           : ColorConstants.darkGrey,
-                      child: const Icon(
+                      child: Icon(
                         size: 20,
-                        Icons.bookmark,
+                        isRouteStarted ? Icons.alt_route : Icons.bookmark,
                         color: ColorConstants.whiteColor,
                       ),
                     ),
@@ -105,7 +109,7 @@ class NavigationScreen extends StatelessWidget {
                       ? clearRouteButton()
                       : const SizedBox(height: 10),
                   if (isRouteCreated && !isRouteStarted) routeActionButton(),
-                  if (isRouteStarted) journeyInformation(),
+                  //if (isRouteStarted) journeyInformation(),
                   currentLocationButton(),
                 ],
               );
@@ -144,11 +148,13 @@ class NavigationScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (mapController.isPlanned) {
-          Get.snackbar("Success", "The route has been saved.");
-          await mapController.saveRoute();
-          mapController.clearRoute();
+          Get.snackbar("routeActionButton()", "The route has been saved.");
+          //await mapController.saveRoute();
+          await mapController.startRoute();
+          //mapController.clearRoute();
         } else {
-          Get.snackbar("Navigation", "The navigation has been preparing.");
+          Get.snackbar(
+              "routeActionButton()", "The navigation has been preparing.");
           //await mapController.saveRoute();
           await mapController.startRoute();
         }
@@ -197,9 +203,6 @@ class NavigationScreen extends StatelessWidget {
                     !mapController.isCameraLocked.value;
                 mapController.moveCameraToLocation(
                     location: locationController.currentLocation.value!);
-                // Get.find<JourneyController>().fetchWeatherData(
-                //     locationController.destination.value!.latitude,
-                //     locationController.destination.value!.longitude);
               }
             },
             icon: const Icon(Icons.location_searching_outlined),
