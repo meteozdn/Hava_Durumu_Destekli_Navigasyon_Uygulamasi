@@ -239,6 +239,7 @@ class MapController extends GetxController {
 
   Future<void> saveRoute() async {
     await Get.find<RouteController>().createRoute(
+        id: route.id,
         startingLocation: route.startingLocation,
         startingCity: route.startingCity,
         destinationLocation: route.destinationLocation,

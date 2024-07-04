@@ -85,7 +85,8 @@ class RouteController extends GetxController {
   }
 
   Future<void> createRoute(
-      {required GeoPoint startingLocation,
+      {String id = "",
+      required GeoPoint startingLocation,
       required String startingCity,
       required GeoPoint destinationLocation,
       required String destinationCity,
@@ -93,7 +94,10 @@ class RouteController extends GetxController {
       required List<String> sharedChatGroups}) async {
     try {
       // Create auto Id.
-      final id = _firestore.collection(FirestoreCollections.routes).doc().id;
+      if (id == "") {
+        id = _firestore.collection(FirestoreCollections.routes).doc().id;
+      }
+      //final id = _firestore.collection(FirestoreCollections.routes).doc().id;
       // Create Route model.
       RouteModel route = RouteModel(
         id: id,

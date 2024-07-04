@@ -149,13 +149,15 @@ class NavigationScreen extends StatelessWidget {
       onTap: () async {
         if (mapController.isPlanned) {
           Get.snackbar("Route", "The route has been saved.");
-          await mapController.saveRoute();
-          await mapController.startRoute();
+          await mapController.saveRoute().then((_) async {
+            await mapController.startRoute();
+          });
           //mapController.clearRoute();
         } else {
           Get.snackbar("Navigation", "The navigation has been preparing.");
-          await mapController.saveRoute();
-          await mapController.startRoute();
+          await mapController.saveRoute().then((_) async {
+            await mapController.startRoute();
+          });
         }
       },
       child: Material(
