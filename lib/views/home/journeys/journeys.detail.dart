@@ -38,7 +38,7 @@ class JourneyDetail extends StatelessWidget {
                 journeyDetailController.clearRoute();
                 Get.back();
               },
-              child: Icon(Icons.arrow_back_ios_new_outlined)),
+              child: const Icon(Icons.arrow_back_ios_new_outlined)),
           title: const Text("Yolculuk Detayları"),
           actions: [
             isOwner
@@ -199,7 +199,7 @@ class JourneyDetail extends StatelessWidget {
                             route.startingCity,
                             style: TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          const Text("3 saat 12 dk"),
+                          //const Text("3 saat 12 dk"),
                           Text(
                             route.destinationCity,
                             style: TextStyle(fontWeight: FontWeight.bold),
@@ -234,7 +234,7 @@ class JourneyDetail extends StatelessWidget {
                                     .length, // Border width around the images
                               ),
                             ),
-                            const Icon(Icons.person_add_alt_1)
+                            //const Icon(Icons.person_add_alt_1)
                           ],
                         );
                       }),
@@ -300,9 +300,9 @@ class JourneyDetail extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  Padding(
+                                  const Padding(
                                     padding: EdgeInsets.only(right: 15.0),
-                                    child: Icon(Icons.delete),
+                                    //child: Icon(Icons.delete),
                                   )
                                 ],
                               );
@@ -312,33 +312,7 @@ class JourneyDetail extends StatelessWidget {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 20.0, right: 20, bottom: 50),
-              child: Material(
-                elevation: 20,
-                borderRadius: BorderRadius.circular(20),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: themeChanger.isLight.value
-                        ? ColorConstants.pictionBlueColor
-                        : ColorConstants.darkGrey,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  //color: Colors.red,
-                  width: 500,
-                  height: 50,
-                  child: const Center(
-                    child: Text(
-                      "Yolculuğu sil",
-                      style: TextStyle(
-                          fontSize: 25,
-                          fontWeight: FontWeight.bold,
-                          color: ColorConstants.whiteColor),
-                    ),
-                  ),
-                ),
-              ),
-            )
+            if (isOwner) startRouteButton(context),
           ],
         )));
   }
