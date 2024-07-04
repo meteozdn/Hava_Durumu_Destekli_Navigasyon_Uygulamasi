@@ -51,7 +51,7 @@ class JourneyDetailController extends GetxController {
         updatePolyline();
       }
     } catch (error) {
-      Get.snackbar("Error", "PolylinePoints could not be set.");
+      //Get.snackbar("Error", "PolylinePoints could not be set.");
     }
   }
 

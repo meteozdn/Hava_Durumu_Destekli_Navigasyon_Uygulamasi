@@ -13,10 +13,10 @@ class LocationUtils {
       List<Placemark> placemarks =
           await placemarkFromCoordinates(location.latitude, location.longitude);
       Placemark placemark = placemarks.first;
-      return placemark.administrativeArea ?? "Unknown";
+      return placemark.administrativeArea ?? "Bilinmeyen";
     } catch (error) {
-      Get.snackbar("Error", "Current city can not be found.");
-      return "Unknown";
+      //Get.snackbar("Error", "Current city can not be found.");
+      return "Bilinmeyen";
     }
   }
 
@@ -30,11 +30,11 @@ class LocationUtils {
         final location = jsonResponse["results"][0]["geometry"]["location"];
         return LatLng(location["lat"], location["lng"]);
       } else {
-        Get.snackbar("Error", "No results found for the provided address.");
+        //Get.snackbar("Error", "No results found for the provided address.");
         return const LatLng(0, 0);
       }
     } catch (error) {
-      Get.snackbar("Error", "Failed to fetch coordinates.");
+      //Get.snackbar("Error", "Failed to fetch coordinates.");
       return const LatLng(0, 0);
     }
   }

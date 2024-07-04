@@ -44,8 +44,10 @@ class JourneyController extends GetxController {
       LatLng location = LatLng(position.latitude, position.longitude);
       currentLocation = location;
       _locationController.setCurrentLocation(location: currentLocation!);
+      // Get next direction.
+      _mapController.getNextDirection(from: location);
       if (lastLocation == null ||
-          LocationUtils.calculateDistance(lastLocation!, location) >= 250) {
+          LocationUtils.calculateDistance(lastLocation!, location) >= 500) {
         lastLocation = location;
         // Update left distance and time.
         getTotalDistanceAndTime();
@@ -88,7 +90,7 @@ class JourneyController extends GetxController {
         }
       });
     } catch (error) {
-      Get.snackbar("Error", error.toString());
+      //Get.snackbar("Error", error.toString());
     }
   }
 
@@ -121,7 +123,7 @@ class JourneyController extends GetxController {
         //     .addTimeToCurrentTime(_locationController.timeLeft.value);
       }
     } catch (error) {
-      Get.snackbar("Error", error.toString());
+      //Get.snackbar("Error", error.toString());
     }
   }
 
@@ -144,7 +146,7 @@ class JourneyController extends GetxController {
           location: LatLng(lat, lon),
           markerId: markerId);
     } catch (error) {
-      Get.snackbar("Error", error.toString());
+      //Get.snackbar("Error", error.toString());
     }
   }
 

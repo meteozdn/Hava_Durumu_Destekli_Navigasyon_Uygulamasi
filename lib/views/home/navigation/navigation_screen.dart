@@ -51,17 +51,19 @@ class NavigationScreen extends StatelessWidget {
               zoomControlsEnabled: false,
               markers: mapController.markers.toSet())),
           Obx(() {
-            final isRouteCreated = mapController.isRouteCreated.value;
+            //final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
             return Visibility(
-              visible: true,
+              visible: isRouteStarted,
               // visible: isRouteCreated && !isRouteStarted,
               child: Positioned(
                   top: 130,
                   bottom: 500,
                   right: 10,
                   left: 10,
-                  child: DirectionsViewWidget(themeChanger: themeChanger)),
+                  child: DirectionsViewWidget(
+                      themeChanger: themeChanger,
+                      mapController: mapController)),
             );
           }),
           Obx(() {
@@ -109,7 +111,7 @@ class NavigationScreen extends StatelessWidget {
                       ? clearRouteButton()
                       : const SizedBox(height: 10),
                   if (isRouteCreated && !isRouteStarted) routeActionButton(),
-                  //if (isRouteStarted) journeyInformation(),
+                  if (isRouteStarted) journeyInformation(),
                   currentLocationButton(),
                 ],
               );
@@ -148,13 +150,13 @@ class NavigationScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (mapController.isPlanned) {
-          Get.snackbar("Route", "The route has been saved.");
+          //Get.snackbar("Route", "The route has been saved.");
           await mapController.saveRoute().then((_) async {
             await mapController.startRoute();
           });
           //mapController.clearRoute();
         } else {
-          Get.snackbar("Navigation", "The navigation has been preparing.");
+          //Get.snackbar("Navigation", "The navigation has been preparing.");
           await mapController.saveRoute().then((_) async {
             await mapController.startRoute();
           });
@@ -215,82 +217,31 @@ class NavigationScreen extends StatelessWidget {
 
   Widget journeyInformation() {
     return GestureDetector(
-      onTap: () {
-        print(
-          locationController.distanceLeft.value,
-        );
-        //locationController.estimatedTimeCalculate();
-        locationController.addTimeToCurrentTime("10:25");
-      },
       child: Material(
         borderRadius: BorderRadius.circular(10),
         elevation: 20,
         child: Container(
             height: 100,
-            width: 250,
+            width: 200,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               color: ColorConstants.whiteColor,
             ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      locationController.estimatedTime.value,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const Text("varış")
-                  ],
+                Text(
+                  locationController.distanceLeft.value,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      locationController.timeLeft.value,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const Text("Süre")
-                  ],
+                const SizedBox(height: 10),
+                Text(
+                  locationController.timeLeft.value,
+                  style: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      locationController.distanceLeft.value,
-                      style: const TextStyle(
-                          fontSize: 20, fontWeight: FontWeight.bold),
-                    ),
-                    const Text("km"),
-                  ],
-                ),
-
-                /*Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      locationController.distanceLeft.value,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      locationController.timeLeft.value,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 10),
-                    // Text(
-                    //   locationController.speed.value,
-                    //   style: const TextStyle(
-                    //       fontSize: 16, fontWeight: FontWeight.bold),
-                    // ),
-                  ],
-                ),*/
+                const SizedBox(height: 10),
               ],
             )),
       ),
@@ -299,12 +250,11 @@ class NavigationScreen extends StatelessWidget {
 }
 
 class DirectionsViewWidget extends StatelessWidget {
-  const DirectionsViewWidget({
-    super.key,
-    required this.themeChanger,
-  });
+  const DirectionsViewWidget(
+      {super.key, required this.themeChanger, required this.mapController});
 
   final ThemeChanger themeChanger;
+  final MapController mapController;
 
   @override
   Widget build(BuildContext context) {
@@ -322,38 +272,60 @@ class DirectionsViewWidget extends StatelessWidget {
         height: 150,
         child: Center(
             child: Padding(
-          padding: const EdgeInsets.all(15.0),
-          child: Row(
-            children: [
-              //TODO getIcon()'u serviten gelen veriyi vererek çalıştır <3
-              Icon(
-                getIcon("Turn left onto Main St"),
-                color: ColorConstants.whiteColor,
-                size: 50,
-              ),
-              const Flexible(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 8.0),
-                      child: Text(
-                        //TODO GELEN VERİ BURAYA GİRİLECEK
-                        "100m sonra sola dönün",
-                        maxLines: 2,
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
+                padding: const EdgeInsets.all(15.0),
+                child: Obx(() {
+                  String instruction = "instruction is null";
+                  String distance = "distance is null";
+                  try {
+                    instruction =
+                        mapController.directions[0]["instruction"].toString();
+                    distance =
+                        mapController.directions[0]["distance"].toString();
+                  } catch (error) {
+                    print(error.toString());
+                  }
+                  return Row(
+                    children: [
+                      //TODO getIcon()'u serviten gelen veriyi vererek çalıştır <3
+                      Icon(
+                        getIcon("Turn left onto Main St"),
+                        color: ColorConstants.whiteColor,
+                        size: 50,
                       ),
-                    )
-                  ],
-                ),
-              )
-            ],
-          ),
-        )),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                instruction,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(left: 8.0),
+                            //   child: Text(
+                            //     distance,
+                            //     maxLines: 2,
+                            //     style: const TextStyle(
+                            //       fontSize: 20,
+                            //       color: Colors.white,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // )
+                          ],
+                        ),
+                      )
+                    ],
+                  );
+                }))),
       ),
     );
   }

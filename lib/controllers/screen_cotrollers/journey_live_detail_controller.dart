@@ -164,7 +164,7 @@ class JourneyLiveDetailController extends GetxController {
         updatePolyline();
       }
     } catch (error) {
-      Get.snackbar("Error = setPolylinePoints()", error.toString());
+      //Get.snackbar("Error = setPolylinePoints()", error.toString());
     }
   }
 

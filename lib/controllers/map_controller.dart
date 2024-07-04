@@ -26,7 +26,8 @@ class MapController extends GetxController {
   var markers = <Marker>[].obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
-  var directions = [].obs;
+  //var directions = [].obs;
+  RxList<Map<String, String>> directions = <Map<String, String>>[].obs;
   RxString mapStyle = "".obs;
 
   @override
@@ -42,7 +43,7 @@ class MapController extends GetxController {
       route.startedAt = DateTime.now();
       await Get.putAsync<JourneyController>(() async => JourneyController());
     } catch (error) {
-      Get.snackbar("Error = startRoute()", error.toString());
+      //Get.snackbar("Error = startRoute()", error.toString());
     }
   }
 
@@ -60,7 +61,7 @@ class MapController extends GetxController {
       var locationController = Get.find<LocationController>();
       locationController.destination.value = destination;
     } catch (error) {
-      Get.snackbar("Error = setPlannedRoute()", error.toString());
+      //Get.snackbar("Error = setPlannedRoute()", error.toString());
     }
   }
 
@@ -114,17 +115,47 @@ class MapController extends GetxController {
         updatePolyline();
         if (true) {
           //!isPlanned
-          final dir = routes[0]["legs"][0]["steps"]
-              .map((h) => {
-                    "instructions": h["html_instructions"],
-                    "distance": h["start_location"]
-                  })
-              .toList();
-          directions.value = [...dir];
+          directions.clear();
+          var steps = data["routes"][0]["legs"][0]["steps"];
+          for (var step in steps) {
+            var instruction = step["navigationInstruction"]["instructions"];
+            var distance = step["localizedValues"]["distance"]["text"];
+            var distanceInMeters = step["distanceMeters"];
+            directions.add({
+              "instruction": instruction,
+              "distance": distance,
+              "distanceMeters": distanceInMeters
+            });
+          }
         }
       }
     } catch (error) {
-      Get.snackbar("Error = setPolylinePoints()", error.toString());
+      //Get.snackbar("Error = setPolylinePoints()", error.toString());
+    }
+  }
+
+  void getNextDirection({required LatLng from}) {
+    if (directions.length > 1) {
+      // Find the closest direction index
+      int? closestDirectionIndex;
+      for (int i = 0; i < directions.length; i++) {
+        var direction = directions[i];
+        var directionLatLng = LatLng(
+          double.parse(direction["distance"]!.split(",")[0]),
+          double.parse(direction["distance"]!.split(",")[1]),
+        );
+        var distance = LocationUtils.calculateDistance(from, directionLatLng);
+        if (distance < 7) {
+          closestDirectionIndex = i;
+          break;
+        }
+      }
+
+      // If a close direction is found, remove it and update the directions
+      if (closestDirectionIndex != null) {
+        directions.removeAt(closestDirectionIndex);
+        update();
+      }
     }
   }
 
@@ -183,7 +214,7 @@ class MapController extends GetxController {
       markers.clear();
       Get.find<JourneyController>().initializeSelectedLocations();
     } catch (error) {
-      Get.snackbar("Error = recalculateRoute()", error.toString());
+      //Get.snackbar("Error = recalculateRoute()", error.toString());
     }
   }
 
@@ -215,6 +246,7 @@ class MapController extends GetxController {
     polylines.clear();
     polylineCoordinates.clear();
     markers.clear();
+    directions.clear();
     isRouteCreated.value = false;
     isRouteStarted.value = false;
     if (Get.isRegistered<JourneyController>()) {

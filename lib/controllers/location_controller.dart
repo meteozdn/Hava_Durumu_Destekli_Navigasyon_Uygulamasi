@@ -39,7 +39,7 @@ class LocationController extends GetxController {
       }
       return currentLocation.value!;
     } catch (error) {
-      Get.snackbar("Error = getCurrentLocation()", error.toString());
+      //Get.snackbar("Error = getCurrentLocation()", error.toString());
       return const LatLng(0, 0);
     }
   }
@@ -121,7 +121,7 @@ class LocationController extends GetxController {
       }
       currentLocation.value = location;
     } catch (error) {
-      Get.snackbar("Error = setCurrentLocation()", error.toString());
+      //Get.snackbar("Error = setCurrentLocation()", error.toString());
     }
   }
 }
