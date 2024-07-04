@@ -26,13 +26,13 @@ class MapController extends GetxController {
   var markers = <Marker>[].obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
+  var directions = [].obs;
   RxString mapStyle = "".obs;
 
   @override
   void onInit() async {
     super.onInit();
     await setMapStyle();
-    // Listen to authentication changes.
   }
 
   Future<void> startRoute() async {
@@ -42,7 +42,7 @@ class MapController extends GetxController {
       route.startedAt = DateTime.now();
       await Get.putAsync<JourneyController>(() async => JourneyController());
     } catch (error) {
-      Get.snackbar("Error", "Failed to create JourneyController.");
+      Get.snackbar("Error = startRoute()", error.toString());
     }
   }
 
@@ -60,7 +60,7 @@ class MapController extends GetxController {
       var locationController = Get.find<LocationController>();
       locationController.destination.value = destination;
     } catch (error) {
-      Get.snackbar("Error", "Failed to create JourneyController.");
+      Get.snackbar("Error = setPlannedRoute()", error.toString());
     }
   }
 
@@ -90,50 +90,54 @@ class MapController extends GetxController {
           "avoidHighways": false,
           "avoidFerries": false
         },
-        "languageCode": "en-US"
+        "languageCode": "tr"
       };
-
       var response = await http.post(
         Uri.parse(routesUrl),
         headers: {
           "Content-Type": "application/json",
           "X-Goog-Api-Key": AppConstants.googleMapsApiKey,
           "X-Goog-FieldMask":
-              "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+              "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.steps",
         },
         body: json.encode(requestBody),
       );
-
       var data = json.decode(response.body);
       var routes = data["routes"];
-
       if (routes != null && routes.isNotEmpty) {
         var points = PolylinePoints()
             .decodePolyline(routes[0]["polyline"]["encodedPolyline"]);
-
         polylineCoordinates.clear();
         polylineCoordinates.addAll(points
             .map((point) => LatLng(point.latitude, point.longitude))
             .toList());
         updatePolyline();
+        if (true) {
+          //!isPlanned
+          final dir = routes[0]["legs"][0]["steps"]
+              .map((h) => {
+                    "instructions": h["html_instructions"],
+                    "distance": h["start_location"]
+                  })
+              .toList();
+          directions.value = [...dir];
+        }
       }
     } catch (error) {
-      Get.snackbar("Error", "PolylinePoints could not be set.");
+      Get.snackbar("Error = setPolylinePoints()", error.toString());
     }
   }
 
   void updatePolylineCoordinates({required LatLng location}) {
-    if (polylineCoordinates.isNotEmpty) {
-      for (int i = 0; i < polylineCoordinates.length - 1; i++) {
-        LatLng nextPoint = polylineCoordinates[i];
-        // Check if the driver has passed the next point.
-        double distance = LocationUtils.calculateDistance(location, nextPoint);
-        if (distance < 20) {
-          // Remove the passed point.
-          polylineCoordinates.removeAt(i);
-          updatePolyline();
-          break;
-        }
+    for (int i = 0; i < polylineCoordinates.length - 1; i++) {
+      LatLng nextPoint = polylineCoordinates[i];
+      // Check if the driver has passed the next point.
+      double distance = LocationUtils.calculateDistance(location, nextPoint);
+      if (distance < 20) {
+        // Remove the passed point.
+        polylineCoordinates.removeAt(i);
+        updatePolyline();
+        break;
       }
     }
   }
@@ -169,26 +173,17 @@ class MapController extends GetxController {
     googleMaps.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
   }
 
-  bool isOffRoute({required LatLng location, double threshold = 200}) {
-    for (LatLng point in polylineCoordinates) {
-      double distance = LocationUtils.calculateDistance(location, point);
-      if (distance < threshold) {
-        // Driver is still on the route.
-        return false;
-      }
-    }
-    // Driver is off the route.
-    return true;
-  }
-
-  Future<void> recalculateRoute(
-      {required LatLng start, required LatLng destination}) async {
+  Future<void> recalculateRoute() async {
     try {
+      var locationController = Get.find<LocationController>();
+      var start = locationController.currentLocation.value!;
+      var destination = locationController.destination.value!;
       await setPolylinePoints(start: start, destination: destination);
-      // Get new future weather data////////////////////////////////
+      // Get new future weather data.
+      markers.clear();
+      Get.find<JourneyController>().initializeSelectedLocations();
     } catch (error) {
-      Get.snackbar("Error",
-          "PolylinePoints could not be recalculateRouted.\n${error.toString()}");
+      Get.snackbar("Error = recalculateRoute()", error.toString());
     }
   }
 
@@ -233,9 +228,11 @@ class MapController extends GetxController {
   }
 
   // Update the active route every x minutes.
-  void updateRouteLocation({required LatLng current, required int timeLeft}) {
+  void updateRouteLocation(
+      {required LatLng current, required int secondsLeft}) {
     route.location = GeoPoint(current.latitude, current.longitude);
-    route.estimatedFinishTime = DateTime.now().add(Duration(minutes: timeLeft));
+    route.estimatedFinishTime =
+        DateTime.now().add(Duration(seconds: secondsLeft));
     route.locationLastUpdate = DateTime.now();
     Get.find<RouteController>().updateRoute(route: route);
   }
@@ -258,4 +255,18 @@ class MapController extends GetxController {
     print(mapStyle.value);
     print(themeChanger.isLight.value);
   }
+
+  // bool isOffRoute(
+  //     {required LatLng location, double threshold = 250, int step = 10}) {
+  //   for (int i = 0; i < polylineCoordinates.length; i += step) {
+  //     double distance =
+  //         LocationUtils.calculateDistance(location, polylineCoordinates[i]);
+  //     if (distance < threshold) {
+  //       // Driver is still on the route.
+  //       return false;
+  //     }
+  //   }
+  //   // Driver is off the route.
+  //   return true;
+  // }
 }

@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:navigationapp/controllers/location_controller.dart';
 import 'package:navigationapp/controllers/map_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/utils/location_utils.dart';
 
 class JourneyController extends GetxController {
   late StreamSubscription<Position> positionStream;
@@ -17,9 +18,11 @@ class JourneyController extends GetxController {
   RxBool isRouteCompleted = false.obs;
   int distanceInMeters = 0;
   int durationInSeconds = 0;
+  LatLng? currentLocation;
+  LatLng? lastLocation;
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
     initializeLocationTracking();
     initializeSelectedLocations();
@@ -38,32 +41,54 @@ class JourneyController extends GetxController {
       accuracy: LocationAccuracy.best,
       distanceFilter: 0,
     )).listen((Position position) {
-      _locationController.setCurrentLocation(position: position);
-      getTotalDistanceAndTime();
+      LatLng location = LatLng(position.latitude, position.longitude);
+      currentLocation = location;
+      _locationController.setCurrentLocation(location: currentLocation!);
+      if (lastLocation == null ||
+          LocationUtils.calculateDistance(lastLocation!, location) >= 250) {
+        lastLocation = location;
+        // Update left distance and time.
+        //getTotalDistanceAndTime();
+        // Update route model for firebase.
+        _mapController.updateRouteLocation(
+            current: location, secondsLeft: durationInSeconds);
+      }
     });
   }
 
   void initializeSelectedLocations() async {
-    await getTotalDistanceAndTime();
-    selectedCoordinates.clear();
-    int totalPoints = _mapController.polylineCoordinates.length;
-    // For each 20 minutes (1200 seconds).
-    int intervalInSeconds = 20 * 60;
-    // Calculate interval in terms of polyline coordinates.
-    int intervalPoints =
-        (totalPoints * (intervalInSeconds / durationInSeconds)).round();
-    // Add to selectedCoordinates.
-    for (int i = intervalPoints; i < totalPoints; i += intervalPoints) {
-      selectedCoordinates.add(_mapController.polylineCoordinates[i]);
-    }
-    // Fetch weather data for each selected coordinates.
-    for (int i = 0; i < selectedCoordinates.length; i++) {
-      var location = selectedCoordinates[i];
-      await fetchWeatherData(
-          lat: location.latitude,
-          lon: location.longitude,
-          secondsAfter: intervalInSeconds * (i + 1),
-          markerId: i);
+    try {
+      await getTotalDistanceAndTime().then((_) async {
+        selectedCoordinates.clear();
+        int totalPoints = _mapController.polylineCoordinates.length;
+        // For each 20 minutes (1200 seconds).
+        int intervalInSeconds = 20 * 60;
+        // Calculate interval in terms of polyline coordinates.
+        int intervalPoints =
+            (totalPoints * (intervalInSeconds / durationInSeconds)).round();
+        // Add to selectedCoordinates.
+        for (int i = intervalPoints; i < totalPoints; i += intervalPoints) {
+          selectedCoordinates.add(_mapController.polylineCoordinates[i]);
+        }
+        // Calculate the average speed from the values of distance and duration.
+        double averageSpeed = distanceInMeters / durationInSeconds;
+        // Get current location.
+        LatLng startingLocation = _locationController.currentLocation.value!;
+        // Fetch weather data for each selected coordinates.
+        for (int i = 0; i < selectedCoordinates.length; i++) {
+          var location = selectedCoordinates[i];
+          double distance =
+              LocationUtils.calculateDistance(startingLocation, location);
+          double secondsAfter = distance / averageSpeed;
+          await fetchWeatherData(
+              lat: location.latitude,
+              lon: location.longitude,
+              secondsAfter: secondsAfter.toInt(),
+              markerId: i);
+        }
+      });
+    } catch (error) {
+      Get.snackbar("Error", error.toString());
     }
   }
 
@@ -74,22 +99,24 @@ class JourneyController extends GetxController {
       String dest =
           "${_locationController.destination.value!.latitude},${_locationController.destination.value!.longitude}";
       final String request =
-          "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=$origin&destinations=$dest&key=${AppConstants.googleMapsApiKey}";
+          "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=$origin&destinations=$dest&key=${AppConstants.googleMapsApiKey}&language=tr";
       final response = await http.get(Uri.parse(request));
       if (response.statusCode == 200) {
         final jsonResponse = json.decode(response.body);
         var data = jsonResponse;
         List<dynamic> elements = data["rows"][0]["elements"];
-        var distanceText = elements[0]["distance"]["text"];
-        var durationText = elements[0]["duration"]["text"];
+        _locationController.timeLeft.value = elements[0]["duration"]["text"];
+        _locationController.distanceLeft.value =
+            elements[0]["distance"]["text"];
         durationInSeconds = elements[0]["duration"]["value"];
         distanceInMeters = elements[0]["distance"]["value"];
-        _locationController.timeLeft.value =
-            _locationController.convertTimeString("$durationText");
-        _locationController.distanceLeft.value =
-            _locationController.convertMilesToKilometers("$distanceText");
-        _locationController
-            .addTimeToCurrentTime(_locationController.timeLeft.value);
+
+        // _locationController.timeLeft.value =
+        //     _locationController.convertTimeString("$durationText");
+        // _locationController.distanceLeft.value =
+        //     _locationController.convertMilesToKilometers("$distanceText");
+        // _locationController
+        //     .addTimeToCurrentTime(_locationController.timeLeft.value);
       }
     } catch (error) {
       Get.snackbar("Error", error.toString());
@@ -114,7 +141,6 @@ class JourneyController extends GetxController {
           secondsAfter: secondsAfter,
           location: LatLng(lat, lon),
           markerId: markerId);
-      Get.defaultDialog(middleText: weatherData.toString());
     } catch (error) {
       Get.snackbar("Error", error.toString());
     }
@@ -128,4 +154,15 @@ class JourneyController extends GetxController {
     }
     return false;
   }
+
+  // void updateCurrentRoute({required LatLng location}) async {
+  //   //Check if the driver is off the route.
+  //   if (_mapController.isOffRoute(location: location)) {
+  //     Get.snackbar("updateCurrentRoute(), isOffRoute = true",
+  //         "The navigation has been preparing.");
+  //     await _mapController.recalculateRoute(
+  //         start: location, destination: _locationController.destination.value!);
+  //   }
+  //   getTotalDistanceAndTime();
+  // }
 }
