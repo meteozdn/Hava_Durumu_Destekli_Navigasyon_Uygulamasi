@@ -20,6 +20,7 @@ class MapController extends GetxController {
   late Completer<GoogleMapController> googleMapsController = Completer();
   late RouteModel route;
   bool isPlanned = false;
+  bool isSaved = false;
   RxBool isRouteStarted = false.obs;
   RxBool isRouteCreated = false.obs;
   RxBool isCameraLocked = true.obs;
@@ -53,6 +54,7 @@ class MapController extends GetxController {
   Future<void> setPlannedRoute({required RouteModel route}) async {
     try {
       setRouteModel(route: route, isPlanned: false);
+      isSaved = true;
       var start = LatLng(this.route.startingLocation.latitude,
           this.route.startingLocation.longitude);
       var destination = LatLng(this.route.destinationLocation.latitude,
@@ -141,13 +143,12 @@ class MapController extends GetxController {
     }
   }
 
-  void getNextDirection({required LatLng from}) {
+  Future<void> getNextDirection({required LatLng from}) async {
     if (directions.length > 1) {
       if (directionIndex == 0) {
         instruction.value = directions[directionIndex]["instruction"]!;
         instructionDistance.value =
             directions[directionIndex]["distanceMeters"];
-        return;
       }
       for (var i = directionIndex; i < directions.length; i++) {
         var direction = directions[i];
@@ -218,6 +219,8 @@ class MapController extends GetxController {
       var locationController = Get.find<LocationController>();
       var start = locationController.currentLocation.value!;
       var destination = locationController.destination.value!;
+      directions.clear();
+      directionIndex = 0;
       await setPolylinePoints(start: start, destination: destination);
       // Get new future weather data.
       markers.clear();
@@ -258,6 +261,8 @@ class MapController extends GetxController {
     directions.clear();
     isRouteCreated.value = false;
     isRouteStarted.value = false;
+    isSaved = false;
+    isPlanned = false;
     if (Get.isRegistered<JourneyController>()) {
       Get.delete<JourneyController>();
     }

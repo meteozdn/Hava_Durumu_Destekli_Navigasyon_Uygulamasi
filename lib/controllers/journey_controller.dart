@@ -21,6 +21,7 @@ class JourneyController extends GetxController {
   LatLng? currentLocation;
   LatLng? lastLocation;
   Completer<void> listenCompleter = Completer<void>();
+  bool isAllowed = true;
 
   @override
   void onInit() {
@@ -42,16 +43,15 @@ class JourneyController extends GetxController {
       accuracy: LocationAccuracy.best,
       distanceFilter: 0,
     )).listen((Position position) {
-      if (!listenCompleter.isCompleted) {
-        // Mark the current operation as in progress.
-        listenCompleter.complete();
+      if (true) {
+        //listenCompleter.complete(); // Mark the current operation as in progress
         LatLng location = LatLng(position.latitude, position.longitude);
         currentLocation = location;
+        _locationController.setCurrentLocation(location: currentLocation!);
         // Get next direction.
         _mapController.getNextDirection(from: location);
-        _locationController.setCurrentLocation(location: currentLocation!);
         if (lastLocation == null ||
-            LocationUtils.calculateDistance(lastLocation!, location) >= 500) {
+            LocationUtils.calculateDistance(lastLocation!, location) >= 250) {
           lastLocation = location;
           // Update left distance and time.
           getTotalDistanceAndTime();
@@ -59,8 +59,8 @@ class JourneyController extends GetxController {
           _mapController.updateRouteLocation(
               current: location, secondsLeft: durationInSeconds);
         }
-        listenCompleter =
-            Completer<void>(); // Reset the Completer for the next operation
+        // listenCompleter =
+        //     Completer<void>(); // Reset the Completer for the next operation
       }
     });
   }

@@ -140,7 +140,9 @@ class JourneyDetail extends StatelessWidget {
                                           zoomControlsEnabled: false,
                                         );
                                       }),
-                                      false
+                                      route.plannedAt.isBefore(DateTime.now()
+                                              .add(const Duration(days: -1)))
+
                                           // ignore: dead_code
                                           ? const BluredContainer(
                                               height: 200,
@@ -162,14 +164,18 @@ class JourneyDetail extends StatelessWidget {
                             ),
                             !isOwner
                                 ? ElevatedButton(
-                                    onPressed: () {
-                                      Get.toNamed(
-                                        NavigationConstants.liveJourney,
-                                        arguments: {
-                                          "route": route,
-                                        },
-                                      );
-                                    },
+                                    onPressed: route.plannedAt.isBefore(
+                                            DateTime.now()
+                                                .add(const Duration(days: -1)))
+                                        ? null
+                                        : () {
+                                            Get.toNamed(
+                                              NavigationConstants.liveJourney,
+                                              arguments: {
+                                                "route": route,
+                                              },
+                                            );
+                                          },
                                     child: const Icon(Icons.broadcast_on_home))
                                 : const SizedBox()
                           ],

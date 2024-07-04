@@ -158,9 +158,13 @@ class NavigationScreen extends StatelessWidget {
           });
         } else {
           //Get.snackbar("Navigation", "The navigation has been preparing.");
-          await mapController.saveRoute().then((_) async {
+          if (mapController.isSaved) {
             await mapController.startRoute();
-          });
+          } else {
+            await mapController.saveRoute().then((_) async {
+              await mapController.startRoute();
+            });
+          }
         }
       },
       child: Material(
@@ -228,7 +232,9 @@ class NavigationScreen extends StatelessWidget {
             width: 200,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
-              color: ColorConstants.whiteColor,
+              color: themeChanger.isLight.value
+                  ? ColorConstants.pictionBlueColor
+                  : ColorConstants.darkGrey,
             ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -236,13 +242,17 @@ class NavigationScreen extends StatelessWidget {
                 Text(
                   locationController.distanceLeft.value,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   locationController.timeLeft.value,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 10),
               ],
