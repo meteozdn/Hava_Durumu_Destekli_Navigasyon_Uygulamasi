@@ -113,9 +113,12 @@ class LocationController extends GetxController {
   Future<void> setCurrentLocation({required LatLng location}) async {
     try {
       double bearing = 0;
-      bearing =
-          LocationUtils.calculateBearing(currentLocation.value!, location);
-      _mapController.moveCameraToLocation(location: location, bearing: bearing);
+      if (currentLocation.value != null) {
+        bearing =
+            LocationUtils.calculateBearing(currentLocation.value!, location);
+        _mapController.moveCameraToLocation(
+            location: location, bearing: bearing);
+      }
       currentLocation.value = location;
     } catch (error) {
       Get.snackbar("Error = setCurrentLocation()", error.toString());

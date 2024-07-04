@@ -48,10 +48,10 @@ class JourneyController extends GetxController {
           LocationUtils.calculateDistance(lastLocation!, location) >= 250) {
         lastLocation = location;
         // Update left distance and time.
-        //getTotalDistanceAndTime();
+        getTotalDistanceAndTime();
         // Update route model for firebase.
-        _mapController.updateRouteLocation(
-            current: location, secondsLeft: durationInSeconds);
+        // _mapController.updateRouteLocation(
+        //     current: location, secondsLeft: durationInSeconds);
       }
     });
   }
@@ -110,6 +110,8 @@ class JourneyController extends GetxController {
             elements[0]["distance"]["text"];
         durationInSeconds = elements[0]["duration"]["value"];
         distanceInMeters = elements[0]["distance"]["value"];
+        Get.snackbar("Test",
+            "${_locationController.timeLeft.value}  ${_locationController.distanceLeft.value}");
 
         // _locationController.timeLeft.value =
         //     _locationController.convertTimeString("$durationText");

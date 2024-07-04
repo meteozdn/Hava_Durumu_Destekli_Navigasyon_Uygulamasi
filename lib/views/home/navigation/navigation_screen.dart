@@ -95,7 +95,7 @@ class NavigationScreen extends StatelessWidget {
                       ? clearRouteButton()
                       : const SizedBox(height: 10),
                   if (isRouteCreated && !isRouteStarted) routeActionButton(),
-                  if (isRouteStarted) journeyInformation(),
+                  //if (isRouteStarted) journeyInformation(),
                   currentLocationButton(),
                 ],
               );
