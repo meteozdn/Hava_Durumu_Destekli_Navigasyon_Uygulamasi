@@ -27,8 +27,11 @@ class MapController extends GetxController {
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
   //var directions = [].obs;
-  RxList<Map<String, String>> directions = <Map<String, String>>[].obs;
+  RxList<Map<String, dynamic>> directions = <Map<String, dynamic>>[].obs;
+  RxString instruction = RxString("");
+  RxString instructionDistance = RxString("");
   RxString mapStyle = "".obs;
+  int directionIndex = 0;
 
   @override
   void onInit() async {
@@ -119,12 +122,16 @@ class MapController extends GetxController {
           var steps = data["routes"][0]["legs"][0]["steps"];
           for (var step in steps) {
             var instruction = step["navigationInstruction"]["instructions"];
-            var distance = step["localizedValues"]["distance"]["text"];
             var distanceInMeters = step["distanceMeters"];
+            var start = step["startLocation"];
+            var end = step["endLocation"];
+            //var distance = step["localizedValues"]["distance"]["text"];
             directions.add({
               "instruction": instruction,
-              "distance": distance,
-              "distanceMeters": distanceInMeters
+              "distanceMeters": distanceInMeters,
+              "start": start,
+              "end": end
+              //"distance": distance,
             });
           }
         }
@@ -136,25 +143,27 @@ class MapController extends GetxController {
 
   void getNextDirection({required LatLng from}) {
     if (directions.length > 1) {
-      // Find the closest direction index
-      int? closestDirectionIndex;
-      for (int i = 0; i < directions.length; i++) {
+      if (directionIndex == 0) {
+        instruction.value = directions[directionIndex]["instruction"]!;
+        instructionDistance.value =
+            directions[directionIndex]["distanceMeters"];
+        return;
+      }
+      for (var i = directionIndex; i < directions.length; i++) {
         var direction = directions[i];
-        var directionLatLng = LatLng(
-          double.parse(direction["distance"]!.split(",")[0]),
-          double.parse(direction["distance"]!.split(",")[1]),
-        );
-        var distance = LocationUtils.calculateDistance(from, directionLatLng);
-        if (distance < 7) {
-          closestDirectionIndex = i;
+        var distanceMeters = directions[i]["distanceMeters"];
+        var start = LatLng(
+            direction["start"]["latitude"], direction["start"]["longitude"]);
+        var end =
+            LatLng(direction["end"]["latitude"], direction["end"]["longitude"]);
+        var startToFrom = LocationUtils.calculateDistance(start, from);
+        var fromToEnd = LocationUtils.calculateDistance(from, end);
+        if (startToFrom < distanceMeters && fromToEnd < distanceMeters) {
+          instruction.value = direction["instruction"]!;
+          instructionDistance.value = distanceMeters;
+          directionIndex = i;
           break;
         }
-      }
-
-      // If a close direction is found, remove it and update the directions
-      if (closestDirectionIndex != null) {
-        directions.removeAt(closestDirectionIndex);
-        update();
       }
     }
   }

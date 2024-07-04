@@ -50,22 +50,22 @@ class NavigationScreen extends StatelessWidget {
               polylines: mapController.polylines.toSet(),
               zoomControlsEnabled: false,
               markers: mapController.markers.toSet())),
-          Obx(() {
-            //final isRouteCreated = mapController.isRouteCreated.value;
-            final isRouteStarted = mapController.isRouteStarted.value;
-            return Visibility(
-              visible: isRouteStarted,
-              // visible: isRouteCreated && !isRouteStarted,
-              child: Positioned(
-                  top: 130,
-                  bottom: 500,
-                  right: 10,
-                  left: 10,
-                  child: DirectionsViewWidget(
-                      themeChanger: themeChanger,
-                      mapController: mapController)),
-            );
-          }),
+          Positioned(
+            top: 130,
+            bottom: 500,
+            right: 20,
+            left: 20,
+            child: Obx(() {
+              final isRouteStarted = mapController.isRouteStarted.value;
+              return Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (isRouteStarted) directionInstructions(),
+                  // if (true) directionInstructions(),
+                ],
+              );
+            }),
+          ),
           Obx(() {
             final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
@@ -112,6 +112,7 @@ class NavigationScreen extends StatelessWidget {
                       : const SizedBox(height: 10),
                   if (isRouteCreated && !isRouteStarted) routeActionButton(),
                   if (isRouteStarted) journeyInformation(),
+                  // if (true) journeyInformation(),
                   currentLocationButton(),
                 ],
               );
@@ -152,9 +153,9 @@ class NavigationScreen extends StatelessWidget {
         if (mapController.isPlanned) {
           //Get.snackbar("Route", "The route has been saved.");
           await mapController.saveRoute().then((_) async {
-            await mapController.startRoute();
+            //await mapController.startRoute();
+            mapController.clearRoute();
           });
-          //mapController.clearRoute();
         } else {
           //Get.snackbar("Navigation", "The navigation has been preparing.");
           await mapController.saveRoute().then((_) async {
@@ -208,7 +209,9 @@ class NavigationScreen extends StatelessWidget {
                     location: locationController.currentLocation.value!);
               }
             },
-            icon: const Icon(Icons.location_searching_outlined),
+            icon: mapController.isCameraLocked.value
+                ? const Icon(Icons.location_searching_outlined)
+                : const Icon(Icons.location_pin),
           ),
         );
       }),
@@ -246,6 +249,96 @@ class NavigationScreen extends StatelessWidget {
             )),
       ),
     );
+  }
+
+  Widget directionInstructions() {
+    return GestureDetector(
+        child: Material(
+      borderRadius: BorderRadius.circular(10),
+      elevation: 10,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: themeChanger.isLight.value
+              ? ColorConstants.pictionBlueColor
+              : ColorConstants.darkGrey,
+        ),
+        width: 350,
+        height: 150,
+        child: Center(
+            child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Obx(() {
+                  String instruction = mapController.instruction.value;
+                  String distance = mapController.instructionDistance.value;
+                  return Row(
+                    children: [
+                      //TODO getIcon()'u serviten gelen veriyi vererek çalıştır <3
+                      Icon(
+                        getIcon("Turn left onto Main St"),
+                        color: ColorConstants.whiteColor,
+                        size: 50,
+                      ),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                instruction,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            // Padding(
+                            //   padding: const EdgeInsets.only(left: 8.0),
+                            //   child: Text(
+                            //     distance,
+                            //     maxLines: 2,
+                            //     style: const TextStyle(
+                            //       fontSize: 16,
+                            //       color: Colors.white,
+                            //       fontWeight: FontWeight.bold,
+                            //     ),
+                            //   ),
+                            // )
+                          ],
+                        ),
+                      )
+                    ],
+                  );
+                }))),
+      ),
+    ));
+  }
+
+  IconData getIcon(String instruction) {
+    if (instruction.contains(NavigationConsts.northEast)) {
+      return Icons.north_west;
+    } else if (instruction.contains(NavigationConsts.northEast)) {
+      return Icons.north_east;
+    } else if (instruction.contains(NavigationConsts.southEast)) {
+      return Icons.south_east;
+    } else if (instruction.contains(NavigationConsts.southWest)) {
+      return Icons.south_west;
+    } else if (instruction.contains(NavigationConsts.north) ||
+        instruction.contains(NavigationConsts.straight)) {
+      return Icons.north;
+    } else if (instruction.contains(NavigationConsts.west) ||
+        instruction.contains(NavigationConsts.left)) {
+      return Icons.west;
+    } else if (instruction.contains(NavigationConsts.east) ||
+        instruction.contains(NavigationConsts.right)) {
+      return Icons.east;
+    } else if (instruction.contains(NavigationConsts.south)) {
+      return Icons.south;
+    }
+    return Icons.north;
   }
 }
 
@@ -308,18 +401,18 @@ class DirectionsViewWidget extends StatelessWidget {
                                 ),
                               ),
                             ),
-                            // Padding(
-                            //   padding: const EdgeInsets.only(left: 8.0),
-                            //   child: Text(
-                            //     distance,
-                            //     maxLines: 2,
-                            //     style: const TextStyle(
-                            //       fontSize: 20,
-                            //       color: Colors.white,
-                            //       fontWeight: FontWeight.bold,
-                            //     ),
-                            //   ),
-                            // )
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                distance,
+                                maxLines: 2,
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            )
                           ],
                         ),
                       )

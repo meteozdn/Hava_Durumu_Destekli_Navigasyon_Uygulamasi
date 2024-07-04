@@ -20,6 +20,7 @@ class JourneyController extends GetxController {
   int durationInSeconds = 0;
   LatLng? currentLocation;
   LatLng? lastLocation;
+  Completer<void> listenCompleter = Completer<void>();
 
   @override
   void onInit() {
@@ -41,22 +42,53 @@ class JourneyController extends GetxController {
       accuracy: LocationAccuracy.best,
       distanceFilter: 0,
     )).listen((Position position) {
-      LatLng location = LatLng(position.latitude, position.longitude);
-      currentLocation = location;
-      _locationController.setCurrentLocation(location: currentLocation!);
-      // Get next direction.
-      _mapController.getNextDirection(from: location);
-      if (lastLocation == null ||
-          LocationUtils.calculateDistance(lastLocation!, location) >= 500) {
-        lastLocation = location;
-        // Update left distance and time.
-        getTotalDistanceAndTime();
-        // Update route model for firebase.
-        _mapController.updateRouteLocation(
-            current: location, secondsLeft: durationInSeconds);
+      if (!listenCompleter.isCompleted) {
+        // Mark the current operation as in progress.
+        listenCompleter.complete();
+        LatLng location = LatLng(position.latitude, position.longitude);
+        currentLocation = location;
+        // Get next direction.
+        _mapController.getNextDirection(from: location);
+        _locationController.setCurrentLocation(location: currentLocation!);
+        if (lastLocation == null ||
+            LocationUtils.calculateDistance(lastLocation!, location) >= 500) {
+          lastLocation = location;
+          // Update left distance and time.
+          getTotalDistanceAndTime();
+          // Update route model for firebase.
+          _mapController.updateRouteLocation(
+              current: location, secondsLeft: durationInSeconds);
+        }
+        listenCompleter =
+            Completer<void>(); // Reset the Completer for the next operation
       }
     });
   }
+
+  // void initializeLocationTracking() {
+  //   // Subscribe to location changes.
+  //   positionStream = Geolocator.getPositionStream(
+  //       locationSettings: const LocationSettings(
+  //     accuracy: LocationAccuracy.best,
+  //     distanceFilter: 0,
+  //   )).listen((Position position) {
+  //     LatLng location = LatLng(position.latitude, position.longitude);
+  //     currentLocation = location;
+  //     // Get next direction.
+  //     _mapController.getNextDirection(from: location).then((_) {
+  //       _locationController.setCurrentLocation(location: currentLocation!);
+  //       if (lastLocation == null ||
+  //           LocationUtils.calculateDistance(lastLocation!, location) >= 500) {
+  //         lastLocation = location;
+  //         // Update left distance and time.
+  //         getTotalDistanceAndTime();
+  //         // Update route model for firebase.
+  //         _mapController.updateRouteLocation(
+  //             current: location, secondsLeft: durationInSeconds);
+  //       }
+  //     });
+  //   });
+  // }
 
   void initializeSelectedLocations() async {
     try {
@@ -112,8 +144,8 @@ class JourneyController extends GetxController {
             elements[0]["distance"]["text"];
         durationInSeconds = elements[0]["duration"]["value"];
         distanceInMeters = elements[0]["distance"]["value"];
-        Get.snackbar("Test",
-            "${_locationController.timeLeft.value}  ${_locationController.distanceLeft.value}");
+        // Get.snackbar("Test",
+        //     "${_locationController.timeLeft.value}  ${_locationController.distanceLeft.value}");
 
         // _locationController.timeLeft.value =
         //     _locationController.convertTimeString("$durationText");
