@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -39,7 +41,7 @@ class JourneyLiveScreen extends StatelessWidget {
             width: Get.width,
             child: Obx(() {
               return GoogleMap(
-                markers: controller.markers,
+                markers: controller.markers.toSet(),
                 compassEnabled: false,
                 polylines: controller.polylines
                     .toSet(), //  scrollGesturesEnabled: false,
@@ -54,6 +56,12 @@ class JourneyLiveScreen extends StatelessWidget {
                           route.startingLocation.longitude),
                       destination: LatLng(route.destinationLocation.latitude,
                           route.destinationLocation.longitude));
+                  if (!controller.googleMapsController.isCompleted) {
+                    controller.googleMapsController.complete(mapController);
+                  } else {
+                    controller.googleMapsController = Completer();
+                    controller.googleMapsController.complete(mapController);
+                  }
                   //  controller.mapController = mapController;
                 },
                 zoomControlsEnabled: false,
@@ -73,8 +81,8 @@ class JourneyLiveScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Obx(() {
-                        String cityName = controller.getCityName();
-                        String lastUpdate = controller.lastUpdateForLocation();
+                        String cityName = controller.currentCity.value;
+                        String lastUpdate = controller.lastUpdate.value;
                         return Column(
                           children: [
                             Row(

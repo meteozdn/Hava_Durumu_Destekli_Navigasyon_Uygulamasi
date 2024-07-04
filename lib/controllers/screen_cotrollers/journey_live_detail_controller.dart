@@ -15,7 +15,7 @@ import 'package:navigationapp/views/components/navigation_marker.dart';
 import 'package:widget_to_marker/widget_to_marker.dart';
 
 class JourneyLiveDetailController extends GetxController {
-  //late Completer<GoogleMapController> googleMapsController = Completer();
+  late Completer<GoogleMapController> googleMapsController = Completer();
   // late RouteModel route;
 //  RxBool isRouteCreated = false.obs;
 //  RxBool isCameraLocked = true.obs;
@@ -30,9 +30,12 @@ class JourneyLiveDetailController extends GetxController {
   StreamSubscription<DocumentSnapshot>? routeSubscription;
   DocumentReference? routeDocRef;
 
-  RxSet<Marker> markers = <Marker>{}.obs;
+  //RxSet<Marker> markers = <Marker>{}.obs;
+  var markers = <Marker>[].obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
+  RxString currentCity = RxString("");
+  RxString lastUpdate = RxString("");
 
   @override
   void onInit() async {
@@ -61,6 +64,8 @@ class JourneyLiveDetailController extends GetxController {
         // Check for updates to "location" field.
         if (oldRouteData.location != routeModel.value!.location) {
           Get.snackbar("title", "location update");
+          currentCity.value = getCityName();
+          lastUpdate.value = lastUpdateForLocation();
           updateLocationMarker();
         }
       }
