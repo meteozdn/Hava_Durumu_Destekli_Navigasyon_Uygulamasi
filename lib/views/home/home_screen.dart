@@ -69,21 +69,26 @@ class HomeScreen extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    IconButton(
-                                      onPressed: () {
+                                    GestureDetector(
+                                      onTap: () {
                                         Navigator.pop(context);
                                         Get.to(() =>
                                             CreateRouteView(isPlanned: false));
                                       },
-                                      icon: Icon(
-                                        Icons.navigation,
-                                        size: 50.r,
+                                      child: Image.asset(
+                                        IconsConst.compass,
+                                        width: 50,
+                                        // Icons.navigation,
+                                        //   size: 50.r,
                                       ),
                                     ),
-                                    const Text(
-                                      "Güvenli\nSürüş",
+                                    Text(
+                                      "\nGüvenli\nSürüş",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
+                                          color: themeChanger.isLight.value
+                                              ? ColorConstants.pictionBlueColor
+                                              : ColorConstants.whiteColor,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
                                     )
@@ -99,18 +104,26 @@ class HomeScreen extends StatelessWidget {
                                 Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    IconButton(
-                                      onPressed: () {
+                                    GestureDetector(
+                                      onTap: () {
                                         Navigator.pop(context);
                                         Get.to(() =>
                                             CreateRouteView(isPlanned: true));
                                       },
-                                      icon: Icon(Icons.watch_later, size: 50.r),
+                                      child: Image.asset(
+                                        IconsConst.calender,
+                                        width: 50,
+                                        // Icons.navigation,
+                                        //   size: 50.r,
+                                      ),
                                     ),
-                                    const Text(
-                                      "Sürüş\nPlanla",
+                                    Text(
+                                      "\nSürüş\nPlanla",
                                       textAlign: TextAlign.center,
                                       style: TextStyle(
+                                          color: themeChanger.isLight.value
+                                              ? ColorConstants.pictionBlueColor
+                                              : ColorConstants.whiteColor,
                                           fontSize: 20,
                                           fontWeight: FontWeight.bold),
                                     )

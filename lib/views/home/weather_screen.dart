@@ -95,8 +95,8 @@ class WeatherScreenBottomWidgets extends StatelessWidget {
                       },
                       children: [
                         NowTemp(),
-                        Daily24HourTemp(),
-                        WeeklyTemp(),
+                        //Daily24HourTemp(),
+                        //WeeklyTemp(),
                         PreasureWidget(),
                         Wind(),
                         AirClean(),

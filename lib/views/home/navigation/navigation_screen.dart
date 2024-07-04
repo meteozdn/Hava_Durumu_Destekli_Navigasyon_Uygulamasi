@@ -54,6 +54,7 @@ class NavigationScreen extends StatelessWidget {
             final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
             return Visibility(
+              visible: false,
               // visible: isRouteCreated && !isRouteStarted,
               child: Positioned(
                   top: 130,

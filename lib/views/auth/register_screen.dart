@@ -37,10 +37,10 @@ class RegisterScreen extends GetView<AuthController> {
                       decoration: BoxDecoration(
                         // color: Colors.blue[100],
                         border: Border.all(
-                          width: 5,
+                          width: 3,
                           color: ColorConstants.pictionBlueColor,
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -60,8 +60,8 @@ class RegisterScreen extends GetView<AuthController> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                            width: 5, color: ColorConstants.pictionBlueColor),
-                        borderRadius: BorderRadius.circular(12),
+                            width: 3, color: ColorConstants.pictionBlueColor),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -82,8 +82,8 @@ class RegisterScreen extends GetView<AuthController> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                            width: 5, color: ColorConstants.pictionBlueColor),
-                        borderRadius: BorderRadius.circular(12),
+                            width: 3, color: ColorConstants.pictionBlueColor),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -104,8 +104,8 @@ class RegisterScreen extends GetView<AuthController> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                            width: 5, color: ColorConstants.pictionBlueColor),
-                        borderRadius: BorderRadius.circular(12),
+                            width: 3, color: ColorConstants.pictionBlueColor),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -125,8 +125,8 @@ class RegisterScreen extends GetView<AuthController> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                            width: 5, color: ColorConstants.pictionBlueColor),
-                        borderRadius: BorderRadius.circular(12),
+                            width: 3, color: ColorConstants.pictionBlueColor),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -146,8 +146,8 @@ class RegisterScreen extends GetView<AuthController> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                            width: 5, color: ColorConstants.pictionBlueColor),
-                        borderRadius: BorderRadius.circular(12),
+                            width: 3, color: ColorConstants.pictionBlueColor),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -186,7 +186,7 @@ class RegisterScreen extends GetView<AuthController> {
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: ColorConstants.pictionBlueColor,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                         child: const Center(
                           child: Text(

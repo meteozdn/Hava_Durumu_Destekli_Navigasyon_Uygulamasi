@@ -504,7 +504,7 @@ class WeatherScreenIndicator extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         ...List.generate(
-          6,
+          4,
           (index) => Obx(() {
             return ProjectIndicator(
                 firstColor: ColorConstants.blackColor,

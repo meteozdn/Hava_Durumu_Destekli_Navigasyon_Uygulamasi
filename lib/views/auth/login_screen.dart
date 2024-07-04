@@ -36,10 +36,10 @@ class LoginScreen extends GetView<AuthController> {
                       decoration: BoxDecoration(
                         // color: ColorConstants.pictionBlueColor,
                         border: Border.all(
-                          width: 5,
+                          width: 3,
                           color: ColorConstants.pictionBlueColor,
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -59,10 +59,10 @@ class LoginScreen extends GetView<AuthController> {
                     child: Container(
                       decoration: BoxDecoration(
                         border: Border.all(
-                          width: 5,
+                          width: 3,
                           color: ColorConstants.pictionBlueColor,
                         ),
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(30),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.only(left: 10),
@@ -92,7 +92,7 @@ class LoginScreen extends GetView<AuthController> {
                         padding: const EdgeInsets.all(15),
                         decoration: BoxDecoration(
                           color: ColorConstants.pictionBlueColor,
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                         child: const Center(
                           child: Text(
@@ -108,15 +108,37 @@ class LoginScreen extends GetView<AuthController> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  GestureDetector(
-                    onTap: showRegisterPage,
-                    child: const Text(
-                      "Kayıt Ol",
-                      style: TextStyle(
-                        color: Colors.blue,
-                        fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(25.0),
+                          child: Divider(
+                            color: ColorConstants.pictionBlueColor,
+                            thickness: 2,
+                          ),
+                        ),
                       ),
-                    ),
+                      GestureDetector(
+                        onTap: showRegisterPage,
+                        child: const Text(
+                          "Kayıt Ol",
+                          style: TextStyle(
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const Expanded(
+                        child: Padding(
+                          padding: EdgeInsets.all(25.0),
+                          child: Divider(
+                            color: ColorConstants.pictionBlueColor,
+                            thickness: 2,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
