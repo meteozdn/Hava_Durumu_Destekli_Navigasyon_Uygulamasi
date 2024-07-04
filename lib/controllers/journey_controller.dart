@@ -50,8 +50,8 @@ class JourneyController extends GetxController {
         // Update left distance and time.
         getTotalDistanceAndTime();
         // Update route model for firebase.
-        // _mapController.updateRouteLocation(
-        //     current: location, secondsLeft: durationInSeconds);
+        _mapController.updateRouteLocation(
+            current: location, secondsLeft: durationInSeconds);
       }
     });
   }

@@ -54,11 +54,11 @@ class NavigationScreen extends StatelessWidget {
             final isRouteCreated = mapController.isRouteCreated.value;
             final isRouteStarted = mapController.isRouteStarted.value;
             return Visibility(
-              visible: false,
+              visible: true,
               // visible: isRouteCreated && !isRouteStarted,
               child: Positioned(
                   top: 130,
-                  bottom: 530,
+                  bottom: 500,
                   right: 10,
                   left: 10,
                   child: DirectionsViewWidget(themeChanger: themeChanger)),
@@ -148,14 +148,13 @@ class NavigationScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () async {
         if (mapController.isPlanned) {
-          Get.snackbar("routeActionButton()", "The route has been saved.");
-          //await mapController.saveRoute();
+          Get.snackbar("Route", "The route has been saved.");
+          await mapController.saveRoute();
           await mapController.startRoute();
           //mapController.clearRoute();
         } else {
-          Get.snackbar(
-              "routeActionButton()", "The navigation has been preparing.");
-          //await mapController.saveRoute();
+          Get.snackbar("Navigation", "The navigation has been preparing.");
+          await mapController.saveRoute();
           await mapController.startRoute();
         }
       },
@@ -326,7 +325,7 @@ class DirectionsViewWidget extends StatelessWidget {
             children: [
               //TODO getIcon()'u serviten gelen veriyi vererek çalıştır <3
               Icon(
-                getIcon(NavigationConsts.northEast),
+                getIcon("Turn left onto Main St"),
                 color: ColorConstants.whiteColor,
                 size: 50,
               ),

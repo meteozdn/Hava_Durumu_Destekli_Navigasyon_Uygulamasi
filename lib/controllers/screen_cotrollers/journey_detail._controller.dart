@@ -28,7 +28,6 @@ class JourneyDetailController extends GetxController {
   void onInit() async {
     super.onInit();
     await getMarkers(route);
-    // Listen to authentication changes.
   }
 
   Future<void> setPolylinePoints(
@@ -95,18 +94,6 @@ class JourneyDetailController extends GetxController {
       width: 4,
     );
     polylines.add(polyline);
-  }
-
-  bool isOffRoute({required LatLng location, double threshold = 200}) {
-    for (LatLng point in polylineCoordinates) {
-      double distance = LocationUtils.calculateDistance(location, point);
-      if (distance < threshold) {
-        // Driver is still on the route.
-        return false;
-      }
-    }
-    // Driver is off the route.
-    return true;
   }
 
   void clearRoute() {

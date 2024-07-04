@@ -14,6 +14,7 @@ import 'package:navigationapp/controllers/screen_cotrollers/journey_live_detail_
 import 'package:navigationapp/core/constants/app_constants.dart';
 import 'package:navigationapp/core/constants/navigation_constants.dart';
 import 'package:navigationapp/models/route.dart';
+import 'package:navigationapp/utils/location_utils.dart';
 import 'package:navigationapp/views/components/blured_container.dart';
 
 class JourneyLiveScreen extends StatelessWidget {
@@ -66,42 +67,46 @@ class JourneyLiveScreen extends StatelessWidget {
               BluredContainer(
                 width: Get.width,
                 height: 150,
-                child: const Padding(
-                  padding: EdgeInsets.all(20.0),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Column(
-                                children: [
-                                  Text("Konum"),
-                                  Text(
-                                    "Bolu",
-                                    style: TextStyle(
-                                        fontSize: 50,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  Text("Saat"),
-                                  Text(
-                                    "00.50",
-                                    style: TextStyle(
-                                        fontSize: 50,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
-                      )
+                      Obx(() {
+                        String cityName = controller.getCityName();
+                        String lastUpdate = controller.lastUpdateForLocation();
+                        return Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Column(
+                                  children: [
+                                    const Text("Konum"),
+                                    Text(
+                                      cityName,
+                                      style: const TextStyle(
+                                          fontSize: 50,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    const Text("Son güncelleme"),
+                                    Text(
+                                      lastUpdate,
+                                      style: const TextStyle(
+                                          fontSize: 50,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        );
+                      })
                     ],
                   ),
                 ),
@@ -130,7 +135,7 @@ class JourneyLiveScreen extends StatelessWidget {
                   Icons.arrow_back_ios_new,
                 )),
             Text(
-              "Metehan",
+              route.ownerName,
               style: TextStyle(
                   color: ColorConstants.blackColor,
                   fontSize: 20.sp,

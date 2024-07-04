@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:navigationapp/controllers/journey_controller.dart';
 import 'package:navigationapp/core/constants/app_constants.dart';
+import 'package:navigationapp/core/constants/firestore_collections.dart';
 import 'package:navigationapp/models/route.dart';
 import 'package:navigationapp/utils/location_utils.dart';
 import 'package:http/http.dart' as http;
@@ -22,30 +24,114 @@ class JourneyLiveDetailController extends GetxController {
     //super.key,
     required this.route,
   });
+
+  Rx<RouteModel?> routeModel = Rx<RouteModel?>(null);
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  StreamSubscription<DocumentSnapshot>? routeSubscription;
+  DocumentReference? routeDocRef;
+
   RxSet<Marker> markers = <Marker>{}.obs;
   var polylines = <Polyline>[].obs;
   var polylineCoordinates = <LatLng>[].obs;
+
   @override
   void onInit() async {
     super.onInit();
     await getMarkers(route);
-    // Listen to authentication changes.
+    routeDocRef =
+        _firestore.collection(FirestoreCollections.routes).doc(route.id);
+    listenToRouteUpdates();
+  }
+
+  @override
+  void onClose() {
+    routeSubscription?.cancel();
+    super.onClose();
+  }
+
+  void listenToRouteUpdates() {
+    routeSubscription = routeDocRef?.snapshots().listen((snapshot) async {
+      if (snapshot.exists) {
+        RouteModel newRouteData = RouteModel.fromFirestore(snapshot);
+        RouteModel? oldRouteData = routeModel.value;
+        routeModel.value = newRouteData;
+        if (oldRouteData == null) {
+          return;
+        }
+        // Check for updates to "location" field.
+        if (oldRouteData.location != routeModel.value!.location) {
+          Get.snackbar("title", "location update");
+          // Update marker
+        }
+      }
+    });
+  }
+
+  String getCityName() {
+    String cityName = "Bilinmeyen";
+    if (routeModel.value != null && routeModel.value!.location != null) {
+      GeoPoint? location = routeModel.value!.location;
+      LatLng latLng = LatLng(location!.latitude, location.longitude);
+      LocationUtils.getCityNameFromLatLng(latLng).then((name) {
+        cityName = name;
+      });
+    }
+    return cityName;
+  }
+
+  String lastUpdateForLocation() {
+    String lastUpdate = "Bilinmeyen";
+    if (routeModel.value != null &&
+        routeModel.value!.locationLastUpdate != null) {
+      lastUpdate =
+          routeModel.value!.locationLastUpdate.toString().substring(12, 16);
+    }
+    return lastUpdate;
   }
 
   Future<void> setPolylinePoints(
       {required LatLng start, required LatLng destination}) async {
     try {
-      String url = "https://maps.googleapis.com/maps/api/directions/json?"
-          "origin=${start.latitude},${start.longitude}&"
-          "destination=${destination.latitude},${destination.longitude}&"
-          "mode=driving&"
-          "key=${AppConstants.googleMapsApiKey}";
-      var response = await http.get(Uri.parse(url));
+      String routesUrl =
+          "https://routes.googleapis.com/directions/v2:computeRoutes";
+      Map<String, dynamic> requestBody = {
+        "origin": {
+          "location": {
+            "latLng": {"latitude": start.latitude, "longitude": start.longitude}
+          }
+        },
+        "destination": {
+          "location": {
+            "latLng": {
+              "latitude": destination.latitude,
+              "longitude": destination.longitude
+            }
+          }
+        },
+        "travelMode": "DRIVE",
+        "computeAlternativeRoutes": false,
+        "routeModifiers": {
+          "avoidTolls": false,
+          "avoidHighways": false,
+          "avoidFerries": false
+        },
+        "languageCode": "tr"
+      };
+      var response = await http.post(
+        Uri.parse(routesUrl),
+        headers: {
+          "Content-Type": "application/json",
+          "X-Goog-Api-Key": AppConstants.googleMapsApiKey,
+          "X-Goog-FieldMask":
+              "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline,routes.legs.steps",
+        },
+        body: json.encode(requestBody),
+      );
       var data = json.decode(response.body);
       var routes = data["routes"];
-      if (routes.isNotEmpty) {
+      if (routes != null && routes.isNotEmpty) {
         var points = PolylinePoints()
-            .decodePolyline(routes[0]["overview_polyline"]["points"]);
+            .decodePolyline(routes[0]["polyline"]["encodedPolyline"]);
         polylineCoordinates.clear();
         polylineCoordinates.addAll(points
             .map((point) => LatLng(point.latitude, point.longitude))
@@ -53,7 +139,7 @@ class JourneyLiveDetailController extends GetxController {
         updatePolyline();
       }
     } catch (error) {
-      Get.snackbar("Error", "PolylinePoints could not be set.");
+      Get.snackbar("Error = setPolylinePoints()", error.toString());
     }
   }
 
@@ -96,18 +182,6 @@ class JourneyLiveDetailController extends GetxController {
       width: 4,
     );
     polylines.add(polyline);
-  }
-
-  bool isOffRoute({required LatLng location, double threshold = 200}) {
-    for (LatLng point in polylineCoordinates) {
-      double distance = LocationUtils.calculateDistance(location, point);
-      if (distance < threshold) {
-        // Driver is still on the route.
-        return false;
-      }
-    }
-    // Driver is off the route.
-    return true;
   }
 
   void clearRoute() {
