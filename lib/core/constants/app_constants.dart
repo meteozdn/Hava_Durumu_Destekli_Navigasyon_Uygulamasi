@@ -117,6 +117,7 @@ class ImageConst {
   static const smile = "lib/assets/images/smile.png";
   static const neutral = "lib/assets/images/neutral.png";
   static const disaster = "lib/assets/images/disaster.png";
+  static const profile = "lib/assets/images/mnd.jpeg";
 }
 
 class NavigationConsts {

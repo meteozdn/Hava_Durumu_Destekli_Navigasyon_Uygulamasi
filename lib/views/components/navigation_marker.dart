@@ -76,3 +76,51 @@ class _Triangle extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+class BerkayMarker extends StatelessWidget {
+  final String img;
+  final bool isNight;
+
+  BerkayMarker({
+    super.key,
+    required this.img,
+    required this.isNight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 200,
+      width: 500,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          CircleAvatar(
+            radius: 60,
+            backgroundColor:
+                !isNight ? ColorConstants.blackColor : ColorConstants.lightGrey,
+            child: CircleAvatar(
+              backgroundColor: !isNight
+                  ? ColorConstants.lightGrey
+                  : ColorConstants.lightGrey,
+              radius: 55,
+              child: Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Image.asset(
+                  img,
+                  width: 50,
+                ),
+              ),
+            ),
+          ),
+          CustomPaint(
+            painter: _Triangle(
+              isNight ? ColorConstants.blackColor : ColorConstants.greyColor,
+            ),
+            size: const Size(40, 40),
+          ),
+        ],
+      ),
+    );
+  }
+}

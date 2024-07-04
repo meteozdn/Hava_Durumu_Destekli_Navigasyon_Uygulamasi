@@ -81,8 +81,8 @@ class JourneyLiveScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Obx(() {
-                        String cityName = controller.currentCity.value;
-                        String lastUpdate = controller.lastUpdate.value;
+                        controller.currentCity.value;
+                        controller.lastUpdate.value;
                         return Column(
                           children: [
                             Row(
@@ -92,7 +92,7 @@ class JourneyLiveScreen extends StatelessWidget {
                                   children: [
                                     const Text("Konum"),
                                     Text(
-                                      cityName,
+                                      controller.currentCity.value,
                                       style: const TextStyle(
                                           fontSize: 50,
                                           fontWeight: FontWeight.bold),
@@ -103,7 +103,7 @@ class JourneyLiveScreen extends StatelessWidget {
                                   children: [
                                     const Text("Son güncelleme"),
                                     Text(
-                                      lastUpdate,
+                                      controller.lastUpdate.value,
                                       style: const TextStyle(
                                           fontSize: 50,
                                           fontWeight: FontWeight.bold),

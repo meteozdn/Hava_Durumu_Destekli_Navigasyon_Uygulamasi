@@ -67,6 +67,9 @@ class JourneyLiveDetailController extends GetxController {
           currentCity.value = getCityName();
           lastUpdate.value = lastUpdateForLocation();
           updateLocationMarker();
+          print(markers.length);
+
+          //   print(markers[2].markerId);
         }
       }
     });
@@ -87,18 +90,21 @@ class JourneyLiveDetailController extends GetxController {
       // Create a new marker with the updated position.
       Marker updatedMarker = marker.copyWith(positionParam: newLocation);
       // Update the markers set.
-      markers.remove(marker);
+      // markers.remove(marker);
+      print(updatedMarker.markerId);
+      print("object");
       markers.add(updatedMarker);
     }
   }
 
   String getCityName() {
-    String cityName = "Bilinmeyen";
+    String cityName = "?";
     if (routeModel.value != null && routeModel.value!.location != null) {
       GeoPoint? location = routeModel.value!.location;
       LatLng latLng = LatLng(location!.latitude, location.longitude);
       LocationUtils.getCityNameFromLatLng(latLng).then((name) {
         cityName = name;
+        currentCity(name);
       });
     }
     return cityName;
@@ -188,6 +194,18 @@ class JourneyLiveDetailController extends GetxController {
         //     : center
         position: LatLng(route.destinationLocation.latitude,
             route.destinationLocation.longitude)));
+    markers.add(Marker(
+        icon: await NavigationMarker(
+          isNight: !(DateTime.now().hour < 19 && DateTime.now().hour > 6),
+          icon: IconsConst.friends,
+        ).toBitmapDescriptor(
+            logicalSize: const Size(200, 200), imageSize: const Size(200, 200)),
+        markerId: const MarkerId("location"),
+        // position: _locationController.currentLocation.value != null
+        //     ? _locationController.currentLocation.value!
+        //     : center
+        position: LatLng(route.startingLocation.latitude,
+            route.startingLocation.longitude)));
     //load();
   }
 
