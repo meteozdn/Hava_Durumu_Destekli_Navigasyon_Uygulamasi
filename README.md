@@ -1,3 +1,3 @@
 # navigationapp
 
-A new Flutter project.
+Hava Durumu Destekli Navigasyon Uygulaması
